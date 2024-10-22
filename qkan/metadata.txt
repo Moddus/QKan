@@ -28,7 +28,7 @@ repository=https://github.com/hoettges/QKan
 # Tags are comma separated with spaces allowed
 tags=flood, hydraulics, spatialite, cadastre, intersection
 
-homepage=https://github.com/hoettges/QKan
+homepage=https://qkan.eu
 category=Plugins
 icon=QKan.png
 # experimental flag
