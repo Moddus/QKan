@@ -4,6 +4,14 @@ from qgis.utils import spatialite_connect
 
 from qkan.utils import get_logger
 
+from qgis.core import (
+    Qgis,
+    QgsProject,
+    QgsVectorLayer,
+    QgsDataSourceUri,
+)
+from qgis.utils import iface, spatialite_connect
+
 logger = get_logger("QKan.tools.k_filepath")
 
 
@@ -23,6 +31,7 @@ def setfilepath(
 
     if ausw_haltung == True:
         bild=''
+        video = ''
         if fotopath != "":
             #Bild suchen
             # ordner und dateiname aus datenbank abfragen
@@ -37,12 +46,18 @@ def setfilepath(
 
             for attr in curs.fetchall():
 
-                bild_nam = attr[1]
+                #pfad+name = attr[1]
+                #nur name =
+
+                #fotopath, bild_nam = attr[1]
+
+
+                bild_nam = os.path.basename(attr[1])
 
                 for root, dirs, files in os.walk(fotopath):
                     for file in files:
-                        if file == bild_nam:
-                            bild = fotopath+root
+                        if file.lower() == bild_nam.lower():
+                            bild = str(fotopath) + '/' + str(bild_nam)
 
                             # pfad in db erstzen
                             sql = """Update untersuchdat_haltung set foto_dateiname = ?
@@ -54,8 +69,9 @@ def setfilepath(
                             except BaseException as err:
                                 return False
 
+            db.commit()
+
         if videopath != "":
-            video=''
 
             #Video suchen
             sql = """select pk, film_dateiname, ordner_video
@@ -67,12 +83,14 @@ def setfilepath(
                 return False
 
             for attr in curs.fetchall():
-                video_nam = attr[1]
+                #video_nam = attr[1]
+
+                video_nam = os.path.basename(attr[1])
 
                 for root, dirs, files in os.walk(videopath):
                     for file in files:
-                        if file == video_nam:
-                            video = videopath+root
+                        if file.lower() == video_nam.lower():
+                            video = str(videopath)+'/'+str(video_nam)
 
                             # ordner_video in db ersetzen
                             sql = """Update untersuchdat_haltung set film_dateiname = ?
@@ -83,6 +101,7 @@ def setfilepath(
                                 curs.execute(sql, data)
                             except BaseException as err:
                                 return False
+            db.commit()
 
 
     if ausw_schacht == True and fotopath_2 != "":
@@ -99,12 +118,18 @@ def setfilepath(
 
 
         for attr in curs.fetchall():
-            bild_nam = attr[1]
+            #bild_nam = attr[1]
+
+            bild_nam = os.path.basename(attr[1])
+
+            iface.messageBar().pushMessage("Error",
+                                           "Name: " + str(bild_nam),
+                                           level=Qgis.Critical)
 
             for root, dirs, files in os.walk(fotopath_2):
                 for file in files:
-                    if file == bild_nam:
-                        bild = fotopath_2+root
+                    if file.lower() == bild_nam.lower():
+                        bild = fotopath_2+file
 
                         # pfad in db erstzen
                         sql = """Update untersuchdat_schacht set foto_dateiname = ?
@@ -117,4 +142,4 @@ def setfilepath(
                             return False
 
 
-    db.commit()
+        db.commit()

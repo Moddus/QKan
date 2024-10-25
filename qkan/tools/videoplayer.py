@@ -128,7 +128,7 @@ class Videoplayer(QDialog, FORM_CLASS_videoplayer):
         self.mediaplayer.set_hwnd(self.frame.winId())
         #mediplayer starten ohne das video dirket abspielt !!!
         events = self.mediaplayer.event_manager()
-        events.event_attach(vlc.EventType.MediaPlayerPositionChanged, self.update_ui)
+        #events.event_attach(vlc.EventType.MediaPlayerPositionChanged, self.update_ui)
         self.play_pause()
         #self.mediaplayer.pause()
         #self.playpause.setText("Play")
