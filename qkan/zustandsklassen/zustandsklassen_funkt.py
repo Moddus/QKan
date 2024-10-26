@@ -15,12 +15,13 @@ logger = get_logger("QKan.zustand.import")
 
 
 class Zustandsklassen_funkt:
-    def __init__(self, check_cb, db, date, epsg):
+    def __init__(self, check_cb, db, date, epsg, datetype):
 
         self.check_cb = check_cb
         self.db = db
         self.date = date
         self.crs = epsg
+        self.datetype = datetype
 
         self.haltung=False
         self.leitung=False
@@ -117,48 +118,83 @@ class Zustandsklassen_funkt:
         sql = """CREATE TABLE IF NOT EXISTS untersuchdat_haltung_bewertung AS SELECT * FROM untersuchdat_haltung"""
         curs.execute(sql)
 
-        if haltung == True:
+        if self.datetype == 'Befahrungsdatum':
 
-            sql = """
-                SELECT
-                    untersuchdat_haltung_bewertung.pk,
-                    untersuchdat_haltung_bewertung.untersuchhal,
-                    untersuchdat_haltung_bewertung.untersuchrichtung,
-                    untersuchdat_haltung_bewertung.schoben,
-                    untersuchdat_haltung_bewertung.schunten,
-                    untersuchdat_haltung_bewertung.id,
-                    untersuchdat_haltung_bewertung.videozaehler,
-                    untersuchdat_haltung_bewertung.inspektionslaenge,
-                    untersuchdat_haltung_bewertung.station,
-                    untersuchdat_haltung_bewertung.timecode,
-                    untersuchdat_haltung_bewertung.kuerzel,
-                    untersuchdat_haltung_bewertung.charakt1,
-                    untersuchdat_haltung_bewertung.charakt2,
-                    untersuchdat_haltung_bewertung.quantnr1,
-                    untersuchdat_haltung_bewertung.quantnr2,
-                    untersuchdat_haltung_bewertung.streckenschaden,
-                    untersuchdat_haltung_bewertung.pos_von,
-                    untersuchdat_haltung_bewertung.pos_bis,
-                    untersuchdat_haltung_bewertung.foto_dateiname,
-                    untersuchdat_haltung_bewertung.film_dateiname,
-                    untersuchdat_haltung_bewertung.kommentar,
-                    untersuchdat_haltung_bewertung.createdat,
-                    haltungen.haltnam,
-                    haltungen.material,
-                    haltungen.hoehe,
-                    haltungen.createdat
-                FROM untersuchdat_haltung_bewertung, haltungen
-                WHERE haltungen.haltnam = untersuchdat_haltung_bewertung.untersuchhal AND untersuchdat_haltung_bewertung.createdat like ?
-            """
-            data = (date, )
+            if haltung == True:
 
-        if leitung == True:
-
-            sql = """
+                sql = """
                     SELECT
                         untersuchdat_haltung_bewertung.pk,
                         untersuchdat_haltung_bewertung.untersuchhal,
-                        untersuchdat_haltung_bewertung.untersuchrichtung,
+                        untersuchdat_haltung_bewertung.schoben,
+                        untersuchdat_haltung_bewertung.schunten,
+                        untersuchdat_haltung_bewertung.id,
+                        untersuchdat_haltung_bewertung.videozaehler,
+                        untersuchdat_haltung_bewertung.inspektionslaenge,
+                        untersuchdat_haltung_bewertung.station,
+                        untersuchdat_haltung_bewertung.timecode,
+                        untersuchdat_haltung_bewertung.kuerzel,
+                        untersuchdat_haltung_bewertung.charakt1,
+                        untersuchdat_haltung_bewertung.charakt2,
+                        untersuchdat_haltung_bewertung.quantnr1,
+                        untersuchdat_haltung_bewertung.quantnr2,
+                        untersuchdat_haltung_bewertung.streckenschaden,
+                        untersuchdat_haltung_bewertung.pos_von,
+                        untersuchdat_haltung_bewertung.pos_bis,
+                        untersuchdat_haltung_bewertung.foto_dateiname,
+                        untersuchdat_haltung_bewertung.film_dateiname,
+                        untersuchdat_haltung_bewertung.kommentar,
+                        untersuchdat_haltung_bewertung.untersuchtag,
+                        haltungen.haltnam,
+                        haltungen.material,
+                        haltungen.hoehe,
+                        haltungen.createdat
+                    FROM untersuchdat_haltung_bewertung, haltungen
+                    WHERE haltungen.haltnam = untersuchdat_haltung_bewertung.untersuchhal AND untersuchdat_haltung_bewertung.untersuchtag like ?
+                """
+                data = (date, )
+
+            if leitung == True:
+
+                sql = """
+                        SELECT
+                            untersuchdat_haltung_bewertung.pk,
+                            untersuchdat_haltung_bewertung.untersuchhal,
+                            anschlussleitungen.createdat,
+                            untersuchdat_haltung_bewertung.schoben,
+                            untersuchdat_haltung_bewertung.schunten,
+                            untersuchdat_haltung_bewertung.id,
+                            untersuchdat_haltung_bewertung.videozaehler,
+                            untersuchdat_haltung_bewertung.inspektionslaenge,
+                            untersuchdat_haltung_bewertung.station,
+                            untersuchdat_haltung_bewertung.timecode,
+                            untersuchdat_haltung_bewertung.kuerzel,
+                            untersuchdat_haltung_bewertung.charakt1,
+                            untersuchdat_haltung_bewertung.charakt2,
+                            untersuchdat_haltung_bewertung.quantnr1,
+                            untersuchdat_haltung_bewertung.quantnr2,
+                            untersuchdat_haltung_bewertung.streckenschaden,
+                            untersuchdat_haltung_bewertung.pos_von,
+                            untersuchdat_haltung_bewertung.pos_bis,
+                            untersuchdat_haltung_bewertung.foto_dateiname,
+                            untersuchdat_haltung_bewertung.film_dateiname,
+                            untersuchdat_haltung_bewertung.kommentar,
+                            untersuchdat_haltung_bewertung.untersuchtag,
+                            anschlussleitungen.leitnam,
+                            anschlussleitungen.material,
+                            anschlussleitungen.hoehe
+                        FROM untersuchdat_haltung_bewertung, anschlussleitungen
+                        WHERE anschlussleitungen.leitnam = untersuchdat_haltung_bewertung.untersuchhal AND untersuchdat_haltung_bewertung.untersuchtag like ? 
+                    """
+                data = (date,)
+
+        if self.datetype == 'Importdatum':
+
+            if haltung == True:
+                sql = """
+                    SELECT
+                        untersuchdat_haltung_bewertung.pk,
+                        untersuchdat_haltung_bewertung.untersuchhal,
                         untersuchdat_haltung_bewertung.schoben,
                         untersuchdat_haltung_bewertung.schunten,
                         untersuchdat_haltung_bewertung.id,
@@ -178,14 +214,47 @@ class Zustandsklassen_funkt:
                         untersuchdat_haltung_bewertung.film_dateiname,
                         untersuchdat_haltung_bewertung.kommentar,
                         untersuchdat_haltung_bewertung.createdat,
-                        anschlussleitungen.leitnam,
-                        anschlussleitungen.material,
-                        anschlussleitungen.hoehe,
-                        anschlussleitungen.createdat
-                    FROM untersuchdat_haltung_bewertung, anschlussleitungen
-                    WHERE anschlussleitungen.leitnam = untersuchdat_haltung_bewertung.untersuchhal AND untersuchdat_haltung_bewertung.createdat like ? 
+                        haltungen.haltnam,
+                        haltungen.material,
+                        haltungen.hoehe,
+                        haltungen.createdat
+                    FROM untersuchdat_haltung_bewertung, haltungen
+                    WHERE haltungen.haltnam = untersuchdat_haltung_bewertung.untersuchhal AND untersuchdat_haltung_bewertung.createdat like ?
                 """
-            data = (date,)
+                data = (date,)
+
+            if leitung == True:
+                sql = """
+                        SELECT
+                            untersuchdat_haltung_bewertung.pk,
+                            untersuchdat_haltung_bewertung.untersuchhal,
+                            anschlussleitungen.createdat,
+                            untersuchdat_haltung_bewertung.schoben,
+                            untersuchdat_haltung_bewertung.schunten,
+                            untersuchdat_haltung_bewertung.id,
+                            untersuchdat_haltung_bewertung.videozaehler,
+                            untersuchdat_haltung_bewertung.inspektionslaenge,
+                            untersuchdat_haltung_bewertung.station,
+                            untersuchdat_haltung_bewertung.timecode,
+                            untersuchdat_haltung_bewertung.kuerzel,
+                            untersuchdat_haltung_bewertung.charakt1,
+                            untersuchdat_haltung_bewertung.charakt2,
+                            untersuchdat_haltung_bewertung.quantnr1,
+                            untersuchdat_haltung_bewertung.quantnr2,
+                            untersuchdat_haltung_bewertung.streckenschaden,
+                            untersuchdat_haltung_bewertung.pos_von,
+                            untersuchdat_haltung_bewertung.pos_bis,
+                            untersuchdat_haltung_bewertung.foto_dateiname,
+                            untersuchdat_haltung_bewertung.film_dateiname,
+                            untersuchdat_haltung_bewertung.kommentar,
+                            untersuchdat_haltung_bewertung.createdat,
+                            anschlussleitungen.leitnam,
+                            anschlussleitungen.material,
+                            anschlussleitungen.hoehe
+                        FROM untersuchdat_haltung_bewertung, anschlussleitungen
+                        WHERE anschlussleitungen.leitnam = untersuchdat_haltung_bewertung.untersuchhal AND untersuchdat_haltung_bewertung.createdat like ? 
+                    """
+                data = (date,)
 
         try:
             curs.execute(sql, data)
@@ -1279,40 +1348,77 @@ class Zustandsklassen_funkt:
         sql = """CREATE TABLE IF NOT EXISTS untersuchdat_anschlussleitung_bewertung AS SELECT * FROM untersuchdat_anschlussleitung"""
         curs.execute(sql)
 
-        if leitung == True:
+        if self.datetype == 'Importdatum':
 
-            sql = """
-                    SELECT
-                        untersuchdat_anschlussleitung_bewertung.pk,
-                        untersuchdat_anschlussleitung_bewertung.untersuchleit,
-                        untersuchdat_anschlussleitung_bewertung.untersuchrichtung,
-                        untersuchdat_anschlussleitung_bewertung.schoben,
-                        untersuchdat_anschlussleitung_bewertung.schunten,
-                        untersuchdat_anschlussleitung_bewertung.id,
-                        untersuchdat_anschlussleitung_bewertung.videozaehler,
-                        untersuchdat_anschlussleitung_bewertung.inspektionslaenge,
-                        untersuchdat_anschlussleitung_bewertung.station,
-                        untersuchdat_anschlussleitung_bewertung.timecode,
-                        untersuchdat_anschlussleitung_bewertung.kuerzel,
-                        untersuchdat_anschlussleitung_bewertung.charakt1,
-                        untersuchdat_anschlussleitung_bewertung.charakt2,
-                        untersuchdat_anschlussleitung_bewertung.quantnr1,
-                        untersuchdat_anschlussleitung_bewertung.quantnr2,
-                        untersuchdat_anschlussleitung_bewertung.streckenschaden,
-                        untersuchdat_anschlussleitung_bewertung.pos_von,
-                        untersuchdat_anschlussleitung_bewertung.pos_bis,
-                        untersuchdat_anschlussleitung_bewertung.foto_dateiname,
-                        untersuchdat_anschlussleitung_bewertung.film_dateiname,
-                        untersuchdat_anschlussleitung_bewertung.baujahr,
-                        untersuchdat_anschlussleitung_bewertung.createdat,
-                        anschlussleitungen.leitnam,
-                        anschlussleitungen.material,
-                        anschlussleitungen.hoehe,
-                        anschlussleitungen.createdat
-                    FROM untersuchdat_anschlussleitung_bewertung, anschlussleitungen
-                    WHERE anschlussleitungen.leitnam = untersuchdat_anschlussleitung_bewertung.untersuchleit AND untersuchdat_anschlussleitung_bewertung.createdat like ? 
-                """
-            data = (date,)
+            if leitung == True:
+
+                sql = """
+                        SELECT
+                            untersuchdat_anschlussleitung_bewertung.pk,
+                            untersuchdat_anschlussleitung_bewertung.untersuchleit,
+                            untersuchdat_anschlussleitung_bewertung.untersuchrichtung,
+                            untersuchdat_anschlussleitung_bewertung.schoben,
+                            untersuchdat_anschlussleitung_bewertung.schunten,
+                            untersuchdat_anschlussleitung_bewertung.id,
+                            untersuchdat_anschlussleitung_bewertung.videozaehler,
+                            untersuchdat_anschlussleitung_bewertung.inspektionslaenge,
+                            untersuchdat_anschlussleitung_bewertung.station,
+                            untersuchdat_anschlussleitung_bewertung.timecode,
+                            untersuchdat_anschlussleitung_bewertung.kuerzel,
+                            untersuchdat_anschlussleitung_bewertung.charakt1,
+                            untersuchdat_anschlussleitung_bewertung.charakt2,
+                            untersuchdat_anschlussleitung_bewertung.quantnr1,
+                            untersuchdat_anschlussleitung_bewertung.quantnr2,
+                            untersuchdat_anschlussleitung_bewertung.streckenschaden,
+                            untersuchdat_anschlussleitung_bewertung.pos_von,
+                            untersuchdat_anschlussleitung_bewertung.pos_bis,
+                            untersuchdat_anschlussleitung_bewertung.foto_dateiname,
+                            untersuchdat_anschlussleitung_bewertung.film_dateiname,
+                            untersuchdat_anschlussleitung_bewertung.baujahr,
+                            untersuchdat_anschlussleitung_bewertung.createdat,
+                            anschlussleitungen.leitnam,
+                            anschlussleitungen.material,
+                            anschlussleitungen.hoehe,
+                            anschlussleitungen.createdat
+                        FROM untersuchdat_anschlussleitung_bewertung, anschlussleitungen
+                        WHERE anschlussleitungen.leitnam = untersuchdat_anschlussleitung_bewertung.untersuchleit AND untersuchdat_anschlussleitung_bewertung.createdat like ? 
+                    """
+                data = (date,)
+        if self.datetype == 'Befahrungsdatum':
+
+            if leitung == True:
+                sql = """
+                        SELECT
+                            untersuchdat_anschlussleitung_bewertung.pk,
+                            untersuchdat_anschlussleitung_bewertung.untersuchleit,
+                            untersuchdat_anschlussleitung_bewertung.untersuchrichtung,
+                            untersuchdat_anschlussleitung_bewertung.schoben,
+                            untersuchdat_anschlussleitung_bewertung.schunten,
+                            untersuchdat_anschlussleitung_bewertung.id,
+                            untersuchdat_anschlussleitung_bewertung.videozaehler,
+                            untersuchdat_anschlussleitung_bewertung.inspektionslaenge,
+                            untersuchdat_anschlussleitung_bewertung.station,
+                            untersuchdat_anschlussleitung_bewertung.timecode,
+                            untersuchdat_anschlussleitung_bewertung.kuerzel,
+                            untersuchdat_anschlussleitung_bewertung.charakt1,
+                            untersuchdat_anschlussleitung_bewertung.charakt2,
+                            untersuchdat_anschlussleitung_bewertung.quantnr1,
+                            untersuchdat_anschlussleitung_bewertung.quantnr2,
+                            untersuchdat_anschlussleitung_bewertung.streckenschaden,
+                            untersuchdat_anschlussleitung_bewertung.pos_von,
+                            untersuchdat_anschlussleitung_bewertung.pos_bis,
+                            untersuchdat_anschlussleitung_bewertung.foto_dateiname,
+                            untersuchdat_anschlussleitung_bewertung.film_dateiname,
+                            untersuchdat_anschlussleitung_bewertung.baujahr,
+                            untersuchdat_anschlussleitung_bewertung.untersuchtag,
+                            anschlussleitungen.leitnam,
+                            anschlussleitungen.material,
+                            anschlussleitungen.hoehe,
+                            anschlussleitungen.createdat
+                        FROM untersuchdat_anschlussleitung_bewertung, anschlussleitungen
+                        WHERE anschlussleitungen.leitnam = untersuchdat_anschlussleitung_bewertung.untersuchleit AND untersuchdat_anschlussleitung_bewertung.untersuchtag like ? 
+                    """
+                data = (date,)
 
         try:
             curs.execute(sql, data)
@@ -2405,28 +2511,54 @@ class Zustandsklassen_funkt:
         sql = """CREATE TABLE IF NOT EXISTS Untersuchdat_schacht_bewertung AS SELECT * FROM Untersuchdat_schacht"""
         curs.execute(sql)
 
-        sql = """
-            SELECT
-                Untersuchdat_schacht_bewertung.pk,
-                Untersuchdat_schacht_bewertung.untersuchsch,
-                Untersuchdat_schacht_bewertung.id,
-                Untersuchdat_schacht_bewertung.videozaehler,
-                Untersuchdat_schacht_bewertung.timecode,
-                Untersuchdat_schacht_bewertung.kuerzel,
-                Untersuchdat_schacht_bewertung.charakt1,
-                Untersuchdat_schacht_bewertung.charakt2,
-                Untersuchdat_schacht_bewertung.quantnr1,
-                Untersuchdat_schacht_bewertung.quantnr2,
-                Untersuchdat_schacht_bewertung.streckenschaden,
-                Untersuchdat_schacht_bewertung.pos_von,
-                Untersuchdat_schacht_bewertung.pos_bis,
-                Untersuchdat_schacht_bewertung.bereich,
-                Untersuchdat_schacht_bewertung.foto_dateiname,
-                Untersuchdat_schacht_bewertung.createdat
-            FROM Untersuchdat_schacht_bewertung
-            WHERE Untersuchdat_schacht_bewertung.createdat like ? 
-        """
-        data = (date,)
+        if self.datetype == 'Importdatum':
+
+            sql = """
+                SELECT
+                    Untersuchdat_schacht_bewertung.pk,
+                    Untersuchdat_schacht_bewertung.untersuchsch,
+                    Untersuchdat_schacht_bewertung.id,
+                    Untersuchdat_schacht_bewertung.videozaehler,
+                    Untersuchdat_schacht_bewertung.timecode,
+                    Untersuchdat_schacht_bewertung.kuerzel,
+                    Untersuchdat_schacht_bewertung.charakt1,
+                    Untersuchdat_schacht_bewertung.charakt2,
+                    Untersuchdat_schacht_bewertung.quantnr1,
+                    Untersuchdat_schacht_bewertung.quantnr2,
+                    Untersuchdat_schacht_bewertung.streckenschaden,
+                    Untersuchdat_schacht_bewertung.pos_von,
+                    Untersuchdat_schacht_bewertung.pos_bis,
+                    Untersuchdat_schacht_bewertung.bereich,
+                    Untersuchdat_schacht_bewertung.foto_dateiname,
+                    Untersuchdat_schacht_bewertung.createdat
+                FROM Untersuchdat_schacht_bewertung
+                WHERE Untersuchdat_schacht_bewertung.createdat like ? 
+            """
+            data = (date,)
+
+        if self.datetype == 'Befahrungsdatum':
+            sql = """
+                            SELECT
+                                Untersuchdat_schacht_bewertung.pk,
+                                Untersuchdat_schacht_bewertung.untersuchsch,
+                                Untersuchdat_schacht_bewertung.id,
+                                Untersuchdat_schacht_bewertung.videozaehler,
+                                Untersuchdat_schacht_bewertung.timecode,
+                                Untersuchdat_schacht_bewertung.kuerzel,
+                                Untersuchdat_schacht_bewertung.charakt1,
+                                Untersuchdat_schacht_bewertung.charakt2,
+                                Untersuchdat_schacht_bewertung.quantnr1,
+                                Untersuchdat_schacht_bewertung.quantnr2,
+                                Untersuchdat_schacht_bewertung.streckenschaden,
+                                Untersuchdat_schacht_bewertung.pos_von,
+                                Untersuchdat_schacht_bewertung.pos_bis,
+                                Untersuchdat_schacht_bewertung.bereich,
+                                Untersuchdat_schacht_bewertung.foto_dateiname,
+                                Untersuchdat_schacht_bewertung.untersuchtag
+                            FROM Untersuchdat_schacht_bewertung
+                            WHERE Untersuchdat_schacht_bewertung.untersuchtag like ? 
+                        """
+            data = (date,)
 
         try:
             curs.execute(sql, data)
@@ -3491,79 +3623,153 @@ class Zustandsklassen_funkt:
         db = spatialite_connect(db_x)
         curs = db.cursor()
 
-        if haltung == True:
-            sql = """
-                        SELECT
-                            untersuchdat_haltung_bewertung.pk,
-                            untersuchdat_haltung_bewertung.untersuchhal,
-                            untersuchdat_haltung_bewertung.untersuchrichtung,
-                            untersuchdat_haltung_bewertung.schoben,
-                            untersuchdat_haltung_bewertung.schunten,
-                            untersuchdat_haltung_bewertung.id,
-                            untersuchdat_haltung_bewertung.videozaehler,
-                            untersuchdat_haltung_bewertung.inspektionslaenge,
-                            untersuchdat_haltung_bewertung.station,
-                            untersuchdat_haltung_bewertung.timecode,
-                            untersuchdat_haltung_bewertung.kuerzel,
-                            untersuchdat_haltung_bewertung.charakt1,
-                            untersuchdat_haltung_bewertung.charakt2,
-                            untersuchdat_haltung_bewertung.quantnr1,
-                            untersuchdat_haltung_bewertung.quantnr2,
-                            untersuchdat_haltung_bewertung.streckenschaden,
-                            untersuchdat_haltung_bewertung.pos_von,
-                            untersuchdat_haltung_bewertung.pos_bis,
-                            untersuchdat_haltung_bewertung.foto_dateiname,
-                            untersuchdat_haltung_bewertung.film_dateiname,
-                            untersuchdat_haltung_bewertung.kommentar,
-                            untersuchdat_haltung_bewertung.bw_bs,
-                            untersuchdat_haltung_bewertung.createdat,
-                            haltungen.haltnam,
-                            haltungen.material,
-                            haltungen.hoehe,
-                            haltungen.createdat
-                        FROM untersuchdat_haltung_bewertung, haltungen
-                        WHERE haltungen.haltnam = untersuchdat_haltung_bewertung.untersuchhal AND untersuchdat_haltung_bewertung.createdat like ? 
-                    """
-            data = (date,)
+        if self.datetype == 'Befahrungsdatum':
 
-            curs.execute(sql, data)
+            if haltung == True:
+                sql = """
+                            SELECT
+                                untersuchdat_haltung_bewertung.pk,
+                                untersuchdat_haltung_bewertung.untersuchhal,
+                                haltungen.createdat,
+                                untersuchdat_haltung_bewertung.schoben,
+                                untersuchdat_haltung_bewertung.schunten,
+                                untersuchdat_haltung_bewertung.id,
+                                untersuchdat_haltung_bewertung.videozaehler,
+                                untersuchdat_haltung_bewertung.inspektionslaenge,
+                                untersuchdat_haltung_bewertung.station,
+                                untersuchdat_haltung_bewertung.timecode,
+                                untersuchdat_haltung_bewertung.kuerzel,
+                                untersuchdat_haltung_bewertung.charakt1,
+                                untersuchdat_haltung_bewertung.charakt2,
+                                untersuchdat_haltung_bewertung.quantnr1,
+                                untersuchdat_haltung_bewertung.quantnr2,
+                                untersuchdat_haltung_bewertung.streckenschaden,
+                                untersuchdat_haltung_bewertung.pos_von,
+                                untersuchdat_haltung_bewertung.pos_bis,
+                                untersuchdat_haltung_bewertung.foto_dateiname,
+                                untersuchdat_haltung_bewertung.film_dateiname,
+                                untersuchdat_haltung_bewertung.kommentar,
+                                untersuchdat_haltung_bewertung.bw_bs,
+                                untersuchdat_haltung_bewertung.untersuchtag,
+                                haltungen.haltnam,
+                                haltungen.material,
+                                haltungen.hoehe
+                            FROM untersuchdat_haltung_bewertung, haltungen
+                            WHERE haltungen.haltnam = untersuchdat_haltung_bewertung.untersuchhal AND untersuchdat_haltung_bewertung.untersuchtag like ? 
+                        """
+                data = (date,)
 
-        if leitung == True:
-            sql = """
-                        SELECT
-                            untersuchdat_haltung_bewertung.pk,
-                            untersuchdat_haltung_bewertung.untersuchhal,
-                            untersuchdat_haltung_bewertung.untersuchrichtung,
-                            untersuchdat_haltung_bewertung.schoben,
-                            untersuchdat_haltung_bewertung.schunten,
-                            untersuchdat_haltung_bewertung.id,
-                            untersuchdat_haltung_bewertung.videozaehler,
-                            untersuchdat_haltung_bewertung.inspektionslaenge,
-                            untersuchdat_haltung_bewertung.station,
-                            untersuchdat_haltung_bewertung.timecode,
-                            untersuchdat_haltung_bewertung.kuerzel,
-                            untersuchdat_haltung_bewertung.charakt1,
-                            untersuchdat_haltung_bewertung.charakt2,
-                            untersuchdat_haltung_bewertung.quantnr1,
-                            untersuchdat_haltung_bewertung.quantnr2,
-                            untersuchdat_haltung_bewertung.streckenschaden,
-                            untersuchdat_haltung_bewertung.pos_von,
-                            untersuchdat_haltung_bewertung.pos_bis,
-                            untersuchdat_haltung_bewertung.foto_dateiname,
-                            untersuchdat_haltung_bewertung.film_dateiname,
-                            untersuchdat_haltung_bewertung.kommentar,
-                            untersuchdat_haltung_bewertung.bw_bs,
-                            untersuchdat_haltung_bewertung.createdat,
-                            anschlussleitungen.leitnam,
-                            anschlussleitungen.material,
-                            anschlussleitungen.hoehe,
-                            anschlussleitungen.createdat
-                        FROM untersuchdat_haltung_bewertung, anschlussleitungen
-                        WHERE anschlussleitungen.leitnam = untersuchdat_haltung_bewertung.untersuchhal AND untersuchdat_haltung_bewertung.createdat like ? 
-                    """
-            data = (date, )
+                curs.execute(sql, data)
 
-            curs.execute(sql, data)
+            if leitung == True:
+                sql = """
+                            SELECT
+                                untersuchdat_haltung_bewertung.pk,
+                                untersuchdat_haltung_bewertung.untersuchhal,
+                                anschlussleitungen.createdat,
+                                untersuchdat_haltung_bewertung.schoben,
+                                untersuchdat_haltung_bewertung.schunten,
+                                untersuchdat_haltung_bewertung.id,
+                                untersuchdat_haltung_bewertung.videozaehler,
+                                untersuchdat_haltung_bewertung.inspektionslaenge,
+                                untersuchdat_haltung_bewertung.station,
+                                untersuchdat_haltung_bewertung.timecode,
+                                untersuchdat_haltung_bewertung.kuerzel,
+                                untersuchdat_haltung_bewertung.charakt1,
+                                untersuchdat_haltung_bewertung.charakt2,
+                                untersuchdat_haltung_bewertung.quantnr1,
+                                untersuchdat_haltung_bewertung.quantnr2,
+                                untersuchdat_haltung_bewertung.streckenschaden,
+                                untersuchdat_haltung_bewertung.pos_von,
+                                untersuchdat_haltung_bewertung.pos_bis,
+                                untersuchdat_haltung_bewertung.foto_dateiname,
+                                untersuchdat_haltung_bewertung.film_dateiname,
+                                untersuchdat_haltung_bewertung.kommentar,
+                                untersuchdat_haltung_bewertung.bw_bs,
+                                untersuchdat_haltung_bewertung.untersuchtag,
+                                anschlussleitungen.leitnam,
+                                anschlussleitungen.material,
+                                anschlussleitungen.hoehe
+                            FROM untersuchdat_haltung_bewertung, anschlussleitungen
+                            WHERE anschlussleitungen.leitnam = untersuchdat_haltung_bewertung.untersuchhal AND untersuchdat_haltung_bewertung.untersuchtag like ? 
+                        """
+                data = (date, )
+
+                curs.execute(sql, data)
+
+        if self.datetype == 'Importdatum':
+
+            if haltung == True:
+                sql = """
+                            SELECT
+                                untersuchdat_haltung_bewertung.pk,
+                                untersuchdat_haltung_bewertung.untersuchhal,
+                                haltungen.createdat,
+                                untersuchdat_haltung_bewertung.schoben,
+                                untersuchdat_haltung_bewertung.schunten,
+                                untersuchdat_haltung_bewertung.id,
+                                untersuchdat_haltung_bewertung.videozaehler,
+                                untersuchdat_haltung_bewertung.inspektionslaenge,
+                                untersuchdat_haltung_bewertung.station,
+                                untersuchdat_haltung_bewertung.timecode,
+                                untersuchdat_haltung_bewertung.kuerzel,
+                                untersuchdat_haltung_bewertung.charakt1,
+                                untersuchdat_haltung_bewertung.charakt2,
+                                untersuchdat_haltung_bewertung.quantnr1,
+                                untersuchdat_haltung_bewertung.quantnr2,
+                                untersuchdat_haltung_bewertung.streckenschaden,
+                                untersuchdat_haltung_bewertung.pos_von,
+                                untersuchdat_haltung_bewertung.pos_bis,
+                                untersuchdat_haltung_bewertung.foto_dateiname,
+                                untersuchdat_haltung_bewertung.film_dateiname,
+                                untersuchdat_haltung_bewertung.kommentar,
+                                untersuchdat_haltung_bewertung.bw_bs,
+                                untersuchdat_haltung_bewertung.createdat,
+                                haltungen.haltnam,
+                                haltungen.material,
+                                haltungen.hoehe
+                            FROM untersuchdat_haltung_bewertung, haltungen
+                            WHERE haltungen.haltnam = untersuchdat_haltung_bewertung.untersuchhal AND untersuchdat_haltung_bewertung.createdat like ? 
+                        """
+                data = (date,)
+
+                curs.execute(sql, data)
+
+            if leitung == True:
+                sql = """
+                            SELECT
+                                untersuchdat_haltung_bewertung.pk,
+                                untersuchdat_haltung_bewertung.untersuchhal,
+                                anschlussleitungen.createdat,
+                                untersuchdat_haltung_bewertung.schoben,
+                                untersuchdat_haltung_bewertung.schunten,
+                                untersuchdat_haltung_bewertung.id,
+                                untersuchdat_haltung_bewertung.videozaehler,
+                                untersuchdat_haltung_bewertung.inspektionslaenge,
+                                untersuchdat_haltung_bewertung.station,
+                                untersuchdat_haltung_bewertung.timecode,
+                                untersuchdat_haltung_bewertung.kuerzel,
+                                untersuchdat_haltung_bewertung.charakt1,
+                                untersuchdat_haltung_bewertung.charakt2,
+                                untersuchdat_haltung_bewertung.quantnr1,
+                                untersuchdat_haltung_bewertung.quantnr2,
+                                untersuchdat_haltung_bewertung.streckenschaden,
+                                untersuchdat_haltung_bewertung.pos_von,
+                                untersuchdat_haltung_bewertung.pos_bis,
+                                untersuchdat_haltung_bewertung.foto_dateiname,
+                                untersuchdat_haltung_bewertung.film_dateiname,
+                                untersuchdat_haltung_bewertung.kommentar,
+                                untersuchdat_haltung_bewertung.bw_bs,
+                                untersuchdat_haltung_bewertung.createdat,
+                                anschlussleitungen.leitnam,
+                                anschlussleitungen.material,
+                                anschlussleitungen.hoehe
+                            FROM untersuchdat_haltung_bewertung, anschlussleitungen
+                            WHERE anschlussleitungen.leitnam = untersuchdat_haltung_bewertung.untersuchhal AND untersuchdat_haltung_bewertung.createdat like ? 
+                        """
+                data = (date,)
+
+                curs.execute(sql, data)
 
 
         try:
@@ -3702,43 +3908,82 @@ class Zustandsklassen_funkt:
         db = spatialite_connect(db_x)
         curs = db.cursor()
 
+        if self.datetype == 'Befahrungsdatum':
 
-        if leitung == True:
-            sql = """
-                        SELECT
-                            untersuchdat_anschlussleitung_bewertung.pk,
-                            untersuchdat_anschlussleitung_bewertung.untersuchleit,
-                            untersuchdat_anschlussleitung_bewertung.untersuchrichtung,
-                            untersuchdat_anschlussleitung_bewertung.schoben,
-                            untersuchdat_anschlussleitung_bewertung.schunten,
-                            untersuchdat_anschlussleitung_bewertung.id,
-                            untersuchdat_anschlussleitung_bewertung.videozaehler,
-                            untersuchdat_anschlussleitung_bewertung.inspektionslaenge,
-                            untersuchdat_anschlussleitung_bewertung.station,
-                            untersuchdat_anschlussleitung_bewertung.timecode,
-                            untersuchdat_anschlussleitung_bewertung.kuerzel,
-                            untersuchdat_anschlussleitung_bewertung.charakt1,
-                            untersuchdat_anschlussleitung_bewertung.charakt2,
-                            untersuchdat_anschlussleitung_bewertung.quantnr1,
-                            untersuchdat_anschlussleitung_bewertung.quantnr2,
-                            untersuchdat_anschlussleitung_bewertung.streckenschaden,
-                            untersuchdat_anschlussleitung_bewertung.pos_von,
-                            untersuchdat_anschlussleitung_bewertung.pos_bis,
-                            untersuchdat_anschlussleitung_bewertung.foto_dateiname,
-                            untersuchdat_anschlussleitung_bewertung.film_dateiname,
-                            untersuchdat_anschlussleitung_bewertung.baujahr,
-                            untersuchdat_anschlussleitung_bewertung.bw_bs,
-                            untersuchdat_anschlussleitung_bewertung.createdat,
-                            anschlussleitungen.leitnam,
-                            anschlussleitungen.material,
-                            anschlussleitungen.hoehe,
-                            anschlussleitungen.createdat
-                        FROM untersuchdat_anschlussleitung_bewertung, anschlussleitungen
-                        WHERE anschlussleitungen.leitnam = untersuchdat_anschlussleitung_bewertung.untersuchleit AND untersuchdat_anschlussleitung_bewertung.createdat like ? 
-                    """
-            data = (date, )
+            if leitung == True:
+                sql = """
+                            SELECT
+                                untersuchdat_anschlussleitung_bewertung.pk,
+                                untersuchdat_anschlussleitung_bewertung.untersuchleit,
+                                untersuchdat_anschlussleitung_bewertung.untersuchrichtung,
+                                untersuchdat_anschlussleitung_bewertung.schoben,
+                                untersuchdat_anschlussleitung_bewertung.schunten,
+                                untersuchdat_anschlussleitung_bewertung.id,
+                                untersuchdat_anschlussleitung_bewertung.videozaehler,
+                                untersuchdat_anschlussleitung_bewertung.inspektionslaenge,
+                                untersuchdat_anschlussleitung_bewertung.station,
+                                untersuchdat_anschlussleitung_bewertung.timecode,
+                                untersuchdat_anschlussleitung_bewertung.kuerzel,
+                                untersuchdat_anschlussleitung_bewertung.charakt1,
+                                untersuchdat_anschlussleitung_bewertung.charakt2,
+                                untersuchdat_anschlussleitung_bewertung.quantnr1,
+                                untersuchdat_anschlussleitung_bewertung.quantnr2,
+                                untersuchdat_anschlussleitung_bewertung.streckenschaden,
+                                untersuchdat_anschlussleitung_bewertung.pos_von,
+                                untersuchdat_anschlussleitung_bewertung.pos_bis,
+                                untersuchdat_anschlussleitung_bewertung.foto_dateiname,
+                                untersuchdat_anschlussleitung_bewertung.film_dateiname,
+                                untersuchdat_anschlussleitung_bewertung.baujahr,
+                                untersuchdat_anschlussleitung_bewertung.bw_bs,
+                                untersuchdat_anschlussleitung_bewertung.untersuchtag,
+                                anschlussleitungen.leitnam,
+                                anschlussleitungen.material,
+                                anschlussleitungen.hoehe,
+                                anschlussleitungen.createdat
+                            FROM untersuchdat_anschlussleitung_bewertung, anschlussleitungen
+                            WHERE anschlussleitungen.leitnam = untersuchdat_anschlussleitung_bewertung.untersuchleit AND untersuchdat_anschlussleitung_bewertung.untersuchtag like ? 
+                        """
+                data = (date, )
 
-            curs.execute(sql, data)
+                curs.execute(sql, data)
+
+        if self.datetype == 'Importdatum':
+            if leitung == True:
+                sql = """
+                            SELECT
+                                untersuchdat_anschlussleitung_bewertung.pk,
+                                untersuchdat_anschlussleitung_bewertung.untersuchleit,
+                                untersuchdat_anschlussleitung_bewertung.untersuchrichtung,
+                                untersuchdat_anschlussleitung_bewertung.schoben,
+                                untersuchdat_anschlussleitung_bewertung.schunten,
+                                untersuchdat_anschlussleitung_bewertung.id,
+                                untersuchdat_anschlussleitung_bewertung.videozaehler,
+                                untersuchdat_anschlussleitung_bewertung.inspektionslaenge,
+                                untersuchdat_anschlussleitung_bewertung.station,
+                                untersuchdat_anschlussleitung_bewertung.timecode,
+                                untersuchdat_anschlussleitung_bewertung.kuerzel,
+                                untersuchdat_anschlussleitung_bewertung.charakt1,
+                                untersuchdat_anschlussleitung_bewertung.charakt2,
+                                untersuchdat_anschlussleitung_bewertung.quantnr1,
+                                untersuchdat_anschlussleitung_bewertung.quantnr2,
+                                untersuchdat_anschlussleitung_bewertung.streckenschaden,
+                                untersuchdat_anschlussleitung_bewertung.pos_von,
+                                untersuchdat_anschlussleitung_bewertung.pos_bis,
+                                untersuchdat_anschlussleitung_bewertung.foto_dateiname,
+                                untersuchdat_anschlussleitung_bewertung.film_dateiname,
+                                untersuchdat_anschlussleitung_bewertung.baujahr,
+                                untersuchdat_anschlussleitung_bewertung.bw_bs,
+                                untersuchdat_anschlussleitung_bewertung.createdat,
+                                anschlussleitungen.leitnam,
+                                anschlussleitungen.material,
+                                anschlussleitungen.hoehe,
+                                anschlussleitungen.createdat
+                            FROM untersuchdat_anschlussleitung_bewertung, anschlussleitungen
+                            WHERE anschlussleitungen.leitnam = untersuchdat_anschlussleitung_bewertung.untersuchleit AND untersuchdat_anschlussleitung_bewertung.createdat like ? 
+                        """
+                data = (date,)
+
+                curs.execute(sql, data)
 
 
         try:
@@ -3875,30 +4120,58 @@ class Zustandsklassen_funkt:
         db = spatialite_connect(db_x)
         curs = db.cursor()
 
-        sql = """
-                    SELECT
-                        Untersuchdat_schacht_bewertung.pk,
-                        Untersuchdat_schacht_bewertung.untersuchsch,
-                        Untersuchdat_schacht_bewertung.id,
-                        Untersuchdat_schacht_bewertung.videozaehler,
-                        Untersuchdat_schacht_bewertung.timecode,
-                        Untersuchdat_schacht_bewertung.kuerzel,
-                        Untersuchdat_schacht_bewertung.charakt1,
-                        Untersuchdat_schacht_bewertung.charakt2,
-                        Untersuchdat_schacht_bewertung.quantnr1,
-                        Untersuchdat_schacht_bewertung.quantnr2,
-                        Untersuchdat_schacht_bewertung.streckenschaden,
-                        Untersuchdat_schacht_bewertung.pos_von,
-                        Untersuchdat_schacht_bewertung.pos_bis,
-                        Untersuchdat_schacht_bewertung.bereich,
-                        Untersuchdat_schacht_bewertung.foto_dateiname,
-                        Untersuchdat_schacht_bewertung.bw_bs,
-                        Untersuchdat_schacht_bewertung.createdat
-                    FROM Untersuchdat_schacht_bewertung  
-                    WHERE Untersuchdat_schacht_bewertung.createdat like ? 
-                """
-        data = (date,)
-        curs.execute(sql, data)
+        if self.datetype == 'Befahrungsdatum':
+
+            sql = """
+                        SELECT
+                            Untersuchdat_schacht_bewertung.pk,
+                            Untersuchdat_schacht_bewertung.untersuchsch,
+                            Untersuchdat_schacht_bewertung.id,
+                            Untersuchdat_schacht_bewertung.videozaehler,
+                            Untersuchdat_schacht_bewertung.timecode,
+                            Untersuchdat_schacht_bewertung.kuerzel,
+                            Untersuchdat_schacht_bewertung.charakt1,
+                            Untersuchdat_schacht_bewertung.charakt2,
+                            Untersuchdat_schacht_bewertung.quantnr1,
+                            Untersuchdat_schacht_bewertung.quantnr2,
+                            Untersuchdat_schacht_bewertung.streckenschaden,
+                            Untersuchdat_schacht_bewertung.pos_von,
+                            Untersuchdat_schacht_bewertung.pos_bis,
+                            Untersuchdat_schacht_bewertung.bereich,
+                            Untersuchdat_schacht_bewertung.foto_dateiname,
+                            Untersuchdat_schacht_bewertung.bw_bs,
+                            Untersuchdat_schacht_bewertung.untersuchtag
+                        FROM Untersuchdat_schacht_bewertung  
+                        WHERE Untersuchdat_schacht_bewertung.untersuchtag like ? 
+                    """
+            data = (date,)
+            curs.execute(sql, data)
+
+        if self.datetype == 'Importdatum':
+            sql = """
+                                    SELECT
+                                        Untersuchdat_schacht_bewertung.pk,
+                                        Untersuchdat_schacht_bewertung.untersuchsch,
+                                        Untersuchdat_schacht_bewertung.id,
+                                        Untersuchdat_schacht_bewertung.videozaehler,
+                                        Untersuchdat_schacht_bewertung.timecode,
+                                        Untersuchdat_schacht_bewertung.kuerzel,
+                                        Untersuchdat_schacht_bewertung.charakt1,
+                                        Untersuchdat_schacht_bewertung.charakt2,
+                                        Untersuchdat_schacht_bewertung.quantnr1,
+                                        Untersuchdat_schacht_bewertung.quantnr2,
+                                        Untersuchdat_schacht_bewertung.streckenschaden,
+                                        Untersuchdat_schacht_bewertung.pos_von,
+                                        Untersuchdat_schacht_bewertung.pos_bis,
+                                        Untersuchdat_schacht_bewertung.bereich,
+                                        Untersuchdat_schacht_bewertung.foto_dateiname,
+                                        Untersuchdat_schacht_bewertung.bw_bs,
+                                        Untersuchdat_schacht_bewertung.createdat
+                                    FROM Untersuchdat_schacht_bewertung  
+                                    WHERE Untersuchdat_schacht_bewertung.createdat like ? 
+                                """
+            data = (date,)
+            curs.execute(sql, data)
 
 
         try:
@@ -4081,8 +4354,11 @@ class Zustandsklassen_funkt:
             except:
                 pass
 
-            if attr1[1] in ["AZ", "B", "BS", "FZ", "MA", "OB", "P", "PC", "PCC", "PHB", "SFB", "SPB", "SB", "STZ",
-                            "SZB", "ZG", "Asbestzement","Beton", "Betonsegmente", "Fasezement", "Mauerwerk", "Ortbeton",
+            if attr1[1] in ["AZ", "AZ Asbestzement", "B", "B Beton", "BS", "BS Betonsegmente ", "FZ", "FZ Fasezement",
+                            "MA", "MA Mauerwerk", "OB", "OB Ortbeton", "P", "P Polymerbeton", "PC", "PC Polymermodifizierter Zementbeton",
+                            "PCC", "PHB", "PHB Polyesterharz", "SFB", "SFB Stahlfaserbeton", "SPB", "SPB Spannbeton",
+                            "SB", "SB Stahlbeton", "STZ", "STZ Steinzeug", "SZB", "SZB Spritzbeton",
+                            "ZG", "ZG Ziegelwerk", "Asbestzement", "Beton", "Betonsegmente", "Fasezement", "Mauerwerk", "Ortbeton",
                             "Polymerbeton", "Polymermodifizierter Zementbeton", "Polyesterharz", "Stahlfaserbeton", "Spannbeton",
                             "Stahlbeton", "Steinzeug", "Spritzbeton", "Ziegelwerk"]:
                 bw_bs = "biegesteif"
@@ -4099,10 +4375,13 @@ class Zustandsklassen_funkt:
                 except:
                     pass
 
-            if attr1[1] in ["CN", "EIS", "GFK", "GG", "GGG", "KST", "PE", "PEHD", "PH", "PP", "PVC", "PVCU", "ST",
+            if attr1[1] in ["CN", "CN Edelstahl", "EIS", "EIS Nichtidentifiziertes Metall", "GFK", "GFK Glasfaserverstärkter Kunststoff",
+                            "GG", "GG Grauguß", "GGG", "GGG Duktiles Gußeisen", "KST", "KST Nichtidentifizier Kunststoff",
+                            "PE", "PE Polyethylen", "PEHD", "PEHD Polyethylen", "PH", "PH Polyesterharz", "PP", "PP Polypropylen",
+                            "PVC", "PVC Polyvinylchlorid", "PVCU", "PVCU Polyvinylchlorid hart", "ST", "ST Stahl",
                             "Edelstahl", "Nichtidentifiziertes Metall", "Glasfaserverstärkter Kunststoff", "Grauguß",
                             "Duktiles Gußeisen", "Nichtidentifizier Kunststoff", "Polyethylen", "Polyesterharz",
-                            "Polypropylen", "Polyvinylchlorid","Polyvinylchlorid hart", "Stahl"]:
+                            "Polypropylen", "Polyvinylchlorid", "Polyvinylchlorid hart", "Stahl"]:
                 bw_bs = 'biegeweich'
                 x = attr1[0]
 
@@ -4124,79 +4403,153 @@ class Zustandsklassen_funkt:
         db = spatialite_connect(db_x)
         curs = db.cursor()
 
-        if haltung == True:
-            sql = """
-                SELECT
-                    untersuchdat_haltung_bewertung.pk,
-                    untersuchdat_haltung_bewertung.untersuchhal,
-                    untersuchdat_haltung_bewertung.untersuchrichtung,
-                    untersuchdat_haltung_bewertung.schoben,
-                    untersuchdat_haltung_bewertung.schunten,
-                    untersuchdat_haltung_bewertung.id,
-                    untersuchdat_haltung_bewertung.videozaehler,
-                    untersuchdat_haltung_bewertung.inspektionslaenge,
-                    untersuchdat_haltung_bewertung.station,
-                    untersuchdat_haltung_bewertung.timecode,
-                    untersuchdat_haltung_bewertung.kuerzel,
-                    untersuchdat_haltung_bewertung.charakt1,
-                    untersuchdat_haltung_bewertung.charakt2,
-                    untersuchdat_haltung_bewertung.quantnr1,
-                    untersuchdat_haltung_bewertung.quantnr2,
-                    untersuchdat_haltung_bewertung.streckenschaden,
-                    untersuchdat_haltung_bewertung.pos_von,
-                    untersuchdat_haltung_bewertung.pos_bis,
-                    untersuchdat_haltung_bewertung.foto_dateiname,
-                    untersuchdat_haltung_bewertung.film_dateiname,
-                    untersuchdat_haltung_bewertung.kommentar,
-                    untersuchdat_haltung_bewertung.bw_bs,
-                    untersuchdat_haltung_bewertung.createdat,
-                    haltungen.haltnam,
-                    haltungen.material,
-                    haltungen.hoehe,
-                    haltungen.createdat
-                FROM untersuchdat_haltung_bewertung, haltungen
-                WHERE haltungen.haltnam = untersuchdat_haltung_bewertung.untersuchhal AND untersuchdat_haltung_bewertung.createdat like ? 
-            """
-            data = (date, )
+        if self.datetype == 'Befahrungsdatum':
 
-            curs.execute(sql, data)
+            if haltung == True:
+                sql = """
+                    SELECT
+                        untersuchdat_haltung_bewertung.pk,
+                        untersuchdat_haltung_bewertung.untersuchhal,
+                        haltungen.createdat,
+                        untersuchdat_haltung_bewertung.schoben,
+                        untersuchdat_haltung_bewertung.schunten,
+                        untersuchdat_haltung_bewertung.id,
+                        untersuchdat_haltung_bewertung.videozaehler,
+                        untersuchdat_haltung_bewertung.inspektionslaenge,
+                        untersuchdat_haltung_bewertung.station,
+                        untersuchdat_haltung_bewertung.timecode,
+                        untersuchdat_haltung_bewertung.kuerzel,
+                        untersuchdat_haltung_bewertung.charakt1,
+                        untersuchdat_haltung_bewertung.charakt2,
+                        untersuchdat_haltung_bewertung.quantnr1,
+                        untersuchdat_haltung_bewertung.quantnr2,
+                        untersuchdat_haltung_bewertung.streckenschaden,
+                        untersuchdat_haltung_bewertung.pos_von,
+                        untersuchdat_haltung_bewertung.pos_bis,
+                        untersuchdat_haltung_bewertung.foto_dateiname,
+                        untersuchdat_haltung_bewertung.film_dateiname,
+                        untersuchdat_haltung_bewertung.kommentar,
+                        untersuchdat_haltung_bewertung.bw_bs,
+                        untersuchdat_haltung_bewertung.untersuchtag, 
+                        haltungen.haltnam,
+                        haltungen.material,
+                        haltungen.hoehe
+                    FROM untersuchdat_haltung_bewertung, haltungen
+                    WHERE haltungen.haltnam = untersuchdat_haltung_bewertung.untersuchhal AND untersuchdat_haltung_bewertung.untersuchtag like ? 
+                """
+                data = (date, )
 
-        if leitung == True:
-            sql = """
-                SELECT
-                    untersuchdat_haltung_bewertung.pk,
-                    untersuchdat_haltung_bewertung.untersuchhal,
-                    untersuchdat_haltung_bewertung.untersuchrichtung,
-                    untersuchdat_haltung_bewertung.schoben,
-                    untersuchdat_haltung_bewertung.schunten,
-                    untersuchdat_haltung_bewertung.id,
-                    untersuchdat_haltung_bewertung.videozaehler,
-                    untersuchdat_haltung_bewertung.inspektionslaenge,
-                    untersuchdat_haltung_bewertung.station,
-                    untersuchdat_haltung_bewertung.timecode,
-                    untersuchdat_haltung_bewertung.kuerzel,
-                    untersuchdat_haltung_bewertung.charakt1,
-                    untersuchdat_haltung_bewertung.charakt2,
-                    untersuchdat_haltung_bewertung.quantnr1,
-                    untersuchdat_haltung_bewertung.quantnr2,
-                    untersuchdat_haltung_bewertung.streckenschaden,
-                    untersuchdat_haltung_bewertung.pos_von,
-                    untersuchdat_haltung_bewertung.pos_bis,
-                    untersuchdat_haltung_bewertung.foto_dateiname,
-                    untersuchdat_haltung_bewertung.film_dateiname,
-                    untersuchdat_haltung_bewertung.kommentar,
-                    untersuchdat_haltung_bewertung.bw_bs,
-                    untersuchdat_haltung_bewertung.createdat,
-                    anschlussleitungen.leitnam,
-                    anschlussleitungen.material,
-                    anschlussleitungen.hoehe,
-                    anschlussleitungen.createdat
-                FROM untersuchdat_haltung_bewertung, anschlussleitungen
-                WHERE anschlussleitungen.leitnam = untersuchdat_haltung_bewertung.untersuchhal AND untersuchdat_haltung_bewertung.createdat , 0, 15 like ? 
-            """
-            data = (date, )
+                curs.execute(sql, data)
 
-            curs.execute(sql, data)
+            if leitung == True:
+                sql = """
+                    SELECT
+                        untersuchdat_haltung_bewertung.pk,
+                        untersuchdat_haltung_bewertung.untersuchhal,
+                        anschlussleitungen.createdat,
+                        untersuchdat_haltung_bewertung.schoben,
+                        untersuchdat_haltung_bewertung.schunten,
+                        untersuchdat_haltung_bewertung.id,
+                        untersuchdat_haltung_bewertung.videozaehler,
+                        untersuchdat_haltung_bewertung.inspektionslaenge,
+                        untersuchdat_haltung_bewertung.station,
+                        untersuchdat_haltung_bewertung.timecode,
+                        untersuchdat_haltung_bewertung.kuerzel,
+                        untersuchdat_haltung_bewertung.charakt1,
+                        untersuchdat_haltung_bewertung.charakt2,
+                        untersuchdat_haltung_bewertung.quantnr1,
+                        untersuchdat_haltung_bewertung.quantnr2,
+                        untersuchdat_haltung_bewertung.streckenschaden,
+                        untersuchdat_haltung_bewertung.pos_von,
+                        untersuchdat_haltung_bewertung.pos_bis,
+                        untersuchdat_haltung_bewertung.foto_dateiname,
+                        untersuchdat_haltung_bewertung.film_dateiname,
+                        untersuchdat_haltung_bewertung.kommentar,
+                        untersuchdat_haltung_bewertung.bw_bs,
+                        untersuchdat_haltung_bewertung.untersuchtag,
+                        anschlussleitungen.leitnam,
+                        anschlussleitungen.material,
+                        anschlussleitungen.hoehe
+                    FROM untersuchdat_haltung_bewertung, anschlussleitungen
+                    WHERE anschlussleitungen.leitnam = untersuchdat_haltung_bewertung.untersuchhal AND untersuchdat_haltung_bewertung.untersuchtag , 0, 15 like ? 
+                """
+                data = (date, )
+
+                curs.execute(sql, data)
+
+        if self.datetype == 'Importdatum':
+
+            if haltung == True:
+                sql = """
+                    SELECT
+                        untersuchdat_haltung_bewertung.pk,
+                        untersuchdat_haltung_bewertung.untersuchhal,
+                        haltungen.createdat,
+                        untersuchdat_haltung_bewertung.schoben,
+                        untersuchdat_haltung_bewertung.schunten,
+                        untersuchdat_haltung_bewertung.id,
+                        untersuchdat_haltung_bewertung.videozaehler,
+                        untersuchdat_haltung_bewertung.inspektionslaenge,
+                        untersuchdat_haltung_bewertung.station,
+                        untersuchdat_haltung_bewertung.timecode,
+                        untersuchdat_haltung_bewertung.kuerzel,
+                        untersuchdat_haltung_bewertung.charakt1,
+                        untersuchdat_haltung_bewertung.charakt2,
+                        untersuchdat_haltung_bewertung.quantnr1,
+                        untersuchdat_haltung_bewertung.quantnr2,
+                        untersuchdat_haltung_bewertung.streckenschaden,
+                        untersuchdat_haltung_bewertung.pos_von,
+                        untersuchdat_haltung_bewertung.pos_bis,
+                        untersuchdat_haltung_bewertung.foto_dateiname,
+                        untersuchdat_haltung_bewertung.film_dateiname,
+                        untersuchdat_haltung_bewertung.kommentar,
+                        untersuchdat_haltung_bewertung.bw_bs,
+                        untersuchdat_haltung_bewertung.createdat, 
+                        haltungen.haltnam,
+                        haltungen.material,
+                        haltungen.hoehe
+                    FROM untersuchdat_haltung_bewertung, haltungen
+                    WHERE haltungen.haltnam = untersuchdat_haltung_bewertung.untersuchhal AND untersuchdat_haltung_bewertung.createdat like ? 
+                """
+                data = (date,)
+
+                curs.execute(sql, data)
+
+            if leitung == True:
+                sql = """
+                    SELECT
+                        untersuchdat_haltung_bewertung.pk,
+                        untersuchdat_haltung_bewertung.untersuchhal,
+                        anschlussleitungen.createdat,
+                        untersuchdat_haltung_bewertung.schoben,
+                        untersuchdat_haltung_bewertung.schunten,
+                        untersuchdat_haltung_bewertung.id,
+                        untersuchdat_haltung_bewertung.videozaehler,
+                        untersuchdat_haltung_bewertung.inspektionslaenge,
+                        untersuchdat_haltung_bewertung.station,
+                        untersuchdat_haltung_bewertung.timecode,
+                        untersuchdat_haltung_bewertung.kuerzel,
+                        untersuchdat_haltung_bewertung.charakt1,
+                        untersuchdat_haltung_bewertung.charakt2,
+                        untersuchdat_haltung_bewertung.quantnr1,
+                        untersuchdat_haltung_bewertung.quantnr2,
+                        untersuchdat_haltung_bewertung.streckenschaden,
+                        untersuchdat_haltung_bewertung.pos_von,
+                        untersuchdat_haltung_bewertung.pos_bis,
+                        untersuchdat_haltung_bewertung.foto_dateiname,
+                        untersuchdat_haltung_bewertung.film_dateiname,
+                        untersuchdat_haltung_bewertung.kommentar,
+                        untersuchdat_haltung_bewertung.bw_bs,
+                        untersuchdat_haltung_bewertung.createdat,
+                        anschlussleitungen.leitnam,
+                        anschlussleitungen.material,
+                        anschlussleitungen.hoehe
+                    FROM untersuchdat_haltung_bewertung, anschlussleitungen
+                    WHERE anschlussleitungen.leitnam = untersuchdat_haltung_bewertung.untersuchhal AND untersuchdat_haltung_bewertung.createdat , 0, 15 like ? 
+                """
+                data = (date,)
+
+                curs.execute(sql, data)
 
         logger.debug(f'Start_forloop_Bewertung_Haltungen.liste: {datetime.now()}')
 
@@ -6882,8 +7235,11 @@ class Zustandsklassen_funkt:
             except:
                 pass
 
-            if attr1[1] in ["AZ", "B", "BS", "FZ", "MA", "OB", "P", "PC", "PCC", "PHB", "SFB", "SPB", "SB", "STZ",
-                            "SZB", "ZG", "Asbestzement","Beton", "Betonsegmente", "Fasezement", "Mauerwerk", "Ortbeton",
+            if attr1[1] in ["AZ", "AZ Asbestzement", "B", "B Beton", "BS", "BS Betonsegmente ", "FZ", "FZ Fasezement",
+                            "MA", "MA Mauerwerk", "OB", "OB Ortbeton", "P", "P Polymerbeton", "PC", "PC Polymermodifizierter Zementbeton",
+                            "PCC", "PHB", "PHB Polyesterharz", "SFB", "SFB Stahlfaserbeton", "SPB", "SPB Spannbeton",
+                            "SB", "SB Stahlbeton", "STZ", "STZ Steinzeug", "SZB", "SZB Spritzbeton",
+                            "ZG", "ZG Ziegelwerk", "Asbestzement", "Beton", "Betonsegmente", "Fasezement", "Mauerwerk", "Ortbeton",
                             "Polymerbeton", "Polymermodifizierter Zementbeton", "Polyesterharz", "Stahlfaserbeton", "Spannbeton",
                             "Stahlbeton", "Steinzeug", "Spritzbeton", "Ziegelwerk"]:
                 bw_bs = "biegesteif"
@@ -6900,10 +7256,13 @@ class Zustandsklassen_funkt:
                 except:
                     pass
 
-            if attr1[1] in ["CN", "EIS", "GFK", "GG", "GGG", "KST", "PE", "PEHD", "PH", "PP", "PVC", "PVCU", "ST",
+            if attr1[1] in ["CN", "CN Edelstahl", "EIS", "EIS Nichtidentifiziertes Metall", "GFK", "GFK Glasfaserverstärkter Kunststoff",
+                            "GG", "GG Grauguß", "GGG", "GGG Duktiles Gußeisen", "KST", "KST Nichtidentifizier Kunststoff",
+                            "PE", "PE Polyethylen", "PEHD", "PEHD Polyethylen", "PH", "PH Polyesterharz", "PP", "PP Polypropylen",
+                            "PVC", "PVC Polyvinylchlorid", "PVCU", "PVCU Polyvinylchlorid hart", "ST", "ST Stahl",
                             "Edelstahl", "Nichtidentifiziertes Metall", "Glasfaserverstärkter Kunststoff", "Grauguß",
                             "Duktiles Gußeisen", "Nichtidentifizier Kunststoff", "Polyethylen", "Polyesterharz",
-                            "Polypropylen", "Polyvinylchlorid","Polyvinylchlorid hart", "Stahl"]:
+                            "Polypropylen", "Polyvinylchlorid", "Polyvinylchlorid hart", "Stahl"]:
                 bw_bs = 'biegeweich'
                 x = attr1[0]
 
@@ -6925,42 +7284,83 @@ class Zustandsklassen_funkt:
         db = spatialite_connect(db_x)
         curs = db.cursor()
 
-        if leitung == True:
-            sql = """
-                SELECT
-                    untersuchdat_anschlussleitung_bewertung.pk,
-                    untersuchdat_anschlussleitung_bewertung.untersuchhal,
-                    untersuchdat_anschlussleitung_bewertung.untersuchrichtung,
-                    untersuchdat_anschlussleitung_bewertung.schoben,
-                    untersuchdat_anschlussleitung_bewertung.schunten,
-                    untersuchdat_anschlussleitung_bewertung.id,
-                    untersuchdat_anschlussleitung_bewertung.videozaehler,
-                    untersuchdat_anschlussleitung_bewertung.inspektionslaenge,
-                    untersuchdat_anschlussleitung_bewertung.station,
-                    untersuchdat_anschlussleitung_bewertung.timecode,
-                    untersuchdat_anschlussleitung_bewertung.kuerzel,
-                    untersuchdat_anschlussleitung_bewertung.charakt1,
-                    untersuchdat_anschlussleitung_bewertung.charakt2,
-                    untersuchdat_anschlussleitung_bewertung.quantnr1,
-                    untersuchdat_anschlussleitung_bewertung.quantnr2,
-                    untersuchdat_anschlussleitung_bewertung.streckenschaden,
-                    untersuchdat_anschlussleitung_bewertung.pos_von,
-                    untersuchdat_anschlussleitung_bewertung.pos_bis,
-                    untersuchdat_anschlussleitung_bewertung.foto_dateiname,
-                    untersuchdat_anschlussleitung_bewertung.film_dateiname,
-                    untersuchdat_anschlussleitung_bewertung.baujahr,
-                    untersuchdat_anschlussleitung_bewertung.bw_bs,
-                    untersuchdat_anschlussleitung_bewertung.createdat,
-                    anschlussleitungen.leitnam,
-                    anschlussleitungen.material,
-                    anschlussleitungen.hoehe,
-                    anschlussleitungen.createdat
-                FROM untersuchdat_anschlussleitung_bewertung, anschlussleitungen
-                WHERE anschlussleitungen.leitnam = untersuchdat_anschlussleitung_bewertung.untersuchhal AND untersuchdat_anschlussleitung_bewertung.createdat , 0, 15 like ? 
-            """
-            data = (date, )
+        if self.datetype == 'Importdatum':
 
-            curs.execute(sql, data)
+            if leitung == True:
+                sql = """
+                    SELECT
+                        untersuchdat_anschlussleitung_bewertung.pk,
+                        untersuchdat_anschlussleitung_bewertung.untersuchhal,
+                        untersuchdat_anschlussleitung_bewertung.untersuchrichtung,
+                        untersuchdat_anschlussleitung_bewertung.schoben,
+                        untersuchdat_anschlussleitung_bewertung.schunten,
+                        untersuchdat_anschlussleitung_bewertung.id,
+                        untersuchdat_anschlussleitung_bewertung.videozaehler,
+                        untersuchdat_anschlussleitung_bewertung.inspektionslaenge,
+                        untersuchdat_anschlussleitung_bewertung.station,
+                        untersuchdat_anschlussleitung_bewertung.timecode,
+                        untersuchdat_anschlussleitung_bewertung.kuerzel,
+                        untersuchdat_anschlussleitung_bewertung.charakt1,
+                        untersuchdat_anschlussleitung_bewertung.charakt2,
+                        untersuchdat_anschlussleitung_bewertung.quantnr1,
+                        untersuchdat_anschlussleitung_bewertung.quantnr2,
+                        untersuchdat_anschlussleitung_bewertung.streckenschaden,
+                        untersuchdat_anschlussleitung_bewertung.pos_von,
+                        untersuchdat_anschlussleitung_bewertung.pos_bis,
+                        untersuchdat_anschlussleitung_bewertung.foto_dateiname,
+                        untersuchdat_anschlussleitung_bewertung.film_dateiname,
+                        untersuchdat_anschlussleitung_bewertung.baujahr,
+                        untersuchdat_anschlussleitung_bewertung.bw_bs,
+                        untersuchdat_anschlussleitung_bewertung.createdat,
+                        anschlussleitungen.leitnam,
+                        anschlussleitungen.material,
+                        anschlussleitungen.hoehe,
+                        anschlussleitungen.createdat
+                    FROM untersuchdat_anschlussleitung_bewertung, anschlussleitungen
+                    WHERE anschlussleitungen.leitnam = untersuchdat_anschlussleitung_bewertung.untersuchhal AND untersuchdat_anschlussleitung_bewertung.createdat , 0, 15 like ? 
+                """
+                data = (date, )
+
+                curs.execute(sql, data)
+
+        if self.datetype == 'Befahrungsdatum':
+
+            if leitung == True:
+                sql = """
+                    SELECT
+                        untersuchdat_anschlussleitung_bewertung.pk,
+                        untersuchdat_anschlussleitung_bewertung.untersuchhal,
+                        untersuchdat_anschlussleitung_bewertung.untersuchrichtung,
+                        untersuchdat_anschlussleitung_bewertung.schoben,
+                        untersuchdat_anschlussleitung_bewertung.schunten,
+                        untersuchdat_anschlussleitung_bewertung.id,
+                        untersuchdat_anschlussleitung_bewertung.videozaehler,
+                        untersuchdat_anschlussleitung_bewertung.inspektionslaenge,
+                        untersuchdat_anschlussleitung_bewertung.station,
+                        untersuchdat_anschlussleitung_bewertung.timecode,
+                        untersuchdat_anschlussleitung_bewertung.kuerzel,
+                        untersuchdat_anschlussleitung_bewertung.charakt1,
+                        untersuchdat_anschlussleitung_bewertung.charakt2,
+                        untersuchdat_anschlussleitung_bewertung.quantnr1,
+                        untersuchdat_anschlussleitung_bewertung.quantnr2,
+                        untersuchdat_anschlussleitung_bewertung.streckenschaden,
+                        untersuchdat_anschlussleitung_bewertung.pos_von,
+                        untersuchdat_anschlussleitung_bewertung.pos_bis,
+                        untersuchdat_anschlussleitung_bewertung.foto_dateiname,
+                        untersuchdat_anschlussleitung_bewertung.film_dateiname,
+                        untersuchdat_anschlussleitung_bewertung.baujahr,
+                        untersuchdat_anschlussleitung_bewertung.bw_bs,
+                        untersuchdat_anschlussleitung_bewertung.untersuchtag,
+                        anschlussleitungen.leitnam,
+                        anschlussleitungen.material,
+                        anschlussleitungen.hoehe,
+                        anschlussleitungen.createdat
+                    FROM untersuchdat_anschlussleitung_bewertung, anschlussleitungen
+                    WHERE anschlussleitungen.leitnam = untersuchdat_anschlussleitung_bewertung.untersuchhal AND untersuchdat_anschlussleitung_bewertung.untersuchtag , 0, 15 like ? 
+                """
+                data = (date,)
+
+                curs.execute(sql, data)
 
         logger.debug(f'Start_forloop_Bewertung_Haltungen.liste: {datetime.now()}')
 
@@ -9635,10 +10035,13 @@ class Zustandsklassen_funkt:
             except:
                 pass
 
-            if attr1[1] in ["AZ", "B", "BS", "FZ", "MA", "OB", "P", "PC", "PCC", "PHB", "SFB", "SPB", "SB", "STZ",
-                            "SZB", "ZG","Asbestzement","Beton", "Betonsegmente", "Fasezement", "Mauerwerk", "Ortbeton",
-                "Polymerbeton", "Polymermodifizierter Zementbeton", "Polyesterharz", "Stahlfaserbeton", "Spannbeton",
-                "Stahlbeton", "Steinzeug", "Spritzbeton", "Ziegelwerk"]:
+            if attr1[1] in ["AZ", "AZ Asbestzement", "B", "B Beton", "BS", "BS Betonsegmente ", "FZ", "FZ Fasezement",
+                            "MA", "MA Mauerwerk", "OB", "OB Ortbeton", "P", "P Polymerbeton", "PC", "PC Polymermodifizierter Zementbeton",
+                            "PCC", "PHB", "PHB Polyesterharz", "SFB", "SFB Stahlfaserbeton", "SPB", "SPB Spannbeton",
+                            "SB", "SB Stahlbeton", "STZ", "STZ Steinzeug", "SZB", "SZB Spritzbeton",
+                            "ZG", "ZG Ziegelwerk", "Asbestzement", "Beton", "Betonsegmente", "Fasezement", "Mauerwerk", "Ortbeton",
+                            "Polymerbeton", "Polymermodifizierter Zementbeton", "Polyesterharz", "Stahlfaserbeton", "Spannbeton",
+                            "Stahlbeton", "Steinzeug", "Spritzbeton", "Ziegelwerk"]:
                 bw_bs = "biegesteif"
                 x = attr1[0]
 
@@ -9653,9 +10056,13 @@ class Zustandsklassen_funkt:
                 except:
                     pass
 
-            if attr1[1] in ["CNS", "EIS", "GFK", "GG", "GGG", "KST", "PE", "PEHD", "PH", "PP", "PVC", "PVCU", "ST","Edelstahl", "Nichtidentifiziertes Metall", "Glasfaserverstärkter Kunststoff", "Grauguß",
-                "Duktiles Gußeisen", "Nichtidentifizier Kunststoff", "Polyethylen", "Polyesterharz",
-                "Polypropylen", "Polyvinylchlorid", "Polyvinylchlorid hart", "Stahl"]:
+            if attr1[1] in ["CN", "CN Edelstahl", "EIS", "EIS Nichtidentifiziertes Metall", "GFK", "GFK Glasfaserverstärkter Kunststoff",
+                            "GG", "GG Grauguß", "GGG", "GGG Duktiles Gußeisen", "KST", "KST Nichtidentifizier Kunststoff",
+                            "PE", "PE Polyethylen", "PEHD", "PEHD Polyethylen", "PH", "PH Polyesterharz", "PP", "PP Polypropylen",
+                            "PVC", "PVC Polyvinylchlorid", "PVCU", "PVCU Polyvinylchlorid hart", "ST", "ST Stahl",
+                            "Edelstahl", "Nichtidentifiziertes Metall", "Glasfaserverstärkter Kunststoff", "Grauguß",
+                            "Duktiles Gußeisen", "Nichtidentifizier Kunststoff", "Polyethylen", "Polyesterharz",
+                            "Polypropylen", "Polyvinylchlorid", "Polyvinylchlorid hart", "Stahl"]:
                 bw_bs = 'biegeweich'
                 x = attr1[0]
 
@@ -9674,30 +10081,59 @@ class Zustandsklassen_funkt:
         db = spatialite_connect(db_x)
         curs = db.cursor()
 
-        sql = """
-            SELECT
-                Untersuchdat_schacht_bewertung.pk,
-                Untersuchdat_schacht_bewertung.untersuchsch,
-                Untersuchdat_schacht_bewertung.id,
-                Untersuchdat_schacht_bewertung.videozaehler,
-                Untersuchdat_schacht_bewertung.timecode,
-                Untersuchdat_schacht_bewertung.kuerzel,
-                Untersuchdat_schacht_bewertung.charakt1,
-                Untersuchdat_schacht_bewertung.charakt2,
-                Untersuchdat_schacht_bewertung.quantnr1,
-                Untersuchdat_schacht_bewertung.quantnr2,
-                Untersuchdat_schacht_bewertung.streckenschaden,
-                Untersuchdat_schacht_bewertung.pos_von,
-                Untersuchdat_schacht_bewertung.pos_bis,
-                Untersuchdat_schacht_bewertung.bereich,
-                Untersuchdat_schacht_bewertung.foto_dateiname,
-                Untersuchdat_schacht_bewertung.bw_bs,
-                Untersuchdat_schacht_bewertung.createdat
-            FROM Untersuchdat_schacht_bewertung  
-            WHERE Untersuchdat_schacht_bewertung.createdat like ?  
-        """
-        data = (date,)
-        curs.execute(sql, data)
+        if self.datetype == 'Importdatum':
+
+            sql = """
+                SELECT
+                    Untersuchdat_schacht_bewertung.pk,
+                    Untersuchdat_schacht_bewertung.untersuchsch,
+                    Untersuchdat_schacht_bewertung.id,
+                    Untersuchdat_schacht_bewertung.videozaehler,
+                    Untersuchdat_schacht_bewertung.timecode,
+                    Untersuchdat_schacht_bewertung.kuerzel,
+                    Untersuchdat_schacht_bewertung.charakt1,
+                    Untersuchdat_schacht_bewertung.charakt2,
+                    Untersuchdat_schacht_bewertung.quantnr1,
+                    Untersuchdat_schacht_bewertung.quantnr2,
+                    Untersuchdat_schacht_bewertung.streckenschaden,
+                    Untersuchdat_schacht_bewertung.pos_von,
+                    Untersuchdat_schacht_bewertung.pos_bis,
+                    Untersuchdat_schacht_bewertung.bereich,
+                    Untersuchdat_schacht_bewertung.foto_dateiname,
+                    Untersuchdat_schacht_bewertung.bw_bs,
+                    Untersuchdat_schacht_bewertung.createdat
+                FROM Untersuchdat_schacht_bewertung  
+                WHERE Untersuchdat_schacht_bewertung.createdat like ?  
+            """
+            data = (date,)
+            curs.execute(sql, data)
+
+        if self.datetype == 'Befahrungsdatum':
+
+            sql = """
+                SELECT
+                    Untersuchdat_schacht_bewertung.pk,
+                    Untersuchdat_schacht_bewertung.untersuchsch,
+                    Untersuchdat_schacht_bewertung.id,
+                    Untersuchdat_schacht_bewertung.videozaehler,
+                    Untersuchdat_schacht_bewertung.timecode,
+                    Untersuchdat_schacht_bewertung.kuerzel,
+                    Untersuchdat_schacht_bewertung.charakt1,
+                    Untersuchdat_schacht_bewertung.charakt2,
+                    Untersuchdat_schacht_bewertung.quantnr1,
+                    Untersuchdat_schacht_bewertung.quantnr2,
+                    Untersuchdat_schacht_bewertung.streckenschaden,
+                    Untersuchdat_schacht_bewertung.pos_von,
+                    Untersuchdat_schacht_bewertung.pos_bis,
+                    Untersuchdat_schacht_bewertung.bereich,
+                    Untersuchdat_schacht_bewertung.foto_dateiname,
+                    Untersuchdat_schacht_bewertung.bw_bs,
+                    Untersuchdat_schacht_bewertung.untersuchtag
+                FROM Untersuchdat_schacht_bewertung  
+                WHERE Untersuchdat_schacht_bewertung.untersuchtag like ?  
+            """
+            data = (date,)
+            curs.execute(sql, data)
 
 
         for attr in curs.fetchall():
@@ -12944,10 +13380,13 @@ class Zustandsklassen_funkt:
             except:
                 pass
 
-            if attr1[1] in ["AZ", "B", "BS", "FZ", "MA", "OB", "P", "PC", "PCC", "PHB", "SFB", "SPB", "SB", "STZ",
-                            "SZB", "ZG","Asbestzement","Beton", "Betonsegmente", "Fasezement", "Mauerwerk", "Ortbeton",
-                "Polymerbeton", "Polymermodifizierter Zementbeton", "Polyesterharz", "Stahlfaserbeton", "Spannbeton",
-                "Stahlbeton", "Steinzeug", "Spritzbeton", "Ziegelwerk"]:
+            if attr1[1] in ["AZ", "AZ Asbestzement", "B", "B Beton", "BS", "BS Betonsegmente ", "FZ", "FZ Fasezement",
+                            "MA", "MA Mauerwerk", "OB", "OB Ortbeton", "P", "P Polymerbeton", "PC", "PC Polymermodifizierter Zementbeton",
+                            "PCC", "PHB", "PHB Polyesterharz", "SFB", "SFB Stahlfaserbeton", "SPB", "SPB Spannbeton",
+                            "SB", "SB Stahlbeton", "STZ", "STZ Steinzeug", "SZB", "SZB Spritzbeton",
+                            "ZG", "ZG Ziegelwerk", "Asbestzement", "Beton", "Betonsegmente", "Fasezement", "Mauerwerk", "Ortbeton",
+                            "Polymerbeton", "Polymermodifizierter Zementbeton", "Polyesterharz", "Stahlfaserbeton", "Spannbeton",
+                            "Stahlbeton", "Steinzeug", "Spritzbeton", "Ziegelwerk"]:
                 bw_bs = "biegesteif"
                 x = attr1[0]
 
@@ -12962,9 +13401,13 @@ class Zustandsklassen_funkt:
                 except:
                     pass
 
-            if attr1[1] in ["CNS", "EIS", "GFK", "GG", "GGG", "KST", "PE", "PEHD", "PH", "PP", "PVC", "PVCU", "ST", "Edelstahl", "Nichtidentifiziertes Metall", "Glasfaserverstärkter Kunststoff", "Grauguß",
-                "Duktiles Gußeisen", "Nichtidentifizier Kunststoff", "Polyethylen", "Polyesterharz",
-                "Polypropylen", "Polyvinylchlorid","Polyvinylchlorid hart", "Stahl"]:
+            if attr1[1] in ["CN", "CN Edelstahl", "EIS", "EIS Nichtidentifiziertes Metall", "GFK", "GFK Glasfaserverstärkter Kunststoff",
+                            "GG", "GG Grauguß", "GGG", "GGG Duktiles Gußeisen", "KST", "KST Nichtidentifizier Kunststoff",
+                            "PE", "PE Polyethylen", "PEHD", "PEHD Polyethylen", "PH", "PH Polyesterharz", "PP", "PP Polypropylen",
+                            "PVC", "PVC Polyvinylchlorid", "PVCU", "PVCU Polyvinylchlorid hart", "ST", "ST Stahl",
+                            "Edelstahl", "Nichtidentifiziertes Metall", "Glasfaserverstärkter Kunststoff", "Grauguß",
+                            "Duktiles Gußeisen", "Nichtidentifizier Kunststoff", "Polyethylen", "Polyesterharz",
+                            "Polypropylen", "Polyvinylchlorid", "Polyvinylchlorid hart", "Stahl"]:
                 bw_bs = 'biegeweich'
                 x = attr1[0]
 
@@ -12984,77 +13427,151 @@ class Zustandsklassen_funkt:
         db = spatialite_connect(data)
         curs = db.cursor()
 
-        if haltung == True:
-            sql = """
-                SELECT
-                    untersuchdat_haltung_bewertung.pk,
-                    untersuchdat_haltung_bewertung.untersuchhal,
-                    untersuchdat_haltung_bewertung.untersuchrichtung,
-                    untersuchdat_haltung_bewertung.schoben,
-                    untersuchdat_haltung_bewertung.schunten,
-                    untersuchdat_haltung_bewertung.id,
-                    untersuchdat_haltung_bewertung.videozaehler,
-                    untersuchdat_haltung_bewertung.inspektionslaenge,
-                    untersuchdat_haltung_bewertung.station,
-                    untersuchdat_haltung_bewertung.timecode,
-                    untersuchdat_haltung_bewertung.kuerzel,
-                    untersuchdat_haltung_bewertung.charakt1,
-                    untersuchdat_haltung_bewertung.charakt2,
-                    untersuchdat_haltung_bewertung.quantnr1,
-                    untersuchdat_haltung_bewertung.quantnr2,
-                    untersuchdat_haltung_bewertung.streckenschaden,
-                    untersuchdat_haltung_bewertung.pos_von,
-                    untersuchdat_haltung_bewertung.pos_bis,
-                    untersuchdat_haltung_bewertung.foto_dateiname,
-                    untersuchdat_haltung_bewertung.film_dateiname,
-                    untersuchdat_haltung_bewertung.kommentar,
-                    untersuchdat_haltung_bewertung.bw_bs,
-                    untersuchdat_haltung_bewertung.createdat,
-                    haltungen.haltnam,
-                    haltungen.material,
-                    haltungen.hoehe,
-                    haltungen.createdat
-                FROM untersuchdat_haltung_bewertung, Haltungen
-                WHERE haltungen.haltnam = untersuchdat_haltung_bewertung.untersuchhal AND untersuchdat_haltung_bewertung.createdat like ?
-            """
-            data = (date, )
-            curs.execute(sql, data)
+        if self.datetype == 'Importdatum':
 
-        if leitung == True:
-            sql = """
-                SELECT
-                    untersuchdat_haltung_bewertung.pk,
-                    untersuchdat_haltung_bewertung.untersuchhal,
-                    untersuchdat_haltung_bewertung.untersuchrichtung,
-                    untersuchdat_haltung_bewertung.schoben,
-                    untersuchdat_haltung_bewertung.schunten,
-                    untersuchdat_haltung_bewertung.id,
-                    untersuchdat_haltung_bewertung.videozaehler,
-                    untersuchdat_haltung_bewertung.inspektionslaenge,
-                    untersuchdat_haltung_bewertung.station,
-                    untersuchdat_haltung_bewertung.timecode,
-                    untersuchdat_haltung_bewertung.kuerzel,
-                    untersuchdat_haltung_bewertung.charakt1,
-                    untersuchdat_haltung_bewertung.charakt2,
-                    untersuchdat_haltung_bewertung.quantnr1,
-                    untersuchdat_haltung_bewertung.quantnr2,
-                    untersuchdat_haltung_bewertung.streckenschaden,
-                    untersuchdat_haltung_bewertung.pos_von,
-                    untersuchdat_haltung_bewertung.pos_bis,
-                    untersuchdat_haltung_bewertung.foto_dateiname,
-                    untersuchdat_haltung_bewertung.film_dateiname,
-                    NULL,
-                    untersuchdat_haltung_bewertung.bw_bs,
-                    untersuchdat_haltung_bewertung.createdat,
-                    anschlussleitungen.leitnam,
-                    anschlussleitungen.material,
-                    anschlussleitungen.hoehe,
-                    anschlussleitungen.createdat
-                FROM untersuchdat_haltung_bewertung, anschlussleitungen
-                WHERE anschlussleitungen.leitnam = untersuchdat_haltung_bewertung.untersuchhal AND untersuchdat_haltung_bewertung.createdat like ? 
-            """
-            data = (date, )
-            curs.execute(sql, data)
+            if haltung == True:
+                sql = """
+                    SELECT
+                        untersuchdat_haltung_bewertung.pk,
+                        untersuchdat_haltung_bewertung.untersuchhal,
+                        haltungen.createdat,
+                        untersuchdat_haltung_bewertung.schoben,
+                        untersuchdat_haltung_bewertung.schunten,
+                        untersuchdat_haltung_bewertung.id,
+                        untersuchdat_haltung_bewertung.videozaehler,
+                        untersuchdat_haltung_bewertung.inspektionslaenge,
+                        untersuchdat_haltung_bewertung.station,
+                        untersuchdat_haltung_bewertung.timecode,
+                        untersuchdat_haltung_bewertung.kuerzel,
+                        untersuchdat_haltung_bewertung.charakt1,
+                        untersuchdat_haltung_bewertung.charakt2,
+                        untersuchdat_haltung_bewertung.quantnr1,
+                        untersuchdat_haltung_bewertung.quantnr2,
+                        untersuchdat_haltung_bewertung.streckenschaden,
+                        untersuchdat_haltung_bewertung.pos_von,
+                        untersuchdat_haltung_bewertung.pos_bis,
+                        untersuchdat_haltung_bewertung.foto_dateiname,
+                        untersuchdat_haltung_bewertung.film_dateiname,
+                        untersuchdat_haltung_bewertung.kommentar,
+                        untersuchdat_haltung_bewertung.bw_bs,
+                        untersuchdat_haltung_bewertung.createdat,
+                        haltungen.haltnam,
+                        haltungen.material,
+                        haltungen.hoehe
+                    FROM untersuchdat_haltung_bewertung, Haltungen
+                    WHERE haltungen.haltnam = untersuchdat_haltung_bewertung.untersuchhal AND untersuchdat_haltung_bewertung.createdat like ?
+                """
+                data = (date, )
+                curs.execute(sql, data)
+
+            if leitung == True:
+                sql = """
+                
+                    SELECT
+                        untersuchdat_haltung_bewertung.pk,
+                        untersuchdat_haltung_bewertung.untersuchhal,
+                        anschlussleitungen.createdat,
+                        untersuchdat_haltung_bewertung.schoben,
+                        untersuchdat_haltung_bewertung.schunten,
+                        untersuchdat_haltung_bewertung.id,
+                        untersuchdat_haltung_bewertung.videozaehler,
+                        untersuchdat_haltung_bewertung.inspektionslaenge,
+                        untersuchdat_haltung_bewertung.station,
+                        untersuchdat_haltung_bewertung.timecode,
+                        untersuchdat_haltung_bewertung.kuerzel,
+                        untersuchdat_haltung_bewertung.charakt1,
+                        untersuchdat_haltung_bewertung.charakt2,
+                        untersuchdat_haltung_bewertung.quantnr1,
+                        untersuchdat_haltung_bewertung.quantnr2,
+                        untersuchdat_haltung_bewertung.streckenschaden,
+                        untersuchdat_haltung_bewertung.pos_von,
+                        untersuchdat_haltung_bewertung.pos_bis,
+                        untersuchdat_haltung_bewertung.foto_dateiname,
+                        untersuchdat_haltung_bewertung.film_dateiname,
+                        NULL,
+                        untersuchdat_haltung_bewertung.bw_bs,
+                        untersuchdat_haltung_bewertung.createdat,
+                        anschlussleitungen.leitnam,
+                        anschlussleitungen.material,
+                        anschlussleitungen.hoehe
+                    FROM untersuchdat_haltung_bewertung, anschlussleitungen
+                    WHERE anschlussleitungen.leitnam = untersuchdat_haltung_bewertung.untersuchhal AND untersuchdat_haltung_bewertung.createdat like ? 
+                """
+                data = (date, )
+                curs.execute(sql, data)
+
+        if self.datetype == 'Befahrungsdatum':
+
+            if haltung == True:
+                sql = """
+                    SELECT
+                        untersuchdat_haltung_bewertung.pk,
+                        untersuchdat_haltung_bewertung.untersuchhal,
+                        haltungen.createdat,
+                        untersuchdat_haltung_bewertung.schoben,
+                        untersuchdat_haltung_bewertung.schunten,
+                        untersuchdat_haltung_bewertung.id,
+                        untersuchdat_haltung_bewertung.videozaehler,
+                        untersuchdat_haltung_bewertung.inspektionslaenge,
+                        untersuchdat_haltung_bewertung.station,
+                        untersuchdat_haltung_bewertung.timecode,
+                        untersuchdat_haltung_bewertung.kuerzel,
+                        untersuchdat_haltung_bewertung.charakt1,
+                        untersuchdat_haltung_bewertung.charakt2,
+                        untersuchdat_haltung_bewertung.quantnr1,
+                        untersuchdat_haltung_bewertung.quantnr2,
+                        untersuchdat_haltung_bewertung.streckenschaden,
+                        untersuchdat_haltung_bewertung.pos_von,
+                        untersuchdat_haltung_bewertung.pos_bis,
+                        untersuchdat_haltung_bewertung.foto_dateiname,
+                        untersuchdat_haltung_bewertung.film_dateiname,
+                        untersuchdat_haltung_bewertung.kommentar,
+                        untersuchdat_haltung_bewertung.bw_bs,
+                        untersuchdat_haltung_bewertung.untersuchtag,
+                        haltungen.haltnam,
+                        haltungen.material,
+                        haltungen.hoehe
+                    FROM untersuchdat_haltung_bewertung, Haltungen
+                    WHERE haltungen.haltnam = untersuchdat_haltung_bewertung.untersuchhal AND untersuchdat_haltung_bewertung.untersuchtag like ?
+                """
+                data = (date,)
+                curs.execute(sql, data)
+
+            if leitung == True:
+                sql = """
+
+                    SELECT
+                        untersuchdat_haltung_bewertung.pk,
+                        untersuchdat_haltung_bewertung.untersuchhal,
+                        anschlussleitungen.createdat,
+                        untersuchdat_haltung_bewertung.schoben,
+                        untersuchdat_haltung_bewertung.schunten,
+                        untersuchdat_haltung_bewertung.id,
+                        untersuchdat_haltung_bewertung.videozaehler,
+                        untersuchdat_haltung_bewertung.inspektionslaenge,
+                        untersuchdat_haltung_bewertung.station,
+                        untersuchdat_haltung_bewertung.timecode,
+                        untersuchdat_haltung_bewertung.kuerzel,
+                        untersuchdat_haltung_bewertung.charakt1,
+                        untersuchdat_haltung_bewertung.charakt2,
+                        untersuchdat_haltung_bewertung.quantnr1,
+                        untersuchdat_haltung_bewertung.quantnr2,
+                        untersuchdat_haltung_bewertung.streckenschaden,
+                        untersuchdat_haltung_bewertung.pos_von,
+                        untersuchdat_haltung_bewertung.pos_bis,
+                        untersuchdat_haltung_bewertung.foto_dateiname,
+                        untersuchdat_haltung_bewertung.film_dateiname,
+                        NULL,
+                        untersuchdat_haltung_bewertung.bw_bs,
+                        untersuchdat_haltung_bewertung.untersuchtag,
+                        anschlussleitungen.leitnam,
+                        anschlussleitungen.material,
+                        anschlussleitungen.hoehe
+                    FROM untersuchdat_haltung_bewertung, anschlussleitungen
+                    WHERE anschlussleitungen.leitnam = untersuchdat_haltung_bewertung.untersuchhal AND untersuchdat_haltung_bewertung.untersuchtag like ? 
+                """
+                data = (date,)
+                curs.execute(sql, data)
 
 
         for attr in curs.fetchall():
@@ -15413,10 +15930,13 @@ class Zustandsklassen_funkt:
             except:
                 pass
 
-            if attr1[1] in ["AZ", "B", "BS", "FZ", "MA", "OB", "P", "PC", "PCC", "PHB", "SFB", "SPB", "SB", "STZ",
-                            "SZB", "ZG","Asbestzement","Beton", "Betonsegmente", "Fasezement", "Mauerwerk", "Ortbeton",
-                "Polymerbeton", "Polymermodifizierter Zementbeton", "Polyesterharz", "Stahlfaserbeton", "Spannbeton",
-                "Stahlbeton", "Steinzeug", "Spritzbeton", "Ziegelwerk"]:
+            if attr1[1] in ["AZ", "AZ Asbestzement", "B", "B Beton", "BS", "BS Betonsegmente ", "FZ", "FZ Fasezement",
+                            "MA", "MA Mauerwerk", "OB", "OB Ortbeton", "P", "P Polymerbeton", "PC", "PC Polymermodifizierter Zementbeton",
+                            "PCC", "PHB", "PHB Polyesterharz", "SFB", "SFB Stahlfaserbeton", "SPB", "SPB Spannbeton",
+                            "SB", "SB Stahlbeton", "STZ", "STZ Steinzeug", "SZB", "SZB Spritzbeton",
+                            "ZG", "ZG Ziegelwerk", "Asbestzement", "Beton", "Betonsegmente", "Fasezement", "Mauerwerk", "Ortbeton",
+                            "Polymerbeton", "Polymermodifizierter Zementbeton", "Polyesterharz", "Stahlfaserbeton", "Spannbeton",
+                            "Stahlbeton", "Steinzeug", "Spritzbeton", "Ziegelwerk"]:
                 bw_bs = "biegesteif"
                 x = attr1[0]
 
@@ -15431,9 +15951,13 @@ class Zustandsklassen_funkt:
                 except:
                     pass
 
-            if attr1[1] in ["CNS", "EIS", "GFK", "GG", "GGG", "KST", "PE", "PEHD", "PH", "PP", "PVC", "PVCU", "ST", "Edelstahl", "Nichtidentifiziertes Metall", "Glasfaserverstärkter Kunststoff", "Grauguß",
-                "Duktiles Gußeisen", "Nichtidentifizier Kunststoff", "Polyethylen", "Polyesterharz",
-                "Polypropylen", "Polyvinylchlorid","Polyvinylchlorid hart", "Stahl"]:
+            if attr1[1] in ["CN", "CN Edelstahl", "EIS", "EIS Nichtidentifiziertes Metall", "GFK", "GFK Glasfaserverstärkter Kunststoff",
+                            "GG", "GG Grauguß", "GGG", "GGG Duktiles Gußeisen", "KST", "KST Nichtidentifizier Kunststoff",
+                            "PE", "PE Polyethylen", "PEHD", "PEHD Polyethylen", "PH", "PH Polyesterharz", "PP", "PP Polypropylen",
+                            "PVC", "PVC Polyvinylchlorid", "PVCU", "PVCU Polyvinylchlorid hart", "ST", "ST Stahl",
+                            "Edelstahl", "Nichtidentifiziertes Metall", "Glasfaserverstärkter Kunststoff", "Grauguß",
+                            "Duktiles Gußeisen", "Nichtidentifizier Kunststoff", "Polyethylen", "Polyesterharz",
+                            "Polypropylen", "Polyvinylchlorid", "Polyvinylchlorid hart", "Stahl"]:
                 bw_bs = 'biegeweich'
                 x = attr1[0]
 
@@ -15453,42 +15977,81 @@ class Zustandsklassen_funkt:
         db = spatialite_connect(data)
         curs = db.cursor()
 
+        if self.datetype == 'Importdatum':
 
-        if leitung == True:
-            sql = """
-                SELECT
-                    untersuchdat_anschlussleitung_bewertung.pk,
-                    untersuchdat_anschlussleitung_bewertung.untersuchleit,
-                    untersuchdat_anschlussleitung_bewertung.untersuchrichtung,
-                    untersuchdat_anschlussleitung_bewertung.schoben,
-                    untersuchdat_anschlussleitung_bewertung.schunten,
-                    untersuchdat_anschlussleitung_bewertung.id,
-                    untersuchdat_anschlussleitung_bewertung.videozaehler,
-                    untersuchdat_anschlussleitung_bewertung.inspektionslaenge,
-                    untersuchdat_anschlussleitung_bewertung.station,
-                    untersuchdat_anschlussleitung_bewertung.timecode,
-                    untersuchdat_anschlussleitung_bewertung.kuerzel,
-                    untersuchdat_anschlussleitung_bewertung.charakt1,
-                    untersuchdat_anschlussleitung_bewertung.charakt2,
-                    untersuchdat_anschlussleitung_bewertung.quantnr1,
-                    untersuchdat_anschlussleitung_bewertung.quantnr2,
-                    untersuchdat_anschlussleitung_bewertung.streckenschaden,
-                    untersuchdat_anschlussleitung_bewertung.pos_von,
-                    untersuchdat_anschlussleitung_bewertung.pos_bis,
-                    untersuchdat_anschlussleitung_bewertung.foto_dateiname,
-                    untersuchdat_anschlussleitung_bewertung.film_dateiname,
-                    untersuchdat_anschlussleitung_bewertung.baujahr,
-                    untersuchdat_anschlussleitung_bewertung.bw_bs,
-                    untersuchdat_anschlussleitung_bewertung.createdat,
-                    anschlussleitungen.leitnam,
-                    anschlussleitungen.material,
-                    anschlussleitungen.hoehe,
-                    anschlussleitungen.createdat
-                FROM untersuchdat_anschlussleitung_bewertung, anschlussleitungen
-                WHERE anschlussleitungen.leitnam = untersuchdat_anschlussleitung_bewertung.untersuchleit AND untersuchdat_anschlussleitung_bewertung.createdat like ? 
-            """
-            data = (date, )
-            curs.execute(sql, data)
+            if leitung == True:
+                sql = """
+                    SELECT
+                        untersuchdat_anschlussleitung_bewertung.pk,
+                        untersuchdat_anschlussleitung_bewertung.untersuchleit,
+                        untersuchdat_anschlussleitung_bewertung.untersuchrichtung,
+                        untersuchdat_anschlussleitung_bewertung.schoben,
+                        untersuchdat_anschlussleitung_bewertung.schunten,
+                        untersuchdat_anschlussleitung_bewertung.id,
+                        untersuchdat_anschlussleitung_bewertung.videozaehler,
+                        untersuchdat_anschlussleitung_bewertung.inspektionslaenge,
+                        untersuchdat_anschlussleitung_bewertung.station,
+                        untersuchdat_anschlussleitung_bewertung.timecode,
+                        untersuchdat_anschlussleitung_bewertung.kuerzel,
+                        untersuchdat_anschlussleitung_bewertung.charakt1,
+                        untersuchdat_anschlussleitung_bewertung.charakt2,
+                        untersuchdat_anschlussleitung_bewertung.quantnr1,
+                        untersuchdat_anschlussleitung_bewertung.quantnr2,
+                        untersuchdat_anschlussleitung_bewertung.streckenschaden,
+                        untersuchdat_anschlussleitung_bewertung.pos_von,
+                        untersuchdat_anschlussleitung_bewertung.pos_bis,
+                        untersuchdat_anschlussleitung_bewertung.foto_dateiname,
+                        untersuchdat_anschlussleitung_bewertung.film_dateiname,
+                        untersuchdat_anschlussleitung_bewertung.baujahr,
+                        untersuchdat_anschlussleitung_bewertung.bw_bs,
+                        untersuchdat_anschlussleitung_bewertung.createdat,
+                        anschlussleitungen.leitnam,
+                        anschlussleitungen.material,
+                        anschlussleitungen.hoehe,
+                        anschlussleitungen.createdat
+                    FROM untersuchdat_anschlussleitung_bewertung, anschlussleitungen
+                    WHERE anschlussleitungen.leitnam = untersuchdat_anschlussleitung_bewertung.untersuchleit AND untersuchdat_anschlussleitung_bewertung.createdat like ? 
+                """
+                data = (date, )
+                curs.execute(sql, data)
+
+        if self.datetype == 'Befahrungsdatum':
+
+            if leitung == True:
+                sql = """
+                    SELECT
+                        untersuchdat_anschlussleitung_bewertung.pk,
+                        untersuchdat_anschlussleitung_bewertung.untersuchleit,
+                        untersuchdat_anschlussleitung_bewertung.untersuchrichtung,
+                        untersuchdat_anschlussleitung_bewertung.schoben,
+                        untersuchdat_anschlussleitung_bewertung.schunten,
+                        untersuchdat_anschlussleitung_bewertung.id,
+                        untersuchdat_anschlussleitung_bewertung.videozaehler,
+                        untersuchdat_anschlussleitung_bewertung.inspektionslaenge,
+                        untersuchdat_anschlussleitung_bewertung.station,
+                        untersuchdat_anschlussleitung_bewertung.timecode,
+                        untersuchdat_anschlussleitung_bewertung.kuerzel,
+                        untersuchdat_anschlussleitung_bewertung.charakt1,
+                        untersuchdat_anschlussleitung_bewertung.charakt2,
+                        untersuchdat_anschlussleitung_bewertung.quantnr1,
+                        untersuchdat_anschlussleitung_bewertung.quantnr2,
+                        untersuchdat_anschlussleitung_bewertung.streckenschaden,
+                        untersuchdat_anschlussleitung_bewertung.pos_von,
+                        untersuchdat_anschlussleitung_bewertung.pos_bis,
+                        untersuchdat_anschlussleitung_bewertung.foto_dateiname,
+                        untersuchdat_anschlussleitung_bewertung.film_dateiname,
+                        untersuchdat_anschlussleitung_bewertung.baujahr,
+                        untersuchdat_anschlussleitung_bewertung.bw_bs,
+                        untersuchdat_anschlussleitung_bewertung.untersuchtag,
+                        anschlussleitungen.leitnam,
+                        anschlussleitungen.material,
+                        anschlussleitungen.hoehe,
+                        anschlussleitungen.createdat
+                    FROM untersuchdat_anschlussleitung_bewertung, anschlussleitungen
+                    WHERE anschlussleitungen.leitnam = untersuchdat_anschlussleitung_bewertung.untersuchleit AND untersuchdat_anschlussleitung_bewertung.untersuchtag like ? 
+                """
+                data = (date, )
+                curs.execute(sql, data)
 
 
         for attr in curs.fetchall():
@@ -17842,10 +18405,13 @@ class Zustandsklassen_funkt:
             except:
                 pass
 
-            if attr1[1] in ["AZ", "B", "BS", "FZ", "MA", "OB", "P", "PC", "PCC", "PHB", "SFB", "SPB", "SB", "STZ",
-                            "SZB", "ZG", "Asbestzement","Beton", "Betonsegmente", "Fasezement", "Mauerwerk", "Ortbeton",
-                "Polymerbeton", "Polymermodifizierter Zementbeton", "Polyesterharz", "Stahlfaserbeton", "Spannbeton",
-                "Stahlbeton", "Steinzeug", "Spritzbeton", "Ziegelwerk"]:
+            if attr1[1] in ["AZ", "AZ Asbestzement", "B", "B Beton", "BS", "BS Betonsegmente ", "FZ", "FZ Fasezement",
+                            "MA", "MA Mauerwerk", "OB", "OB Ortbeton", "P", "P Polymerbeton", "PC", "PC Polymermodifizierter Zementbeton",
+                            "PCC", "PHB", "PHB Polyesterharz", "SFB", "SFB Stahlfaserbeton", "SPB", "SPB Spannbeton",
+                            "SB", "SB Stahlbeton", "STZ", "STZ Steinzeug", "SZB", "SZB Spritzbeton",
+                            "ZG", "ZG Ziegelwerk", "Asbestzement", "Beton", "Betonsegmente", "Fasezement", "Mauerwerk", "Ortbeton",
+                            "Polymerbeton", "Polymermodifizierter Zementbeton", "Polyesterharz", "Stahlfaserbeton", "Spannbeton",
+                            "Stahlbeton", "Steinzeug", "Spritzbeton", "Ziegelwerk"]:
                 bw_bs = "biegesteif"
                 x = attr1[0]
 
@@ -17860,9 +18426,13 @@ class Zustandsklassen_funkt:
                 except:
                     pass
 
-            if attr1[1] in ["CNS", "EIS", "GFK", "GG", "GGG", "KST", "PE", "PEHD", "PH", "PP", "PVC", "PVCU", "ST","Edelstahl", "Nichtidentifiziertes Metall", "Glasfaserverstärkter Kunststoff", "Grauguß",
-                "Duktiles Gußeisen", "Nichtidentifizier Kunststoff", "Polyethylen", "Polyesterharz",
-                "Polypropylen", "Polyvinylchlorid","Polyvinylchlorid hart", "Stahl"]:
+            if attr1[1] in ["CN", "CN Edelstahl", "EIS", "EIS Nichtidentifiziertes Metall", "GFK", "GFK Glasfaserverstärkter Kunststoff",
+                            "GG", "GG Grauguß", "GGG", "GGG Duktiles Gußeisen", "KST", "KST Nichtidentifizier Kunststoff",
+                            "PE", "PE Polyethylen", "PEHD", "PEHD Polyethylen", "PH", "PH Polyesterharz", "PP", "PP Polypropylen",
+                            "PVC", "PVC Polyvinylchlorid", "PVCU", "PVCU Polyvinylchlorid hart", "ST", "ST Stahl",
+                            "Edelstahl", "Nichtidentifiziertes Metall", "Glasfaserverstärkter Kunststoff", "Grauguß",
+                            "Duktiles Gußeisen", "Nichtidentifizier Kunststoff", "Polyethylen", "Polyesterharz",
+                            "Polypropylen", "Polyvinylchlorid", "Polyvinylchlorid hart", "Stahl"]:
                 bw_bs = 'biegeweich'
                 x = attr1[0]
 
@@ -17882,31 +18452,60 @@ class Zustandsklassen_funkt:
         db = spatialite_connect(data)
         curs = db.cursor()
 
-        sql = """
-            SELECT
-                Untersuchdat_schacht_bewertung.pk,
-                Untersuchdat_schacht_bewertung.untersuchsch,
-                Untersuchdat_schacht_bewertung.id,
-                Untersuchdat_schacht_bewertung.videozaehler,
-                Untersuchdat_schacht_bewertung.timecode,
-                Untersuchdat_schacht_bewertung.kuerzel,
-                Untersuchdat_schacht_bewertung.charakt1,
-                Untersuchdat_schacht_bewertung.charakt2,
-                Untersuchdat_schacht_bewertung.quantnr1,
-                Untersuchdat_schacht_bewertung.quantnr2,
-                Untersuchdat_schacht_bewertung.streckenschaden,
-                Untersuchdat_schacht_bewertung.pos_von,
-                Untersuchdat_schacht_bewertung.pos_bis,
-                Untersuchdat_schacht_bewertung.bereich,
-                Untersuchdat_schacht_bewertung.foto_dateiname,
-                Untersuchdat_schacht_bewertung.bw_bs,
-                Untersuchdat_schacht_bewertung.createdat
-            FROM Untersuchdat_schacht_bewertung
-            WHERE Untersuchdat_schacht_bewertung.createdat like ? 
-        """
-        data = (date,)
+        if self.datetype == 'Importdatum':
 
-        curs.execute(sql, data)
+            sql = """
+                SELECT
+                    Untersuchdat_schacht_bewertung.pk,
+                    Untersuchdat_schacht_bewertung.untersuchsch,
+                    Untersuchdat_schacht_bewertung.id,
+                    Untersuchdat_schacht_bewertung.videozaehler,
+                    Untersuchdat_schacht_bewertung.timecode,
+                    Untersuchdat_schacht_bewertung.kuerzel,
+                    Untersuchdat_schacht_bewertung.charakt1,
+                    Untersuchdat_schacht_bewertung.charakt2,
+                    Untersuchdat_schacht_bewertung.quantnr1,
+                    Untersuchdat_schacht_bewertung.quantnr2,
+                    Untersuchdat_schacht_bewertung.streckenschaden,
+                    Untersuchdat_schacht_bewertung.pos_von,
+                    Untersuchdat_schacht_bewertung.pos_bis,
+                    Untersuchdat_schacht_bewertung.bereich,
+                    Untersuchdat_schacht_bewertung.foto_dateiname,
+                    Untersuchdat_schacht_bewertung.bw_bs,
+                    Untersuchdat_schacht_bewertung.createdat
+                FROM Untersuchdat_schacht_bewertung
+                WHERE Untersuchdat_schacht_bewertung.createdat like ? 
+            """
+            data = (date,)
+
+            curs.execute(sql, data)
+
+        if self.datetype == 'Befahrungsdatum':
+            sql = """
+                SELECT
+                    Untersuchdat_schacht_bewertung.pk,
+                    Untersuchdat_schacht_bewertung.untersuchsch,
+                    Untersuchdat_schacht_bewertung.id,
+                    Untersuchdat_schacht_bewertung.videozaehler,
+                    Untersuchdat_schacht_bewertung.timecode,
+                    Untersuchdat_schacht_bewertung.kuerzel,
+                    Untersuchdat_schacht_bewertung.charakt1,
+                    Untersuchdat_schacht_bewertung.charakt2,
+                    Untersuchdat_schacht_bewertung.quantnr1,
+                    Untersuchdat_schacht_bewertung.quantnr2,
+                    Untersuchdat_schacht_bewertung.streckenschaden,
+                    Untersuchdat_schacht_bewertung.pos_von,
+                    Untersuchdat_schacht_bewertung.pos_bis,
+                    Untersuchdat_schacht_bewertung.bereich,
+                    Untersuchdat_schacht_bewertung.foto_dateiname,
+                    Untersuchdat_schacht_bewertung.bw_bs,
+                    Untersuchdat_schacht_bewertung.untersuchtag
+                FROM Untersuchdat_schacht_bewertung
+                WHERE Untersuchdat_schacht_bewertung.untersuchtag like ? 
+            """
+            data = (date,)
+
+            curs.execute(sql, data)
 
         for attr in curs.fetchall():
             try:
@@ -20827,93 +21426,185 @@ class Zustandsklassen_funkt:
         db = spatialite_connect(data)
         curs = db.cursor()
 
-        if self.check_cb['cb16']:
-            sql = """SELECT
-                        untersuchdat_haltung_bewertung.pk,
-                        untersuchdat_haltung_bewertung.untersuchhal,
-                        untersuchdat_haltung_bewertung.untersuchrichtung,
-                        untersuchdat_haltung_bewertung.schoben,
-                        untersuchdat_haltung_bewertung.schunten,
-                        untersuchdat_haltung_bewertung.id,
-                        untersuchdat_haltung_bewertung.videozaehler,
-                        untersuchdat_haltung_bewertung.inspektionslaenge,
-                        untersuchdat_haltung_bewertung.station,
-                        untersuchdat_haltung_bewertung.timecode,
-                        untersuchdat_haltung_bewertung.kuerzel,
-                        untersuchdat_haltung_bewertung.charakt1,
-                        untersuchdat_haltung_bewertung.charakt2,
-                        untersuchdat_haltung_bewertung.quantnr1,
-                        untersuchdat_haltung_bewertung.quantnr2,
-                        untersuchdat_haltung_bewertung.streckenschaden,
-                        untersuchdat_haltung_bewertung.pos_von,
-                        untersuchdat_haltung_bewertung.pos_bis,
-                        untersuchdat_haltung_bewertung.foto_dateiname,
-                        untersuchdat_haltung_bewertung.film_dateiname,
-                        NULL,
-                        untersuchdat_haltung_bewertung.bw_bs,
-                        untersuchdat_haltung_bewertung.createdat,
-                        haltungen.haltnam,
-                        haltungen.material,
-                        haltungen.hoehe,
-                        haltungen.createdat,
-                        untersuchdat_haltung_bewertung.Zustandsklasse_D,
-                        untersuchdat_haltung_bewertung.Zustandsklasse_S,
-                        untersuchdat_haltung_bewertung.Zustandsklasse_B
-                        FROM
-                        untersuchdat_haltung_bewertung, haltungen
-                        WHERE
-                        haltungen.haltnam = untersuchdat_haltung_bewertung.untersuchhal
-                        AND(untersuchdat_haltung_bewertung.Zustandsklasse_D = 'Einzelfallbetrachtung'
-                        OR
-                        untersuchdat_haltung_bewertung.Zustandsklasse_B = 'Einzelfallbetrachtung'
-                        OR
-                        untersuchdat_haltung_bewertung.Zustandsklasse_S = 'Einzelfallbetrachtung') AND untersuchdat_haltung_bewertung.createdat like ? """
-            data = (date,)
-            curs.execute(sql, data)
+        if self.datetype == 'Importdatum':
 
-        if self.check_cb['cb18']:
-            sql = """SELECT
-                        untersuchdat_haltung_bewertung.pk,
-                        untersuchdat_haltung_bewertung.untersuchhal,
-                        untersuchdat_haltung_bewertung.untersuchrichtung,
-                        untersuchdat_haltung_bewertung.schoben,
-                        untersuchdat_haltung_bewertung.schunten,
-                        untersuchdat_haltung_bewertung.id,
-                        untersuchdat_haltung_bewertung.videozaehler,
-                        untersuchdat_haltung_bewertung.inspektionslaenge,
-                        untersuchdat_haltung_bewertung.station,
-                        untersuchdat_haltung_bewertung.timecode,
-                        untersuchdat_haltung_bewertung.kuerzel,
-                        untersuchdat_haltung_bewertung.charakt1,
-                        untersuchdat_haltung_bewertung.charakt2,
-                        untersuchdat_haltung_bewertung.quantnr1,
-                        untersuchdat_haltung_bewertung.quantnr2,
-                        untersuchdat_haltung_bewertung.streckenschaden,
-                        untersuchdat_haltung_bewertung.pos_von,
-                        untersuchdat_haltung_bewertung.pos_bis,
-                        untersuchdat_haltung_bewertung.foto_dateiname,
-                        untersuchdat_haltung_bewertung.film_dateiname,
-                        NULL,
-                        untersuchdat_haltung_bewertung.bw_bs,
-                        untersuchdat_haltung_bewertung.createdat,
-                        anschlussleitungen.leitnam,
-                        anschlussleitungen.material,
-                        anschlussleitungen.hoehe,
-                        anschlussleitungen.createdat,
-                        untersuchdat_haltung_bewertung.Zustandsklasse_D,
-                        untersuchdat_haltung_bewertung.Zustandsklasse_S,
-                        untersuchdat_haltung_bewertung.Zustandsklasse_B
-                        FROM
-                        untersuchdat_haltung_bewertung, haltungen
-                        WHERE
-                        anschlussleitungen.leitnam = untersuchdat_haltung_bewertung.untersuchleit
-                        AND(untersuchdat_haltung_bewertung.Zustandsklasse_D = 'Einzelfallbetrachtung'
-                        OR
-                        untersuchdat_haltung_bewertung.Zustandsklasse_B = 'Einzelfallbetrachtung'
-                        OR
-                        untersuchdat_haltung_bewertung.Zustandsklasse_S = 'Einzelfallbetrachtung') AND untersuchdat_haltung_bewertung.createdat like ? """
-            data = (date,)
-            curs.execute(sql, data)
+            if self.check_cb['cb16']:
+                sql = """SELECT
+                            untersuchdat_haltung_bewertung.pk,
+                            untersuchdat_haltung_bewertung.untersuchhal,
+                            NULL,
+                            untersuchdat_haltung_bewertung.schoben,
+                            untersuchdat_haltung_bewertung.schunten,
+                            untersuchdat_haltung_bewertung.id,
+                            untersuchdat_haltung_bewertung.videozaehler,
+                            untersuchdat_haltung_bewertung.inspektionslaenge,
+                            untersuchdat_haltung_bewertung.station,
+                            untersuchdat_haltung_bewertung.timecode,
+                            untersuchdat_haltung_bewertung.kuerzel,
+                            untersuchdat_haltung_bewertung.charakt1,
+                            untersuchdat_haltung_bewertung.charakt2,
+                            untersuchdat_haltung_bewertung.quantnr1,
+                            untersuchdat_haltung_bewertung.quantnr2,
+                            untersuchdat_haltung_bewertung.streckenschaden,
+                            untersuchdat_haltung_bewertung.pos_von,
+                            untersuchdat_haltung_bewertung.pos_bis,
+                            untersuchdat_haltung_bewertung.foto_dateiname,
+                            untersuchdat_haltung_bewertung.film_dateiname,
+                            NULL,
+                            untersuchdat_haltung_bewertung.bw_bs,
+                            untersuchdat_haltung_bewertung.createdat,
+                            haltungen.haltnam,
+                            haltungen.material,
+                            haltungen.hoehe,
+                            haltungen.untersuchtag,
+                            untersuchdat_haltung_bewertung.Zustandsklasse_D,
+                            untersuchdat_haltung_bewertung.Zustandsklasse_S,
+                            untersuchdat_haltung_bewertung.Zustandsklasse_B
+                            FROM
+                            untersuchdat_haltung_bewertung, haltungen
+                            WHERE
+                            haltungen.haltnam = untersuchdat_haltung_bewertung.untersuchhal
+                            AND(untersuchdat_haltung_bewertung.Zustandsklasse_D = 'Einzelfallbetrachtung'
+                            OR
+                            untersuchdat_haltung_bewertung.Zustandsklasse_B = 'Einzelfallbetrachtung'
+                            OR
+                            untersuchdat_haltung_bewertung.Zustandsklasse_S = 'Einzelfallbetrachtung') AND untersuchdat_haltung_bewertung.createdat like ? """
+                data = (date,)
+                curs.execute(sql, data)
+
+            if self.check_cb['cb18']:
+                sql = """SELECT
+                            untersuchdat_haltung_bewertung.pk,
+                            untersuchdat_haltung_bewertung.untersuchhal,
+                            NULL,
+                            untersuchdat_haltung_bewertung.schoben,
+                            untersuchdat_haltung_bewertung.schunten,
+                            untersuchdat_haltung_bewertung.id,
+                            untersuchdat_haltung_bewertung.videozaehler,
+                            untersuchdat_haltung_bewertung.inspektionslaenge,
+                            untersuchdat_haltung_bewertung.station,
+                            untersuchdat_haltung_bewertung.timecode,
+                            untersuchdat_haltung_bewertung.kuerzel,
+                            untersuchdat_haltung_bewertung.charakt1,
+                            untersuchdat_haltung_bewertung.charakt2,
+                            untersuchdat_haltung_bewertung.quantnr1,
+                            untersuchdat_haltung_bewertung.quantnr2,
+                            untersuchdat_haltung_bewertung.streckenschaden,
+                            untersuchdat_haltung_bewertung.pos_von,
+                            untersuchdat_haltung_bewertung.pos_bis,
+                            untersuchdat_haltung_bewertung.foto_dateiname,
+                            untersuchdat_haltung_bewertung.film_dateiname,
+                            NULL,
+                            untersuchdat_haltung_bewertung.bw_bs,
+                            untersuchdat_haltung_bewertung.createdat,
+                            anschlussleitungen.leitnam,
+                            anschlussleitungen.material,
+                            anschlussleitungen.hoehe,
+                            anschlussleitungen.createdat,
+                            untersuchdat_haltung_bewertung.Zustandsklasse_D,
+                            untersuchdat_haltung_bewertung.Zustandsklasse_S,
+                            untersuchdat_haltung_bewertung.Zustandsklasse_B
+                            FROM
+                            untersuchdat_haltung_bewertung, haltungen
+                            WHERE
+                            anschlussleitungen.leitnam = untersuchdat_haltung_bewertung.untersuchleit
+                            AND(untersuchdat_haltung_bewertung.Zustandsklasse_D = 'Einzelfallbetrachtung'
+                            OR
+                            untersuchdat_haltung_bewertung.Zustandsklasse_B = 'Einzelfallbetrachtung'
+                            OR
+                            untersuchdat_haltung_bewertung.Zustandsklasse_S = 'Einzelfallbetrachtung') AND untersuchdat_haltung_bewertung.createdat like ? """
+                data = (date,)
+                curs.execute(sql, data)
+
+        if self.datetype == 'Befahrungsdatum':
+
+            if self.check_cb['cb16']:
+                sql = """SELECT
+                            untersuchdat_haltung_bewertung.pk,
+                            untersuchdat_haltung_bewertung.untersuchhal,
+                            NULL,
+                            untersuchdat_haltung_bewertung.schoben,
+                            untersuchdat_haltung_bewertung.schunten,
+                            untersuchdat_haltung_bewertung.id,
+                            untersuchdat_haltung_bewertung.videozaehler,
+                            untersuchdat_haltung_bewertung.inspektionslaenge,
+                            untersuchdat_haltung_bewertung.station,
+                            untersuchdat_haltung_bewertung.timecode,
+                            untersuchdat_haltung_bewertung.kuerzel,
+                            untersuchdat_haltung_bewertung.charakt1,
+                            untersuchdat_haltung_bewertung.charakt2,
+                            untersuchdat_haltung_bewertung.quantnr1,
+                            untersuchdat_haltung_bewertung.quantnr2,
+                            untersuchdat_haltung_bewertung.streckenschaden,
+                            untersuchdat_haltung_bewertung.pos_von,
+                            untersuchdat_haltung_bewertung.pos_bis,
+                            untersuchdat_haltung_bewertung.foto_dateiname,
+                            untersuchdat_haltung_bewertung.film_dateiname,
+                            NULL,
+                            untersuchdat_haltung_bewertung.bw_bs,
+                            untersuchdat_haltung_bewertung.untersuchtag,
+                            haltungen.haltnam,
+                            haltungen.material,
+                            haltungen.hoehe,
+                            haltungen.createdat,
+                            untersuchdat_haltung_bewertung.Zustandsklasse_D,
+                            untersuchdat_haltung_bewertung.Zustandsklasse_S,
+                            untersuchdat_haltung_bewertung.Zustandsklasse_B
+                            FROM
+                            untersuchdat_haltung_bewertung, haltungen
+                            WHERE
+                            haltungen.haltnam = untersuchdat_haltung_bewertung.untersuchhal
+                            AND(untersuchdat_haltung_bewertung.Zustandsklasse_D = 'Einzelfallbetrachtung'
+                            OR
+                            untersuchdat_haltung_bewertung.Zustandsklasse_B = 'Einzelfallbetrachtung'
+                            OR
+                            untersuchdat_haltung_bewertung.Zustandsklasse_S = 'Einzelfallbetrachtung') AND untersuchdat_haltung_bewertung.untersuchtag like ? """
+                data = (date,)
+                curs.execute(sql, data)
+
+            if self.check_cb['cb18']:
+                sql = """SELECT
+                            untersuchdat_haltung_bewertung.pk,
+                            untersuchdat_haltung_bewertung.untersuchhal,
+                            NULL,
+                            untersuchdat_haltung_bewertung.schoben,
+                            untersuchdat_haltung_bewertung.schunten,
+                            untersuchdat_haltung_bewertung.id,
+                            untersuchdat_haltung_bewertung.videozaehler,
+                            untersuchdat_haltung_bewertung.inspektionslaenge,
+                            untersuchdat_haltung_bewertung.station,
+                            untersuchdat_haltung_bewertung.timecode,
+                            untersuchdat_haltung_bewertung.kuerzel,
+                            untersuchdat_haltung_bewertung.charakt1,
+                            untersuchdat_haltung_bewertung.charakt2,
+                            untersuchdat_haltung_bewertung.quantnr1,
+                            untersuchdat_haltung_bewertung.quantnr2,
+                            untersuchdat_haltung_bewertung.streckenschaden,
+                            untersuchdat_haltung_bewertung.pos_von,
+                            untersuchdat_haltung_bewertung.pos_bis,
+                            untersuchdat_haltung_bewertung.foto_dateiname,
+                            untersuchdat_haltung_bewertung.film_dateiname,
+                            NULL,
+                            untersuchdat_haltung_bewertung.bw_bs,
+                            untersuchdat_haltung_bewertung.untersuchtag,
+                            anschlussleitungen.leitnam,
+                            anschlussleitungen.material,
+                            anschlussleitungen.hoehe,
+                            anschlussleitungen.createdat,
+                            untersuchdat_haltung_bewertung.Zustandsklasse_D,
+                            untersuchdat_haltung_bewertung.Zustandsklasse_S,
+                            untersuchdat_haltung_bewertung.Zustandsklasse_B
+                            FROM
+                            untersuchdat_haltung_bewertung, haltungen
+                            WHERE
+                            anschlussleitungen.leitnam = untersuchdat_haltung_bewertung.untersuchleit
+                            AND(untersuchdat_haltung_bewertung.Zustandsklasse_D = 'Einzelfallbetrachtung'
+                            OR
+                            untersuchdat_haltung_bewertung.Zustandsklasse_B = 'Einzelfallbetrachtung'
+                            OR
+                            untersuchdat_haltung_bewertung.Zustandsklasse_S = 'Einzelfallbetrachtung') AND untersuchdat_haltung_bewertung.untersuchtag like ? """
+                data = (date,)
+                curs.execute(sql, data)
 
         for attr in curs.fetchall():
             liste_pk.append(attr[0])
@@ -23167,50 +23858,97 @@ class Zustandsklassen_funkt:
         db = spatialite_connect(data)
         curs = db.cursor()
 
+        if self.datetype == 'Importdatum':
 
-        if self.check_cb['cb18']:
-            sql = """SELECT
-                        untersuchdat_anschlussleitung_bewertung.pk,
-                        untersuchdat_anschlussleitung_bewertung.untersuchleit,
-                        untersuchdat_anschlussleitung_bewertung.untersuchrichtung,
-                        untersuchdat_anschlussleitung_bewertung.schoben,
-                        untersuchdat_anschlussleitung_bewertung.schunten,
-                        untersuchdat_anschlussleitung_bewertung.id,
-                        untersuchdat_anschlussleitung_bewertung.videozaehler,
-                        untersuchdat_anschlussleitung_bewertung.inspektionslaenge,
-                        untersuchdat_anschlussleitung_bewertung.station,
-                        untersuchdat_anschlussleitung_bewertung.timecode,
-                        untersuchdat_anschlussleitung_bewertung.kuerzel,
-                        untersuchdat_anschlussleitung_bewertung.charakt1,
-                        untersuchdat_anschlussleitung_bewertung.charakt2,
-                        untersuchdat_anschlussleitung_bewertung.quantnr1,
-                        untersuchdat_anschlussleitung_bewertung.quantnr2,
-                        untersuchdat_anschlussleitung_bewertung.streckenschaden,
-                        untersuchdat_anschlussleitung_bewertung.pos_von,
-                        untersuchdat_anschlussleitung_bewertung.pos_bis,
-                        untersuchdat_anschlussleitung_bewertung.foto_dateiname,
-                        untersuchdat_anschlussleitung_bewertung.film_dateiname,
-                        untersuchdat_anschlussleitung_bewertung.baujahr,
-                        untersuchdat_anschlussleitung_bewertung.bw_bs,
-                        untersuchdat_anschlussleitung_bewertung.createdat,
-                        anschlussleitungen.leitnam,
-                        anschlussleitungen.material,
-                        anschlussleitungen.hoehe,
-                        anschlussleitungen.createdat,
-                        untersuchdat_anschlussleitung_bewertung.Zustandsklasse_D,
-                        untersuchdat_anschlussleitung_bewertung.Zustandsklasse_S,
-                        untersuchdat_anschlussleitung_bewertung.Zustandsklasse_B
-                        FROM
-                        untersuchdat_anschlussleitung_bewertung, anschlussleitungen
-                        WHERE
-                        anschlussleitungen.leitnam = untersuchdat_anschlussleitung_bewertung.untersuchleit
-                        AND(untersuchdat_anschlussleitung_bewertung.Zustandsklasse_D = 'Einzelfallbetrachtung'
-                        OR
-                        untersuchdat_anschlussleitung_bewertung.Zustandsklasse_B = 'Einzelfallbetrachtung'
-                        OR
-                        untersuchdat_anschlussleitung_bewertung.Zustandsklasse_S = 'Einzelfallbetrachtung') AND untersuchdat_anschlussleitung_bewertung.createdat like ? """
-            data = (date,)
-            curs.execute(sql, data)
+            if self.check_cb['cb18']:
+                sql = """SELECT
+                            untersuchdat_anschlussleitung_bewertung.pk,
+                            untersuchdat_anschlussleitung_bewertung.untersuchleit,
+                            untersuchdat_anschlussleitung_bewertung.untersuchrichtung,
+                            untersuchdat_anschlussleitung_bewertung.schoben,
+                            untersuchdat_anschlussleitung_bewertung.schunten,
+                            untersuchdat_anschlussleitung_bewertung.id,
+                            untersuchdat_anschlussleitung_bewertung.videozaehler,
+                            untersuchdat_anschlussleitung_bewertung.inspektionslaenge,
+                            untersuchdat_anschlussleitung_bewertung.station,
+                            untersuchdat_anschlussleitung_bewertung.timecode,
+                            untersuchdat_anschlussleitung_bewertung.kuerzel,
+                            untersuchdat_anschlussleitung_bewertung.charakt1,
+                            untersuchdat_anschlussleitung_bewertung.charakt2,
+                            untersuchdat_anschlussleitung_bewertung.quantnr1,
+                            untersuchdat_anschlussleitung_bewertung.quantnr2,
+                            untersuchdat_anschlussleitung_bewertung.streckenschaden,
+                            untersuchdat_anschlussleitung_bewertung.pos_von,
+                            untersuchdat_anschlussleitung_bewertung.pos_bis,
+                            untersuchdat_anschlussleitung_bewertung.foto_dateiname,
+                            untersuchdat_anschlussleitung_bewertung.film_dateiname,
+                            untersuchdat_anschlussleitung_bewertung.baujahr,
+                            untersuchdat_anschlussleitung_bewertung.bw_bs,
+                            untersuchdat_anschlussleitung_bewertung.createdat,
+                            anschlussleitungen.leitnam,
+                            anschlussleitungen.material,
+                            anschlussleitungen.hoehe,
+                            anschlussleitungen.createdat,
+                            untersuchdat_anschlussleitung_bewertung.Zustandsklasse_D,
+                            untersuchdat_anschlussleitung_bewertung.Zustandsklasse_S,
+                            untersuchdat_anschlussleitung_bewertung.Zustandsklasse_B
+                            FROM
+                            untersuchdat_anschlussleitung_bewertung, anschlussleitungen
+                            WHERE
+                            anschlussleitungen.leitnam = untersuchdat_anschlussleitung_bewertung.untersuchleit
+                            AND(untersuchdat_anschlussleitung_bewertung.Zustandsklasse_D = 'Einzelfallbetrachtung'
+                            OR
+                            untersuchdat_anschlussleitung_bewertung.Zustandsklasse_B = 'Einzelfallbetrachtung'
+                            OR
+                            untersuchdat_anschlussleitung_bewertung.Zustandsklasse_S = 'Einzelfallbetrachtung') AND untersuchdat_anschlussleitung_bewertung.createdat like ? """
+                data = (date,)
+                curs.execute(sql, data)
+
+        if self.datetype == 'Befahrungsdatum':
+
+            if self.check_cb['cb18']:
+                sql = """SELECT
+                            untersuchdat_anschlussleitung_bewertung.pk,
+                            untersuchdat_anschlussleitung_bewertung.untersuchleit,
+                            untersuchdat_anschlussleitung_bewertung.untersuchrichtung,
+                            untersuchdat_anschlussleitung_bewertung.schoben,
+                            untersuchdat_anschlussleitung_bewertung.schunten,
+                            untersuchdat_anschlussleitung_bewertung.id,
+                            untersuchdat_anschlussleitung_bewertung.videozaehler,
+                            untersuchdat_anschlussleitung_bewertung.inspektionslaenge,
+                            untersuchdat_anschlussleitung_bewertung.station,
+                            untersuchdat_anschlussleitung_bewertung.timecode,
+                            untersuchdat_anschlussleitung_bewertung.kuerzel,
+                            untersuchdat_anschlussleitung_bewertung.charakt1,
+                            untersuchdat_anschlussleitung_bewertung.charakt2,
+                            untersuchdat_anschlussleitung_bewertung.quantnr1,
+                            untersuchdat_anschlussleitung_bewertung.quantnr2,
+                            untersuchdat_anschlussleitung_bewertung.streckenschaden,
+                            untersuchdat_anschlussleitung_bewertung.pos_von,
+                            untersuchdat_anschlussleitung_bewertung.pos_bis,
+                            untersuchdat_anschlussleitung_bewertung.foto_dateiname,
+                            untersuchdat_anschlussleitung_bewertung.film_dateiname,
+                            untersuchdat_anschlussleitung_bewertung.baujahr,
+                            untersuchdat_anschlussleitung_bewertung.bw_bs,
+                            untersuchdat_anschlussleitung_bewertung.untersuchtag,
+                            anschlussleitungen.leitnam,
+                            anschlussleitungen.material,
+                            anschlussleitungen.hoehe,
+                            anschlussleitungen.createdat,
+                            untersuchdat_anschlussleitung_bewertung.Zustandsklasse_D,
+                            untersuchdat_anschlussleitung_bewertung.Zustandsklasse_S,
+                            untersuchdat_anschlussleitung_bewertung.Zustandsklasse_B
+                            FROM
+                            untersuchdat_anschlussleitung_bewertung, anschlussleitungen
+                            WHERE
+                            anschlussleitungen.leitnam = untersuchdat_anschlussleitung_bewertung.untersuchleit
+                            AND(untersuchdat_anschlussleitung_bewertung.Zustandsklasse_D = 'Einzelfallbetrachtung'
+                            OR
+                            untersuchdat_anschlussleitung_bewertung.Zustandsklasse_B = 'Einzelfallbetrachtung'
+                            OR
+                            untersuchdat_anschlussleitung_bewertung.Zustandsklasse_S = 'Einzelfallbetrachtung') AND untersuchdat_anschlussleitung_bewertung.untersuchtag like ? """
+                data = (date,)
+                curs.execute(sql, data)
 
         for attr in curs.fetchall():
             liste_pk.append(attr[0])
@@ -25460,41 +26198,80 @@ class Zustandsklassen_funkt:
         data = db
         db = spatialite_connect(data)
         curs = db.cursor()
-        sql = """SELECT
-                        Untersuchdat_schacht_bewertung.pk,
-                        Untersuchdat_schacht_bewertung.untersuchsch,
-                        Untersuchdat_schacht_bewertung.id,
-                        Untersuchdat_schacht_bewertung.videozaehler,
-                        Untersuchdat_schacht_bewertung.timecode,
-                        Untersuchdat_schacht_bewertung.kuerzel,
-                        Untersuchdat_schacht_bewertung.charakt1,
-                        Untersuchdat_schacht_bewertung.charakt2,
-                        Untersuchdat_schacht_bewertung.quantnr1,
-                        Untersuchdat_schacht_bewertung.quantnr2,
-                        Untersuchdat_schacht_bewertung.streckenschaden,
-                        Untersuchdat_schacht_bewertung.pos_von,
-                        Untersuchdat_schacht_bewertung.pos_bis,
-                        Untersuchdat_schacht_bewertung.bereich,
-                        Untersuchdat_schacht_bewertung.foto_dateiname,
-                        Untersuchdat_schacht_bewertung.bw_bs,
-                        Untersuchdat_schacht_bewertung.createdat,
-                                schaechte.schnam,
-                                schaechte.material,
-                                schaechte.createdat,
-                                Untersuchdat_schacht_bewertung.Zustandsklasse_D,
-                                Untersuchdat_schacht_bewertung.Zustandsklasse_S,
-                                Untersuchdat_schacht_bewertung.Zustandsklasse_B
-                                FROM
-                                Untersuchdat_schacht_bewertung, schaechte
-                                WHERE
-                                schaechte.schnam = Untersuchdat_schacht_bewertung.untersuchsch
-                                AND(Untersuchdat_schacht_bewertung.Zustandsklasse_D = 'Einzelfallbetrachtung'
-                                OR
-                                Untersuchdat_schacht_bewertung.Zustandsklasse_B = 'Einzelfallbetrachtung'
-                                OR
-                                Untersuchdat_schacht_bewertung.Zustandsklasse_S = 'Einzelfallbetrachtung') AND Untersuchdat_schacht_bewertung.createdat like ? """
-        data = (date,)
-        curs.execute(sql, data)
+        if self.datetype == 'Importdatum':
+            sql = """SELECT
+                            Untersuchdat_schacht_bewertung.pk,
+                            Untersuchdat_schacht_bewertung.untersuchsch,
+                            Untersuchdat_schacht_bewertung.id,
+                            Untersuchdat_schacht_bewertung.videozaehler,
+                            Untersuchdat_schacht_bewertung.timecode,
+                            Untersuchdat_schacht_bewertung.kuerzel,
+                            Untersuchdat_schacht_bewertung.charakt1,
+                            Untersuchdat_schacht_bewertung.charakt2,
+                            Untersuchdat_schacht_bewertung.quantnr1,
+                            Untersuchdat_schacht_bewertung.quantnr2,
+                            Untersuchdat_schacht_bewertung.streckenschaden,
+                            Untersuchdat_schacht_bewertung.pos_von,
+                            Untersuchdat_schacht_bewertung.pos_bis,
+                            Untersuchdat_schacht_bewertung.bereich,
+                            Untersuchdat_schacht_bewertung.foto_dateiname,
+                            Untersuchdat_schacht_bewertung.bw_bs,
+                            Untersuchdat_schacht_bewertung.createdat,
+                                    schaechte.schnam,
+                                    schaechte.material,
+                                    schaechte.createdat,
+                                    Untersuchdat_schacht_bewertung.Zustandsklasse_D,
+                                    Untersuchdat_schacht_bewertung.Zustandsklasse_S,
+                                    Untersuchdat_schacht_bewertung.Zustandsklasse_B
+                                    FROM
+                                    Untersuchdat_schacht_bewertung, schaechte
+                                    WHERE
+                                    schaechte.schnam = Untersuchdat_schacht_bewertung.untersuchsch
+                                    AND(Untersuchdat_schacht_bewertung.Zustandsklasse_D = 'Einzelfallbetrachtung'
+                                    OR
+                                    Untersuchdat_schacht_bewertung.Zustandsklasse_B = 'Einzelfallbetrachtung'
+                                    OR
+                                    Untersuchdat_schacht_bewertung.Zustandsklasse_S = 'Einzelfallbetrachtung') AND Untersuchdat_schacht_bewertung.createdat like ? """
+            data = (date,)
+            curs.execute(sql, data)
+
+        if self.datetype == 'Befahrungsdatum':
+            sql = """SELECT
+                            Untersuchdat_schacht_bewertung.pk,
+                            Untersuchdat_schacht_bewertung.untersuchsch,
+                            Untersuchdat_schacht_bewertung.id,
+                            Untersuchdat_schacht_bewertung.videozaehler,
+                            Untersuchdat_schacht_bewertung.timecode,
+                            Untersuchdat_schacht_bewertung.kuerzel,
+                            Untersuchdat_schacht_bewertung.charakt1,
+                            Untersuchdat_schacht_bewertung.charakt2,
+                            Untersuchdat_schacht_bewertung.quantnr1,
+                            Untersuchdat_schacht_bewertung.quantnr2,
+                            Untersuchdat_schacht_bewertung.streckenschaden,
+                            Untersuchdat_schacht_bewertung.pos_von,
+                            Untersuchdat_schacht_bewertung.pos_bis,
+                            Untersuchdat_schacht_bewertung.bereich,
+                            Untersuchdat_schacht_bewertung.foto_dateiname,
+                            Untersuchdat_schacht_bewertung.bw_bs,
+                            Untersuchdat_schacht_bewertung.untersuchtag,
+                                    schaechte.schnam,
+                                    schaechte.material,
+                                    schaechte.createdat,
+                                    Untersuchdat_schacht_bewertung.Zustandsklasse_D,
+                                    Untersuchdat_schacht_bewertung.Zustandsklasse_S,
+                                    Untersuchdat_schacht_bewertung.Zustandsklasse_B
+                                    FROM
+                                    Untersuchdat_schacht_bewertung, schaechte
+                                    WHERE
+                                    schaechte.schnam = Untersuchdat_schacht_bewertung.untersuchsch
+                                    AND (Untersuchdat_schacht_bewertung.Zustandsklasse_D = 'Einzelfallbetrachtung'
+                                    OR
+                                    Untersuchdat_schacht_bewertung.Zustandsklasse_B = 'Einzelfallbetrachtung'
+                                    OR
+                                    Untersuchdat_schacht_bewertung.Zustandsklasse_S = 'Einzelfallbetrachtung') AND Untersuchdat_schacht_bewertung.untersuchtag like ? """
+            data = (date,)
+            curs.execute(sql, data)
+
 
 
         for attr in curs.fetchall():

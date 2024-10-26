@@ -48,7 +48,8 @@ import sys
 from ctypes.util import find_library
 
 # Used by EventManager in override.py
-from inspect import getargspec, signature
+#getargspec
+from inspect import getfullargspec, signature
 
 logger = logging.getLogger(__name__)
 
@@ -1907,7 +1908,7 @@ class EventManager(_Ctype):
         if not hasattr(callback, "__call__"):  # callable()
             raise VLCException("%s required: %r" % ("callable", callback))
         # check that the callback expects arguments
-        if not any(getargspec(callback)[:2]):  # list(...)
+        if not any(getfullargspec(callback)[:2]):  # list(...)
             raise VLCException("%s required: %r" % ("argument", callback))
 
         if self._callback_handler is None:

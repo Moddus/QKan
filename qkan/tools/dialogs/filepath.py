@@ -14,6 +14,7 @@ from qgis.PyQt.QtWidgets import (
     QTextBrowser,
 )
 
+
 from qkan import QKan
 
 from . import QKanDBDialog
@@ -47,14 +48,15 @@ class QgsFileDialog(QKanDBDialog, FORM_CLASS_filepath):  # type: ignore
         self.button_box.helpRequested.connect(self.click_help)
 
     def click_help(self) -> None:
-        help_file = "https://qkan.eu/Qkan_Formulare.html#datenbank-aktualisieren"
+        help_file = "https://www.fh-aachen.de/fileadmin/people/fb02_hoettges/" \
+                    "QKan/Doku/Qkan_Formulare.html#datenbank-aktualisieren"
         os.startfile(help_file)
 
     def select_videopath(self) -> None:
 
         ordner_video = QFileDialog.getExistingDirectory(
             self,
-            self.tr("Ordner Pfad")
+            self.tr("Dateiname Film")
         )
         if ordner_video:
             self.lineEdit.setText(ordner_video)
@@ -63,7 +65,7 @@ class QgsFileDialog(QKanDBDialog, FORM_CLASS_filepath):  # type: ignore
 
         ordner_bild = QFileDialog.getExistingDirectory(
             self,
-            self.tr("Ordner Pfad")
+            self.tr("Dateiname Foto")
         )
         if ordner_bild:
             self.lineEdit_2.setText(ordner_bild)
@@ -72,7 +74,7 @@ class QgsFileDialog(QKanDBDialog, FORM_CLASS_filepath):  # type: ignore
 
         ordner_bild = QFileDialog.getExistingDirectory(
             self,
-            self.tr("Ordner Pfad")
+            self.tr("Dateiname Foto")
         )
         if ordner_bild:
             self.lineEdit_3.setText(ordner_bild)

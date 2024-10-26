@@ -145,7 +145,7 @@ def layersadapt(
             raise Exception(f"{__name__}: {errormsg}")
 
         actversion = dbQK.actDbVersion
-        logger.debug("actDBversion: {}".format(actversion))
+        logger.debug("actDBversion: {}".format(actDBversion))
     else:
         if (anpassen_ProjektMakros
             or anpassen_Datenbankanbindung

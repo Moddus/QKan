@@ -1680,6 +1680,10 @@ class ImportTask:
     #Haltung_untersucht
     def _haltungen_untersucht(self) -> None:
         def _iter() -> Iterator[Haltung_untersucht]:
+            xschob = 0.0
+            yschob = 0.0
+            xschun = 0.0
+            yschun = 0.0
             blocks = self.xml.findall(
                 "d:Datenkollektive/d:Stammdatenkollektiv/d:AbwassertechnischeAnlage/[d:Objektart='1']/d:Kante/d:Haltung/../..",
                 self.NS,
@@ -1999,7 +2003,6 @@ class ImportTask:
                         ZD = _get_int(_untersuchdat.findtext("d:Klassifizierung/d:Dichtheit/d:SKDvAuto", 63, self.NS))
                         ZS = _get_int(_untersuchdat.findtext("d:Klassifizierung/d:Standsicherheit/d:SKSvAuto", 63, self.NS))
                         ZB = _get_int(_untersuchdat.findtext("d:Klassifizierung/d:Standsicherheit/d:SKBvAuto", 63, self.NS))
-
 
 
                         yield Untersuchdat_haltung(

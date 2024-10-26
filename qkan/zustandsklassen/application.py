@@ -107,6 +107,7 @@ class Zustandsklassen(QKanPlugin):
         """
         QKan.config.database.qkan = self.import_dlg.db.text()
         QKan.config.zustand.date = self.import_dlg.date.currentText()
+        datetype = self.import_dlg.comboBox.currentText()
 
         check_cb = {}
         check_cb['cb1'] = self.import_dlg.checkBox.isChecked()
@@ -150,6 +151,7 @@ class Zustandsklassen(QKanPlugin):
             QKan.config.database.qkan,
             QKan.config.zustand.date,
             QKan.config.epsg,
+            datetype,
         )
         zustand.run()
         del zustand

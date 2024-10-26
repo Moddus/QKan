@@ -11,6 +11,7 @@ from qgis.PyQt.QtWidgets import (
     QLineEdit,
     QPushButton,
     QWidget,
+    QComboBox,
 )
 
 from qkan import QKan
@@ -37,6 +38,7 @@ ZUSTAND_CLASS, _ = uic.loadUiType(
 class ZustandDialog(_Dialog, ZUSTAND_CLASS):  # type: ignore
     db: QLineEdit
     date: QLineEdit
+    comboBox: QComboBox
 
     epsg: QgsProjectionSelectionWidget
 
@@ -133,50 +135,103 @@ class ZustandDialog(_Dialog, ZUSTAND_CLASS):  # type: ignore
 
     def select_date(self):
 
-        try:
-            db_x = self.db.text()
+        if self.comboBox.currentText() == 'Importdatum':
+            try:
+                db_x = self.db.text()
 
-            uri = QgsDataSourceUri()
-            uri.setDatabase(db_x)
-            schema = ''
-            table = 'untersuchdat_haltung'
-            geom_column = 'geom'
-            uri.setDataSource(schema, table, geom_column)
-            vlayer = QgsVectorLayer(uri.uri(), 'untersuchdat_haltung', 'spatialite')
-            list = []
-            for feature in vlayer.getFeatures():
-                name = feature["createdat"]
-                name=name[0:16]
-                if name in list:
-                    pass
-                else:
-                    list.append(name)
+                uri = QgsDataSourceUri()
+                uri.setDatabase(db_x)
+                schema = ''
+                table = 'untersuchdat_haltung'
+                geom_column = 'geom'
+                uri.setDataSource(schema, table, geom_column)
+                vlayer = QgsVectorLayer(uri.uri(), 'untersuchdat_haltung', 'spatialite')
+                list = []
+                for feature in vlayer.getFeatures():
+                    name = feature["createdat"]
+                    name=name[0:16]
+                    if name in list:
+                        pass
+                    else:
+                        list.append(name)
 
-            self.date.clear()
-            self.date.addItems(list)
-            if list ==[]:
-                try:
-                    db_x = self.db.text()
+                self.date.clear()
+                list.sort(reverse=True)
+                self.date.addItems(list)
+                if list ==[]:
+                    try:
+                        db_x = self.db.text()
 
-                    uri = QgsDataSourceUri()
-                    uri.setDatabase(db_x)
-                    schema = ''
-                    table = 'Untersuchdat_schacht'
-                    geom_column = 'geop'
-                    uri.setDataSource(schema, table, geom_column)
-                    vlayer = QgsVectorLayer(uri.uri(), 'Untersuchdat_schacht', 'spatialite')
-                    list = []
-                    for feature in vlayer.getFeatures():
-                        name = feature["createdat"]
-                        name = name[0:16]
-                        if name in list:
-                            pass
-                        else:
-                            list.append(name)
+                        uri = QgsDataSourceUri()
+                        uri.setDatabase(db_x)
+                        schema = ''
+                        table = 'Untersuchdat_schacht'
+                        geom_column = 'geop'
+                        uri.setDataSource(schema, table, geom_column)
+                        vlayer = QgsVectorLayer(uri.uri(), 'Untersuchdat_schacht', 'spatialite')
+                        list = []
+                        for feature in vlayer.getFeatures():
+                            name = feature["createdat"]
+                            name = name[0:16]
+                            if name in list:
+                                pass
+                            else:
+                                list.append(name)
 
-                    self.date.clear()
-                    self.date.addItems(list)
-                except:
-                    pass
-        except:
-            pass
+                        self.date.clear()
+                        list.sort(reverse=True)
+                        self.date.addItems(list)
+                    except:
+                        pass
+            except:
+                pass
+        if self.comboBox.currentText() == 'Befahrungsdatum':
+            try:
+                db_x = self.db.text()
+
+                uri = QgsDataSourceUri()
+                uri.setDatabase(db_x)
+                schema = ''
+                table = 'untersuchdat_haltung'
+                geom_column = 'geom'
+                uri.setDataSource(schema, table, geom_column)
+                vlayer = QgsVectorLayer(uri.uri(), 'untersuchdat_haltung', 'spatialite')
+                list = []
+                for feature in vlayer.getFeatures():
+                    name = feature["untersuchtag"]
+                    name = name[0:16]
+                    if name in list:
+                        pass
+                    else:
+                        list.append(name)
+
+                self.date.clear()
+                list.sort(reverse=True)
+                self.date.addItems(list)
+                if list == []:
+                    try:
+                        db_x = self.db.text()
+
+                        uri = QgsDataSourceUri()
+                        uri.setDatabase(db_x)
+                        schema = ''
+                        table = 'Untersuchdat_schacht'
+                        geom_column = 'geop'
+                        uri.setDataSource(schema, table, geom_column)
+                        vlayer = QgsVectorLayer(uri.uri(), 'Untersuchdat_schacht', 'spatialite')
+                        list = []
+                        for feature in vlayer.getFeatures():
+                            name = feature["untersuchtag"]
+                            name = name[0:16]
+                            if name in list:
+                                pass
+                            else:
+                                list.append(name)
+
+                        self.date.clear()
+                        list.sort(reverse=True)
+                        self.date.addItems(list)
+                    except:
+                        pass
+            except:
+                pass
