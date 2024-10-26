@@ -54,6 +54,7 @@
 <li class="toctree-l1"><a class="reference internal" href="Qkan_aufsetzen.html">Installation</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">FAQ</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#fehlerhafte-anzeige-linienelemente">Fehlerhafte Anzeige Linienelemente</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#fehlerhafte-anzeige-qkan-formulare">Fehlerhafte Anzeige QKan Formulare</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#objektabfrage-funktioniert-nicht">Objektabfrage funktioniert nicht</a></li>
 </ul>
 </li>
@@ -108,19 +109,25 @@ Intervall angezeigt.</p>
 ein Fenster geöffnet, welches ohne eine weitere Auswahl mit <span class="guilabel">OK</span> geschlossen werden kann. Nun sollten die Symbole richtig
 angezeigt werden.</p>
 </section>
+<section id="fehlerhafte-anzeige-qkan-formulare">
+<h2>Fehlerhafte Anzeige QKan Formulare<a class="headerlink" href="#fehlerhafte-anzeige-qkan-formulare" title="Link to this heading"></a></h2>
+<p><strong>Problem:</strong> QKan Formulare werden in einer falschen Skalierung angezeigt (siehe Bild unten).</p>
+<img alt="_images/Formular_fehlerhaft.png" src="_images/Formular_fehlerhaft.png" />
+<p><strong>Lösung:</strong> Um dieses Problem zu beheben, müssen die grundlegende Grafikeinstellungen richtig konfiguriert sein. Eine Anleitung zur richtigen Konfiguration
+ist <a class="reference internal" href="Qkan_aufsetzen.html#linkgrafikeinstellungen"><span class="std std-ref">hier</span></a> zu finden.</p>
+</section>
 <section id="objektabfrage-funktioniert-nicht">
 <h2>Objektabfrage funktioniert nicht<a class="headerlink" href="#objektabfrage-funktioniert-nicht" title="Link to this heading"></a></h2>
 <p><strong>Problem:</strong> Bei der Verwendung der Menüfunktion <a class="reference internal" href="_images/Tool_info.png"><img alt="Tool_info" src="_images/Tool_info.png" style="width: 1.25em;" /></a> <span class="guilabel">Objekt abfragen</span> wird nur ein Formular mit tabellarisch
 angeordneten Feldern anstelle eines QKan-Formulares angezeigt.</p>
 <p><strong>Lösung:</strong> Hierfür gibt es zwei mögliche Ursachen, welche auch beide zusammen vorliegen können:</p>
-<ol class="arabic simple">
-<li><p>Die Projektdatei wurde (in der Regel zusammen mit der eingebundenen QKan-Datenbank) in ein anderes Verzeichnis verschoben. Ist dies der Fall, kann im Menü unter <span class="guilabel">QKan</span> unter dem Punkt <span class="guilabel">Allgemein</span> mit <a class="reference internal" href="_images/Tool_projekt_aktualisieren.png"><img alt="Tool_projekt_aktualisieren" src="_images/Tool_projekt_aktualisieren.png" style="width: 1.25em;" /></a> <span class="guilabel">QKan-Projekt aktualisieren</span> der Pfad wieder hergestellt werden. Dazu muss in dem sich öffnenden Fesnter das Kontrollfeld im Bereich „Layer anpassen &gt; Formularanbindung auf QKan-Standard setzten“ sowie das Optionsfeld im Bereich „QKan-Layer &gt; alle anpassen“ aktiviert werden (siehe Bild unten).</p></li>
-</ol>
+<p>1. Die Projektdatei wurde (in der Regel zusammen mit der eingebundenen QKan-Datenbank) in ein anderes Verzeichnis verschoben. Ist dies der Fall,
+kann im Menü unter <span class="guilabel">QKan</span> unter dem Punkt <span class="guilabel">Allgemein</span> mit <a class="reference internal" href="_images/Tool_projekt_aktualisieren.png"><img alt="Tool_projekt_aktualisieren" src="_images/Tool_projekt_aktualisieren.png" style="width: 1.25em;" /></a> <span class="guilabel">QKan-Projekt aktualisieren</span>
+der Pfad wieder hergestellt werden. Dazu muss in dem sich öffnenden Fesnter das Kontrollfeld im Bereich „Layer anpassen &gt; Formularanbindung auf
+QKan-Standard setzten“ sowie das Optionsfeld im Bereich „QKan-Layer &gt; alle anpassen“ aktiviert werden (siehe Bild unten).</p>
 <img alt="_images/formularpfade_wiederherstellen.png" src="_images/formularpfade_wiederherstellen.png" />
-<ol class="arabic simple" start="2">
-<li><p>Der Modus für die Anzeige von Objektinformationen wurde noch nicht umgestellt. Es wird empfohlen folgende Einstellung vorzunehmen: Über dem Menüpunkt <span class="guilabel">Ansicht</span> &gt; <span class="guilabel">Bedienfelder</span> &gt; <span class="guilabel">Identifikationsergebnis</span> das Formular öffnen. Dort über den Menüpunkt <span class="guilabel">Abfrageeinstellung</span> das Kontrollfeld „Objektformular automatsich öffnen, wenn ein einzelnes Objekt abgefragt wird“ aktivieren. Außerdem sollte unten in der Auswahlliste <span class="guilabel">Modus</span> der Eintrag „Layerauswahl“ gewählt werden.</p></li>
-</ol>
-<img alt="_images/abfrageeinstellung_formularanzeige.png" src="_images/abfrageeinstellung_formularanzeige.png" />
+<p>2. Der Modus für die Anzeige von Objektinformationen wurde noch nicht umgestellt. Eine Anleitung für die richtige Einstellung ist
+<span class="xref std std-ref">hier</span> zu finden.</p>
 </section>
 </section>
 

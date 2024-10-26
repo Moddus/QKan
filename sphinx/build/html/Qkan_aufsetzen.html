@@ -53,8 +53,11 @@
 <li class="toctree-l1"><a class="reference internal" href="Qkan_allgemein.html">Was ist QKan?</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Installation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#qgis-installieren">QGIS Installieren</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#qkan-plugin-installation">QKan-Plugin Installation</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#grafikeinstellung-fur-qkan">Grafikeinstellung für QKan</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#qkan-plugin-installation">QKan-Plugin Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#grundlegende-einstellungen-fur-qkan">Grundlegende Einstellungen für QKan</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#makros">Makros</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#objektinformationen">Objektinformationen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#grafik">Grafik</a></li>
 </ul>
 </li>
 </ul>
@@ -123,20 +126,50 @@ Die nachstehende Abbildung zeigt die „Eigenständige QGIS-Installation Version
 <p>Es handelt sich um Beispieldaten, die für die Nutzung von QKan nicht benötigt werden. Klicken Sie anschließend auf „Installieren“, um die Installation zu starten. Diese Installation kann einige Minuten in Anspruch nehmen.</p>
 </section>
 <section id="qkan-plugin-installation">
-<h2>QKan-Plugin Installation<a class="headerlink" href="#qkan-plugin-installation" title="Link to this heading"></a></h2>
+<span id="qkan-plugins-fuer-qgis"></span><h2>QKan-Plugin Installation<a class="headerlink" href="#qkan-plugin-installation" title="Link to this heading"></a></h2>
 <p>Nachdem QGIS erfolgreich auf Ihrem System installiert wurde, kann nun das QKan-Plugin installiert werden.
 Dieses kann unter Erweiterungen -&gt; Erweiterungen verwalten und installieren… auf dem Reiter „Alle“ in der Liste der Plug-Ins gefunden werden.
 Wenn es ausgewählt ist, kann es über den Button „Erweiterung installieren“ auf dem Rechner installiert werden.
 Es sollte darauf geachtet werden, dass immer mit der aktuellsten Version gearbeitet wird.
 Installationen von weiteren Plugins für den Export nach HYSTEM-EXTRAN sind nun nicht mehr nötig.</p>
 <img alt="_images/QKan_Plugin.png" src="_images/QKan_Plugin.png" />
-<section id="grafikeinstellung-fur-qkan">
-<h3>Grafikeinstellung für QKan<a class="headerlink" href="#grafikeinstellung-fur-qkan" title="Link to this heading"></a></h3>
-<p>Wenn QKan auf einem Laptop genutzt wird, kann es vorkommen, dass die Formulare fehlerhaft angezeigt werden (Beispiel siehe Bild unten).
-Dies beeinträchtigt die Funktion der Formulare nicht, kann jedoch die Nutzung dieser erschweren.</p>
+</section>
+<section id="grundlegende-einstellungen-fur-qkan">
+<h2>Grundlegende Einstellungen für QKan<a class="headerlink" href="#grundlegende-einstellungen-fur-qkan" title="Link to this heading"></a></h2>
+<section id="makros">
+<h3>Makros<a class="headerlink" href="#makros" title="Link to this heading"></a></h3>
+<p>Damit alle Funktionen in QKan richtig laufen, ist es wichtig, dass die Makros immer aktiviert sind. Diese Einstellung kann über <span class="guilabel">Einstellungen</span> &gt;
+<span class="guilabel">Optionen</span> &gt; <span class="guilabel">Allgemein</span> vorgenommen werden.</p>
+<img alt="_images/Makroaktivierung.png" src="_images/Makroaktivierung.png" />
+</section>
+<section id="objektinformationen">
+<span id="linkobjektinformationeneinstellung"></span><h3>Objektinformationen<a class="headerlink" href="#objektinformationen" title="Link to this heading"></a></h3>
+<div class="admonition note">
+<p class="admonition-title">Bemerkung</p>
+<p>Die nachfolgende Einstellung ist möglicherweise bereits automatisch durch QKan vorgenommen worden.</p>
+</div>
+<p>Damit bei der Objektabfrage die QKan-Formulare angezeigt werden, ist es wichtig, dass der Modus für die Anzeige der Objektinformationen richtig eingestellt ist.
+Über den Menüpunkt <span class="guilabel">Ansicht</span> &gt; <span class="guilabel">Bedienfelder</span> &gt; <span class="guilabel">Identifikationsergebnis`das Formular öffnen. Dort über den Menüpunkt
+:guilabel:`Abfrageeinstellung</span> das Kontrollfeld „Objektformular automatsich öffnen, wenn ein einzelnes Objekt abgefragt wird“ aktivieren. Außerdem
+sollte unten in der Auswahlliste <span class="guilabel">Modus</span> der Eintrag „Layerauswahl“ gewählt werden.</p>
+<img alt="_images/abfrageeinstellung_formularanzeige.png" src="_images/abfrageeinstellung_formularanzeige.png" />
+</section>
+<section id="grafik">
+<span id="linkgrafikeinstellungen"></span><h3>Grafik<a class="headerlink" href="#grafik" title="Link to this heading"></a></h3>
+<p>Bei Monitoren mit hoher Auflösung kann es vorkommen, dass die Beschriftungen in den Formularen fehlerhaft angezeigt werden (Beispiel siehe Bild unten). Dies hängt mit
+der Skalierungseinstellung unter Windows zusammen. Dadurch wird zwar nicht die Funktion der Formulare beeinträchtigt, es erschwert
+jedoch die Bedienung erheblich.</p>
 <img alt="_images/Formular_fehlerhaft.png" src="_images/Formular_fehlerhaft.png" />
 <p>Um dieses Problem zu beheben kann über die Windows-Suchleiste mit „Systemumgebungsvariablen bearbeiten“ die Systemeigenschaften geöffnet
 werden.</p>
+<img alt="_images/Systemeigenschaften_Umgebungsvariablen.png" src="_images/Systemeigenschaften_Umgebungsvariablen.png" />
+<p>Über die Schaltfläche „Umgebungsvariablen“ wird das entsprechende Formular geöffnet. Dort kann über die Schaltfläche „Neu…“ ein neuer Datensatz
+hinzugefügt werden.</p>
+<img alt="_images/Umgebungsvariablen_neu.png" src="_images/Umgebungsvariablen_neu.png" />
+<p>Das Formular sollte mit den entsprechenden Daten ausgefüllt werden und mit „OK“ bestätigt werden.</p>
+<p>Name der Variable: QT_AUTO_SCREEN_SCALE_FACTOR</p>
+<p>Wert der Variablen: 1</p>
+<img alt="_images/Systemvariable.png" src="_images/Systemvariable.png" />
 </section>
 </section>
 </section>

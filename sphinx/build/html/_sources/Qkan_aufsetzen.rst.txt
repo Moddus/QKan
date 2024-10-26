@@ -35,7 +35,8 @@ Starten Sie die Installation, akzeptieren das Lizenzabkommen und bestätigen die
 
 Es handelt sich um Beispieldaten, die für die Nutzung von QKan nicht benötigt werden. Klicken Sie anschließend auf "Installieren", um die Installation zu starten. Diese Installation kann einige Minuten in Anspruch nehmen.
 
-.. _QKan_plugins_fuer_QGIS
+
+.. _QKan_plugins_fuer_QGIS:
 
 QKan-Plugin Installation
 ------------------------
@@ -48,13 +49,57 @@ Installationen von weiteren Plugins für den Export nach HYSTEM-EXTRAN sind nun 
 
 .. image:: ./QKan_Bilder/QKan_Plugin.png
 
-Grafikeinstellung für QKan
-^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Wenn QKan auf einem Laptop genutzt wird, kann es vorkommen, dass die Formulare fehlerhaft angezeigt werden (Beispiel siehe Bild unten). 
-Dies beeinträchtigt die Funktion der Formulare nicht, kann jedoch die Nutzung dieser erschweren. 
+Grundlegende Einstellungen für QKan
+------------------------------------
+
+Makros
+^^^^^^
+
+Damit alle Funktionen in QKan richtig laufen, ist es wichtig, dass die Makros immer aktiviert sind. Diese Einstellung kann über :guilabel:`Einstellungen` > 
+:guilabel:`Optionen` > :guilabel:`Allgemein` vorgenommen werden.
+
+.. image:: ./QKan_Bilder/Makroaktivierung.png
+
+.. _linkobjektinformationeneinstellung:
+
+Objektinformationen
+^^^^^^^^^^^^^^^^^^^
+
+.. note:: Die nachfolgende Einstellung ist möglicherweise bereits automatisch durch QKan vorgenommen worden.
+
+Damit bei der Objektabfrage die QKan-Formulare angezeigt werden, ist es wichtig, dass der Modus für die Anzeige der Objektinformationen richtig eingestellt ist. 
+Über den Menüpunkt :guilabel:`Ansicht` > :guilabel:`Bedienfelder` > :guilabel:`Identifikationsergebnis`das Formular öffnen. Dort über den Menüpunkt
+:guilabel:`Abfrageeinstellung` das Kontrollfeld "Objektformular automatsich öffnen, wenn ein einzelnes Objekt abgefragt wird" aktivieren. Außerdem
+sollte unten in der Auswahlliste :guilabel:`Modus` der Eintrag "Layerauswahl" gewählt werden.
+
+.. image:: ./QKan_Bilder/abfrageeinstellung_formularanzeige.png
+
+.. _linkgrafikeinstellungen:
+
+Grafik
+^^^^^^
+
+Bei Monitoren mit hoher Auflösung kann es vorkommen, dass die Beschriftungen in den Formularen fehlerhaft angezeigt werden (Beispiel siehe Bild unten). Dies hängt mit 
+der Skalierungseinstellung unter Windows zusammen. Dadurch wird zwar nicht die Funktion der Formulare beeinträchtigt, es erschwert 
+jedoch die Bedienung erheblich. 
 
 .. image:: ./QKan_Bilder/Formular_fehlerhaft.png
 
 Um dieses Problem zu beheben kann über die Windows-Suchleiste mit "Systemumgebungsvariablen bearbeiten" die Systemeigenschaften geöffnet 
-werden. 
+werden.
+
+.. image:: ./QKan_Bilder/Systemeigenschaften_Umgebungsvariablen.png
+
+Über die Schaltfläche "Umgebungsvariablen" wird das entsprechende Formular geöffnet. Dort kann über die Schaltfläche "Neu..." ein neuer Datensatz 
+hinzugefügt werden. 
+
+.. image:: ./QKan_Bilder/Umgebungsvariablen_neu.png
+
+Das Formular sollte mit den entsprechenden Daten ausgefüllt werden und mit "OK" bestätigt werden.
+
+Name der Variable: QT_AUTO_SCREEN_SCALE_FACTOR 
+
+Wert der Variablen: 1
+
+.. image:: ./QKan_Bilder/Systemvariable.png

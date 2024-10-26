@@ -19,6 +19,17 @@ angezeigt werden.
 
 .. |Tool_projekt_aktualisieren| image:: ./QKan_Bilder/Tool_projekt_aktualisieren.png
                              :width: 1.25 em
+
+
+Fehlerhafte Anzeige QKan Formulare
+----------------------------------
+
+**Problem:** QKan Formulare werden in einer falschen Skalierung angezeigt (siehe Bild unten).
+
+.. image:: ./QKan_Bilder/Formular_fehlerhaft.png
+
+**Lösung:** Um dieses Problem zu beheben, müssen die grundlegende Grafikeinstellungen richtig konfiguriert sein. Eine Anleitung zur richtigen Konfiguration
+ist :ref:`hier <linkgrafikeinstellungen>` zu finden.
                              
 
 Objektabfrage funktioniert nicht
@@ -29,13 +40,15 @@ angeordneten Feldern anstelle eines QKan-Formulares angezeigt.
 
 **Lösung:** Hierfür gibt es zwei mögliche Ursachen, welche auch beide zusammen vorliegen können:
 
-1. Die Projektdatei wurde (in der Regel zusammen mit der eingebundenen QKan-Datenbank) in ein anderes Verzeichnis verschoben. Ist dies der Fall, kann im Menü unter :guilabel:`QKan` unter dem Punkt :guilabel:`Allgemein` mit |Tool_projekt_aktualisieren| :guilabel:`QKan-Projekt aktualisieren` der Pfad wieder hergestellt werden. Dazu muss in dem sich öffnenden Fesnter das Kontrollfeld im Bereich "Layer anpassen > Formularanbindung auf QKan-Standard setzten" sowie das Optionsfeld im Bereich "QKan-Layer > alle anpassen" aktiviert werden (siehe Bild unten).
+1. Die Projektdatei wurde (in der Regel zusammen mit der eingebundenen QKan-Datenbank) in ein anderes Verzeichnis verschoben. Ist dies der Fall,
+kann im Menü unter :guilabel:`QKan` unter dem Punkt :guilabel:`Allgemein` mit |Tool_projekt_aktualisieren| :guilabel:`QKan-Projekt aktualisieren`
+der Pfad wieder hergestellt werden. Dazu muss in dem sich öffnenden Fesnter das Kontrollfeld im Bereich "Layer anpassen > Formularanbindung auf
+QKan-Standard setzten" sowie das Optionsfeld im Bereich "QKan-Layer > alle anpassen" aktiviert werden (siehe Bild unten).
 
 .. image:: ./QKan_Bilder/formularpfade_wiederherstellen.png
 
 .. |Tool_info| image:: ./QKan_Bilder/Tool_info.png
                              :width: 1.25 em
 
-2. Der Modus für die Anzeige von Objektinformationen wurde noch nicht umgestellt. Es wird empfohlen folgende Einstellung vorzunehmen: Über dem Menüpunkt :guilabel:`Ansicht` > :guilabel:`Bedienfelder` > :guilabel:`Identifikationsergebnis` das Formular öffnen. Dort über den Menüpunkt :guilabel:`Abfrageeinstellung` das Kontrollfeld "Objektformular automatsich öffnen, wenn ein einzelnes Objekt abgefragt wird" aktivieren. Außerdem sollte unten in der Auswahlliste :guilabel:`Modus` der Eintrag "Layerauswahl" gewählt werden.
-
-.. image:: ./QKan_Bilder/abfrageeinstellung_formularanzeige.png
+2. Der Modus für die Anzeige von Objektinformationen wurde noch nicht umgestellt. Eine Anleitung für die richtige Einstellung ist
+:ref:`hier <linkobjektinformationeneinstellung>` zu finden.
