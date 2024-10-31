@@ -1356,7 +1356,7 @@ class Zustandsklassen_funkt:
                         SELECT
                             untersuchdat_anschlussleitung_bewertung.pk,
                             untersuchdat_anschlussleitung_bewertung.untersuchleit,
-                            untersuchdat_anschlussleitung_bewertung.untersuchrichtung,
+                            NULL,
                             untersuchdat_anschlussleitung_bewertung.schoben,
                             untersuchdat_anschlussleitung_bewertung.schunten,
                             untersuchdat_anschlussleitung_bewertung.id,
@@ -1391,7 +1391,7 @@ class Zustandsklassen_funkt:
                         SELECT
                             untersuchdat_anschlussleitung_bewertung.pk,
                             untersuchdat_anschlussleitung_bewertung.untersuchleit,
-                            untersuchdat_anschlussleitung_bewertung.untersuchrichtung,
+                            NULL,
                             untersuchdat_anschlussleitung_bewertung.schoben,
                             untersuchdat_anschlussleitung_bewertung.schunten,
                             untersuchdat_anschlussleitung_bewertung.id,
@@ -3915,7 +3915,7 @@ class Zustandsklassen_funkt:
                             SELECT
                                 untersuchdat_anschlussleitung_bewertung.pk,
                                 untersuchdat_anschlussleitung_bewertung.untersuchleit,
-                                untersuchdat_anschlussleitung_bewertung.untersuchrichtung,
+                                NULL,
                                 untersuchdat_anschlussleitung_bewertung.schoben,
                                 untersuchdat_anschlussleitung_bewertung.schunten,
                                 untersuchdat_anschlussleitung_bewertung.id,
@@ -3953,7 +3953,7 @@ class Zustandsklassen_funkt:
                             SELECT
                                 untersuchdat_anschlussleitung_bewertung.pk,
                                 untersuchdat_anschlussleitung_bewertung.untersuchleit,
-                                untersuchdat_anschlussleitung_bewertung.untersuchrichtung,
+                                NULL,
                                 untersuchdat_anschlussleitung_bewertung.schoben,
                                 untersuchdat_anschlussleitung_bewertung.schunten,
                                 untersuchdat_anschlussleitung_bewertung.id,
@@ -7291,7 +7291,7 @@ class Zustandsklassen_funkt:
                     SELECT
                         untersuchdat_anschlussleitung_bewertung.pk,
                         untersuchdat_anschlussleitung_bewertung.untersuchhal,
-                        untersuchdat_anschlussleitung_bewertung.untersuchrichtung,
+                        NULL,
                         untersuchdat_anschlussleitung_bewertung.schoben,
                         untersuchdat_anschlussleitung_bewertung.schunten,
                         untersuchdat_anschlussleitung_bewertung.id,
@@ -7330,7 +7330,7 @@ class Zustandsklassen_funkt:
                     SELECT
                         untersuchdat_anschlussleitung_bewertung.pk,
                         untersuchdat_anschlussleitung_bewertung.untersuchhal,
-                        untersuchdat_anschlussleitung_bewertung.untersuchrichtung,
+                        NULL,
                         untersuchdat_anschlussleitung_bewertung.schoben,
                         untersuchdat_anschlussleitung_bewertung.schunten,
                         untersuchdat_anschlussleitung_bewertung.id,
@@ -15984,7 +15984,7 @@ class Zustandsklassen_funkt:
                     SELECT
                         untersuchdat_anschlussleitung_bewertung.pk,
                         untersuchdat_anschlussleitung_bewertung.untersuchleit,
-                        untersuchdat_anschlussleitung_bewertung.untersuchrichtung,
+                        NULL,
                         untersuchdat_anschlussleitung_bewertung.schoben,
                         untersuchdat_anschlussleitung_bewertung.schunten,
                         untersuchdat_anschlussleitung_bewertung.id,
@@ -16022,7 +16022,7 @@ class Zustandsklassen_funkt:
                     SELECT
                         untersuchdat_anschlussleitung_bewertung.pk,
                         untersuchdat_anschlussleitung_bewertung.untersuchleit,
-                        untersuchdat_anschlussleitung_bewertung.untersuchrichtung,
+                        NULL,
                         untersuchdat_anschlussleitung_bewertung.schoben,
                         untersuchdat_anschlussleitung_bewertung.schunten,
                         untersuchdat_anschlussleitung_bewertung.id,
@@ -23864,7 +23864,7 @@ class Zustandsklassen_funkt:
                 sql = """SELECT
                             untersuchdat_anschlussleitung_bewertung.pk,
                             untersuchdat_anschlussleitung_bewertung.untersuchleit,
-                            untersuchdat_anschlussleitung_bewertung.untersuchrichtung,
+                            NULL,
                             untersuchdat_anschlussleitung_bewertung.schoben,
                             untersuchdat_anschlussleitung_bewertung.schunten,
                             untersuchdat_anschlussleitung_bewertung.id,
@@ -23910,7 +23910,7 @@ class Zustandsklassen_funkt:
                 sql = """SELECT
                             untersuchdat_anschlussleitung_bewertung.pk,
                             untersuchdat_anschlussleitung_bewertung.untersuchleit,
-                            untersuchdat_anschlussleitung_bewertung.untersuchrichtung,
+                            NULL,
                             untersuchdat_anschlussleitung_bewertung.schoben,
                             untersuchdat_anschlussleitung_bewertung.schunten,
                             untersuchdat_anschlussleitung_bewertung.id,
