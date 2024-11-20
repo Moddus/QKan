@@ -322,7 +322,7 @@ def createdbtables(
             baujahr INTEGER,
             haltnam TEXT,
             teilgebiet TEXT,                                -- join teilgebiet.tgnam
-            strasse TEXT                                    -- für ISYBAU benötigt,
+            strasse TEXT,                                   -- für ISYBAU benötigt
             profilnam TEXT DEFAULT 'Kreisquerschnitt',      -- join profile.profilnam
             entwart TEXT DEFAULT 'Regenwasser',             -- join entwaesserungsarten.bezeichnung
             material TEXT,                                  -- join material.bezeichnung

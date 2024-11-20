@@ -117,7 +117,7 @@ class ExportTask:
                     ( SELECT
                         schaechte.deckelhoehe AS deckelhoehe,
                         schaechte.sohlhoehe AS sohlhoehe,
-                        schaechte.deckelhoehe AS gelaendehoehe, 
+                        coalesce(schaechte.deckelhoehe, 0.0) AS gelaendehoehe, 
                         1 AS art, 
                         st.he_nr AS planungsstatus, 
                         coalesce(schaechte.createdat, datetime('now'))
@@ -213,7 +213,7 @@ class ExportTask:
                         ) =
                     ( SELECT
                         schaechte.sohlhoehe AS sohlhoehe, 
-                        schaechte.deckelhoehe AS gelaendehoehe,
+                        coalesce(schaechte.deckelhoehe, 0.0) AS gelaendehoehe,
                         schaechte.deckelhoehe AS scheitelhoehe,
                         st.he_nr AS planungsstatus, 
                         coalesce(schaechte.createdat, datetime('now')) AS lastmodified, 
@@ -251,7 +251,7 @@ class ExportTask:
                       schaechte.schnam AS name, 
                       1 AS typ, 
                       schaechte.sohlhoehe AS sohlhoehe, 
-                      schaechte.deckelhoehe AS gelaendehoehe,
+                      coalesce(schaechte.deckelhoehe, 0.0) AS gelaendehoehe,
                       1 AS art, 
                       2 AS anzahlkanten, 
                       schaechte.deckelhoehe AS scheitelhoehe,
@@ -308,7 +308,7 @@ class ExportTask:
                         ) =
                     ( SELECT
                         schaechte.sohlhoehe AS sohlhoehe, 
-                        schaechte.deckelhoehe AS gelaendehoehe,
+                        coalesce(schaechte.deckelhoehe, 0.0) AS gelaendehoehe,
                         schaechte.deckelhoehe AS scheitelhoehe,
                         st.he_nr AS planungsstatus, 
                         coalesce(schaechte.createdat, datetime('now')) AS lastmodified, 
@@ -348,7 +348,7 @@ class ExportTask:
                       schaechte.schnam AS name, 
                       1 AS typ, 
                       schaechte.sohlhoehe AS sohlhoehe, 
-                      schaechte.deckelhoehe AS gelaendehoehe,
+                      coalesce(schaechte.deckelhoehe, 0.0) AS gelaendehoehe,
                       1 AS art, 
                       2 AS anzahlkanten, 
                       schaechte.deckelhoehe AS scheitelhoehe,

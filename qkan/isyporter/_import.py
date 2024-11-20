@@ -775,7 +775,7 @@ class ImportTask:
             params = {'schnam': schacht.schnam, 'xsch': schacht.xsch, 'ysch': schacht.ysch,
                       'sohlhoehe': schacht.sohlhoehe, 'deckelhoehe': schacht.deckelhoehe,
                       'durchm': schacht.durchm, 'baujahr': schacht.baujahr, 'entwart': entwart,
-                      'strasse': schacht.strasse, 'knotentyp': schacht.knotentyp,'material': material,
+                      'strasse': schacht.strasse, 'knotentyp': schacht.knotentyp, 'material': material,
                       'simstatus': simstatus, 'kommentar': schacht.kommentar, 'schachttyp': schacht.schachttyp, 'epsg': QKan.config.epsg}
 
             logger.debug(f'isyporter.import - insertdata:\ntabnam: schaechte\n'

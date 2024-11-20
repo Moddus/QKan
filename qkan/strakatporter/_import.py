@@ -162,6 +162,7 @@ class ImportTask:
                 self._adapt_refvals(),                                                  logger.debug("_adapt_refvals"),
                 self._strakat_hausanschl(), self.progress_bar.setValue(30),             logger.debug("_strakat_hausanschl"),
                 self._anschlussleitungen(), self.progress_bar.setValue(35),             logger.debug("_anschlussleitungen"),
+                self._anschlussschaechte(), self.progress_bar.setValue(38),             logger.debug("_anschlussschaechte"),
                 self._strakat_berichte(), self.progress_bar.setValue(40),               logger.debug("_strakat_berichte"),
                 self._schaechte_untersucht(), self.progress_bar.setValue(45),           logger.debug("_schaechte_untersucht"),
                 self._untersuchdat_schacht(), self.progress_bar.setValue(50),           logger.debug("_untersuchdat_schacht"),
@@ -794,14 +795,21 @@ class ImportTask:
         # Erstellung Tabelle t_strakathausanschluesse
         sql = "PRAGMA table_list('t_strakathausanschluesse')"
         if not self.db_qkan.sql(sql, "Prüfen, ob temporäre Tabelle 't_strakathausanschluesse', vorhanden ist"):
-            return False                                        # Abbruch weil Anfrage fehlgeschlagen
+            raise Exception(f'{self.__class__.__name__}: Fehler bei Prüfung der Tabelle t_strakathausanschluesse')
+
+        # Bereits vorhandene Tabelle muss erst gelöscht werden
+        if self.db_qkan.fetchone():
+            sql = "SELECT DropTable(NULL, 't_strakathausanschluesse')"
+            if not self.db_qkan.sql(sql, 'Löschung Tabelle "t_strakathausanschluesse wegen Neuanlage"'):
+                raise Exception(f'{self.__class__.__name__}: Fehler beim Löschen der Tabelle t_strakathausanschluesse')
+
         if not self.db_qkan.fetchone():
             sql = """ 
-            CREATE TABLE IF NOT EXISTS t_strakathausanschluesse (
+            CREATE TABLE t_strakathausanschluesse (
                 pk INTEGER PRIMARY KEY,
                 nummer INTEGER,
                 nextnum INTEGER,
-                x1 REAL,
+                x1 REAL,                    -- Ende der Leitung am Kanal 
                 x2 REAL,
                 x3 REAL,
                 x4 REAL,
@@ -819,12 +827,26 @@ class ImportTask:
                 y7 REAL,
                 y8 REAL,
                 y9 REAL,
+                z1 REAL,
+                z2 REAL,
+                z3 REAL,
+                z4 REAL,
+                z5 REAL,
+                z6 REAL,
+                z7 REAL,
+                z8 REAL,
+                z9 REAL,
+                xanf REAL,                  -- Anfang der Leitung am Haus
+                yanf REAL,
+                zanf REAL,
                 rohrbreite REAL,
                 berichtnr INTEGER,
                 anschlusshalnr INTEGER,
                 anschlusshalname TEXT,
-                haschob TEXT,
-                haschun TEXT,
+                anschlussschob TEXT,
+                anschlussschun TEXT,
+                sohleoben REAL,             -- aus z-Wert
+                sohleunten REAL,            -- aus z-Wert
                 urstation REAL,
                 geloescht INTEGER,
                 strakatid TEXT,
@@ -854,6 +876,7 @@ class ImportTask:
                     break
                 xlis = list(unpack('ddddddddd', b[20:92]))
                 ylis = list(unpack('ddddddddd', b[100:172]))
+                zlis = list(unpack('fffffffff', b[180:216]))
                 # d1, d2, d3, d4, d5, d6, d7, d8, d9 = unpack('fffffffff', b[220:256])
 
                 # Erste x-Koordinate = 0 auf alle folgenden übertragen, weil in STRAKAT manchmal
@@ -865,16 +888,23 @@ class ImportTask:
 
                 (x1, x2, x3, x4, x5, x6, x7, x8, x9) = xlis
                 (y1, y2, y3, y4, y5, y6, y7, y8, y9) = ylis
+                (z1, z2, z3, z4, z5, z6, z7, z8, z9) = zlis
 
                 # Hausanschlusslinie erzeugen
                 ptlis = []
-                for x, y in zip(xlis, ylis):
+                for x, y, z in zip(xlis, ylis, zlis):
                     if x < 1 or y < 1:
                         break
                     ptlis.append(QgsPoint(x, y))
+                    xanf = x                            # enthält nach Ende der Schleife den letzten gültigen Wert
+                    yanf = y
+                    zanf = z
                 if len(ptlis) <= 1:
                     continue
                 geomwkb = QgsGeometry.fromPolyline(ptlis).asWkb()
+
+                sohleoben = z1
+                sohleunten = zanf
 
                 rohrbreite = unpack('f', b[220:224])[0]  # nur erste von 9 Rohrbreiten lesen
 
@@ -886,15 +916,15 @@ class ImportTask:
 
                 geloescht = unpack('B', b[317:318])[0]
 
-                haschob = b[326:b[326:346].find(b'\x00')+326].decode('ansi').strip()
-                haschun = b[362:b[362:382].find(b'\x00')+362].decode('ansi').strip()
+                anschlussschob = b[326:b[326:362].find(b'\x00')+326].decode('ansi').strip()    # vermutlich kürzer als 36 Zeichen
+                anschlussschun = b[362:b[362:398].find(b'\x00')+362].decode('ansi').strip()    # vermutlich kürzer als 36 Zeichen
 
                 urstation = unpack('f', b[515:519])[0]
 
                 anschlusshalname = b[611:b[611:631].find(b'\x00')+611].decode('ansi').strip()
                 if anschlusshalname == '':
-                    if haschob != '':
-                        anschlusshalname = haschob
+                    if anschlussschob != '':
+                        anschlusshalname = anschlussschob
                     else:
                         anschlusshalname = hausnr
 
@@ -913,10 +943,16 @@ class ImportTask:
                     'y1': y1, 'y2': y2, 'y3': y3,
                     'y4': y4, 'y5': y5, 'y6': y6,
                     'y7': y7, 'y8': y8, 'y9': y9,
+                    'z1': z1, 'z2': z2, 'z3': z3,
+                    'z4': z4, 'z5': z5, 'z6': z6,
+                    'z7': z7, 'z8': z8, 'z9': z9,
+                    'xanf': xanf, 'yanf': yanf, 'zanf': zanf,
                     'rohrbreite': rohrbreite,
                     'berichtnr': berichtnr,
                     'anschlusshalnr': anschlusshalnr, 'anschlusshalname': anschlusshalname,
-                    'haschob': haschob, 'haschun': haschun, 'urstation': urstation, 'geloescht': geloescht,
+                    'anschlussschob': anschlussschob, 'anschlussschun': anschlussschun,
+                    'sohleoben': sohleoben, 'sohleunten': sohleunten,
+                    'urstation': urstation, 'geloescht': geloescht,
                     'strakatid': strakatid, 'hausanschlid': hausanschlid, 'geomwkb': geomwkb, "epsg": self.epsg,
                 }
 
@@ -928,10 +964,14 @@ class ImportTask:
                     y1, y2, y3,
                     y4, y5, y6,
                     y7, y8, y9,
+                    z1, z2, z3,
+                    z4, z5, z6,
+                    z7, z8, z9,
+                    xanf, yanf, zanf, 
                     rohrbreite,
                     berichtnr,
                     anschlusshalnr, anschlusshalname,
-                    haschob, haschun, urstation, geloescht,
+                    anschlussschob, anschlussschun, sohleoben, sohleunten, urstation, geloescht,
                     strakatid, hausanschlid, geom
                 )
                 VALUES (
@@ -942,10 +982,14 @@ class ImportTask:
                     :y1, :y2, :y3,
                     :y4, :y5, :y6,
                     :y7, :y8, :y9,
+                    :z1, :z2, :z3,
+                    :z4, :z5, :z6,
+                    :z7, :z8, :z9,
+                    :xanf, :yanf, :zanf, 
                     :rohrbreite,
                     :berichtnr,
                     :anschlusshalnr, :anschlusshalname,
-                    :haschob, :haschun, :urstation, :geloescht,
+                    :anschlussschob, :anschlussschun, :sohleoben, :sohleunten, :urstation, :geloescht,
                     :strakatid, :hausanschlid, GeomFromWKB(:geomwkb, :epsg)
                 )"""
 
@@ -985,6 +1029,10 @@ class ImportTask:
         self.db_qkan.commit()
 
         return True
+
+    def _anschlussschaechte(self) -> bool:
+        """Erzeugen der zusätzlichen Schächte aus Anschlussleitungen"""
+        sql = """"""
 
     def _strakat_berichte(self) -> bool:
         """Import der Schadensdaten aus der STRAKAT-Datei 'ENBericht.rwtopen', entspricht ACCESS-Tabelle 'SCHADENSTABELLE'
@@ -1882,8 +1930,8 @@ class ImportTask:
                 pk,
                 nummer                          AS nummer, 
                 anschlusshalname                AS leitnam,
-                Trim(haschob)                   AS schoben,
-                Trim(haschun)                   AS schunten,
+                Trim(anschlussschob)            AS schoben,
+                Trim(anschlussschun)            AS schunten,
                 rohrbreite                      AS hoehe,
                 rohrbreite                      AS breite,
                 geom                            AS geom
@@ -2376,8 +2424,8 @@ class ImportTask:
             lu AS (
             SELECT
                 anschlusshalname                    AS leitnam,
-                Trim(sha.haschob)                   AS schoben,
-                Trim(sha.haschun)                   AS schunten,
+                Trim(sha.anschlussschob)            AS schoben,
+                Trim(sha.anschlussschun)            AS schunten,
                 sha.rohrbreite                      AS hoehe,
                 sha.rohrbreite                      AS breite,
                 GLength(sha.geom)                   AS laenge,
@@ -2464,8 +2512,8 @@ class ImportTask:
             ua AS (
                 SELECT
                     sha.anschlusshalname                    AS untersuchleit,
-                    sha.haschob                             AS schoben,
-                    sha.haschun                             AS schunten,
+                    sha.anschlussschob                      AS schoben,
+                    sha.anschlussschun                      AS schunten,
                     NULL                                    AS id, 
                     stb.datum                               AS untersuchtag,
                     NULL                                    AS inspektionslaenge,

@@ -7,13 +7,13 @@
     <x>0</x>
     <y>0</y>
     <width>520</width>
-    <height>400</height>
+    <height>360</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
     <width>520</width>
-    <height>400</height>
+    <height>360</height>
    </size>
   </property>
   <property name="font">
@@ -48,8 +48,8 @@
    <widget class="QLabel" name="label_70">
     <property name="geometry">
      <rect>
-      <x>370</x>
-      <y>260</y>
+      <x>40</x>
+      <y>270</y>
       <width>71</width>
       <height>21</height>
      </rect>
@@ -61,8 +61,8 @@
    <widget class="QLabel" name="label_14">
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>260</y>
+      <x>300</x>
+      <y>240</y>
       <width>81</width>
       <height>16</height>
      </rect>
@@ -93,9 +93,9 @@
    <widget class="QTextEdit" name="kommentar">
     <property name="geometry">
      <rect>
-      <x>10</x>
-      <y>280</y>
-      <width>331</width>
+      <x>280</x>
+      <y>260</y>
+      <width>231</width>
       <height>61</height>
      </rect>
     </property>
@@ -109,9 +109,9 @@
    <widget class="QgsDateTimeEdit" name="createdat">
     <property name="geometry">
      <rect>
-      <x>360</x>
-      <y>280</y>
-      <width>151</width>
+      <x>30</x>
+      <y>290</y>
+      <width>181</width>
       <height>23</height>
      </rect>
     </property>
@@ -128,7 +128,7 @@
       <x>10</x>
       <y>40</y>
       <width>191</width>
-      <height>101</height>
+      <height>91</height>
      </rect>
     </property>
     <property name="font">
@@ -252,9 +252,9 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>150</y>
+      <y>140</y>
       <width>251</width>
-      <height>101</height>
+      <height>121</height>
      </rect>
     </property>
     <property name="font">
@@ -400,6 +400,72 @@
       <string>Muldenverlust</string>
      </property>
     </widget>
+    <widget class="QLineEdit" name="rauheit_kst">
+     <property name="geometry">
+      <rect>
+       <x>140</x>
+       <y>90</y>
+       <width>61</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Tahoma</family>
+       <pointsize>10</pointsize>
+       <weight>50</weight>
+       <bold>false</bold>
+      </font>
+     </property>
+     <property name="toolTip">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Absolute Rauheit gemäß Prandtl-Colebrook&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+     <property name="statusTip">
+      <string>Absolute Rauheit gemäß Prandtl-Colebrook</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_72">
+     <property name="geometry">
+      <rect>
+       <x>210</x>
+       <y>90</y>
+       <width>46</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Tahoma</family>
+       <pointsize>10</pointsize>
+       <weight>50</weight>
+       <bold>false</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>mm</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_62">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>90</y>
+       <width>101</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Tahoma</family>
+       <pointsize>10</pointsize>
+       <weight>50</weight>
+       <bold>false</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>Rauheitsbeiwert</string>
+     </property>
+    </widget>
    </widget>
    <widget class="QGroupBox" name="groupBox_3">
     <property name="geometry">
@@ -407,7 +473,7 @@
       <x>220</x>
       <y>40</y>
       <width>291</width>
-      <height>101</height>
+      <height>91</height>
      </rect>
     </property>
     <property name="font">
@@ -528,9 +594,9 @@
     <property name="geometry">
      <rect>
       <x>280</x>
-      <y>150</y>
+      <y>140</y>
       <width>231</width>
-      <height>101</height>
+      <height>91</height>
      </rect>
     </property>
     <property name="font">
@@ -684,7 +750,7 @@
      <x>0</x>
      <y>0</y>
      <width>520</width>
-     <height>21</height>
+     <height>22</height>
     </rect>
    </property>
   </widget>

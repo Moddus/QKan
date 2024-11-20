@@ -73,11 +73,21 @@ def qgsadapt(
 
     # --------------------------------------------------------------------------
     # Zoom-Bereich für die Projektdatei vorbereiten
-    sql = """SELECT min(x(coalesce(geop, centroid(geom)))) AS xmin, 
-                    min(y(coalesce(geop, centroid(geom)))) AS ymin, 
-                    max(x(coalesce(geop, centroid(geom)))) AS xmax, 
-                    max(y(coalesce(geop, centroid(geom)))) AS ymax
-             FROM schaechte"""
+    sql = """
+        SELECT
+            min(x) AS xmin,
+            min(y) AS ymin,
+            max(x) AS xmax,
+            max(y) AS ymax
+        FROM (
+            SELECT x(coalesce(geop, centroid(geom))) AS x, 
+                   y(coalesce(geop, centroid(geom))) AS y
+            FROM schaechte
+            UNION 
+            SELECT x(centroid(geom)) AS x, 
+                   y(centroid(geom)) AS y
+            FROM haltungen
+        )"""
     try:
         dbQK.sql(sql)
     except BaseException as err:

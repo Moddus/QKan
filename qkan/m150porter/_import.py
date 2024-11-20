@@ -117,6 +117,7 @@ class Haltung_untersucht(ClassObject):
     untersuchtag: str = ""
     untersucher: str = ""
     untersuchrichtung: str = ""
+    bezugspunkt: str = ""
     wetter: str = ""
     strasse: str = ""
     bewertungsart: str = ""
@@ -1191,7 +1192,7 @@ class ImportTask:
                 untersuchtag = block.findtext("KI/KI104")
 
                 _datei = block.findtext("KI/KI116", None)
-                if _datei is not None and self.ordner_video is not None:
+                if _datei and self.ordner_video:
                     film_dateiname = os.path.join(self.ordner_video, _datei).replace("\\","/")
                 else:
                     film_dateiname = None
@@ -1216,7 +1217,7 @@ class ImportTask:
                     bereich = _untersuchdat_schacht.findtext("KZ013", None)
 
                     _datei = _untersuchdat_schacht.findtext("KZ009", None)
-                    if _datei is not None and self.ordner_bild is not None:
+                    if _datei and self.ordner_bild:
                         foto_dateiname = os.path.join(self.ordner_bild, _datei).replace("\\","/")
                     else:
                         foto_dateiname = None
@@ -1529,7 +1530,7 @@ class ImportTask:
 
             for block in blocks:
                 # Anschlussleitungen überspringen
-                if block.findtext("HG005") is not None or block.findtext("HG006") is not None:
+                if block.findtext("HG005") or block.findtext("HG006"):
                     continue
 
                 name = block.findtext("HG001")
@@ -1694,7 +1695,7 @@ class ImportTask:
 
             for block in blocks:
                 # Anschlussleitungen überspringen
-                if block.findtext("HG005") is not None or block.findtext("HG006") is not None:
+                if block.findtext("HG005") or block.findtext("HG006"):
                     continue
 
                 name = block.findtext("HG001", None)
@@ -1706,10 +1707,12 @@ class ImportTask:
                 schoben = block.findtext("HG003", None)
                 schunten = block.findtext("HG004", None)
 
-                laenge = _get_float(block, "HG314", 0.0)
+                laenge = _get_float(block, "HG314", None)
+                if not laenge:
+                    laenge = _get_float(block, "HG310", None)
 
-                hoehe = (_get_float(block, "HG307", 0.0))
-                breite = (_get_float(block, "HG306", 0.0))
+                hoehe = _get_float(block, "HG307")
+                breite = _get_float(block, "HG306")
 
                 strasse = block.findtext("HG102", None)
                 kommentar = block.findtext("HG999", None)
@@ -1752,40 +1755,50 @@ class ImportTask:
                     max_ZB = _get_int(_haltung, "HI208", 63)
                     max_ZS = _get_int(_haltung, "HI207", 63)
 
-                    uricht = block.findtext("HI101", None)
-                    if uricht == "I":
+                    _val = _haltung.findtext("HI101", None)
+                    if _val == "I":
                         untersuchrichtung = "in Fließrichtung"
-                    elif uricht == "G":
+                    elif _val == "G":
                         untersuchrichtung = "gegen Fließrichtung"
                     else:
-                        logger.info(f"Untersuchungsdaten Haltung: Feld HI/HI101 fehlt oder falscher Wert: {uricht}")
+                        logger.info(f"Untersuchungsdaten Haltung: Feld HI/HI101 fehlt oder falscher Wert: {_val}")
                         continue
+
+                    _val = block.findtext("HI/HI102")
+                    if _val == 'A' or not _val:
+                        bezugspunkt = 'Rohranfang'
+                    else:
+                        bezugspunkt = 'Gerinnemittelpunkt'          # HI 102 in ('C' , 'D', 'Z')
 
                 else:
                     untersuchtag = None
                     untersucher = None
-                    uricht = None
+                    untersuchrichtung = None
+                    bezugspunkt = None
                     wetter = ""
                     bewertungsart = None
                     bewertungstag = None
                     max_ZD = 63
                     max_ZB = 63
                     max_ZS = 63
+                    untersuchrichtung = None
+                    bezugspunkt = None
                 datenart = self.datenart
 
                 yield Haltung_untersucht(
                     haltnam=name,
-                    strasse=strasse,
                     schoben=schoben,
                     schunten=schunten,
                     hoehe=hoehe,
                     breite=breite,
                     laenge=laenge,
+                    strasse=strasse,
                     kommentar=kommentar,
                     baujahr=baujahr,
                     untersuchtag=untersuchtag,
                     untersucher=untersucher,
                     untersuchrichtung=untersuchrichtung,
+                    bezugspunkt=bezugspunkt,
                     wetter=wetter,
                     bewertungsart=bewertungsart,
                     bewertungstag=bewertungstag,
@@ -1798,26 +1811,18 @@ class ImportTask:
 
         for haltung_untersucht in _iter():
 
-            # Wetter
-            # wetter = self.db_qkan.get_from_mapper(
-            #     haltung_untersucht.wetter,
-            #     self.mapper_wetter,
-            #     'haltung_untersucht',
-            #     'wetter',
-            #     'bezeichnung',
-            #     'm150',
-            #     'bemerkung',
-            #     'kuerzel',
-            # )
-
-            params = {'haltnam': haltung_untersucht.haltnam, 'schoben': haltung_untersucht.schoben,
+            params = {'haltnam': haltung_untersucht.haltnam,
+                      'schoben': haltung_untersucht.schoben,
                       'schunten': haltung_untersucht.schunten, 'hoehe': haltung_untersucht.hoehe,
                       'breite': haltung_untersucht.breite, 'laenge': haltung_untersucht.laenge,
                       'kommentar': haltung_untersucht.kommentar, 'baujahr': haltung_untersucht.baujahr,
                       'strasse': haltung_untersucht.strasse,
-                      'untersuchtag': haltung_untersucht.untersuchtag,'untersuchrichtung': haltung_untersucht.untersuchrichtung,
+                      'untersuchtag': haltung_untersucht.untersuchtag,
+                      'untersuchrichtung': haltung_untersucht.untersuchrichtung,
+                      'bezugspunkt': haltung_untersucht.bezugspunkt,
                       'untersucher': haltung_untersucht.untersucher, 'wetter': haltung_untersucht.wetter,
-                      'bewertungsart': haltung_untersucht.bewertungsart, 'bewertungstag': haltung_untersucht.bewertungstag,
+                      'bewertungsart': haltung_untersucht.bewertungsart,
+                      'bewertungstag': haltung_untersucht.bewertungstag,
                       'datenart': haltung_untersucht.datenart, 'max_ZD': haltung_untersucht.max_ZD,
                       'max_ZB': haltung_untersucht.max_ZB, 'max_ZS': haltung_untersucht.max_ZS,
                       'geom': haltung_untersucht.geom, 'epsg': QKan.config.epsg,
@@ -1878,13 +1883,13 @@ class ImportTask:
                 name = block.findtext("HG001", None)
                 schoben = block.findtext("HG003", None)
                 schunten = block.findtext("HG004", None)
-                uricht = block.findtext("HI/HI101", None)
-                if uricht == "I":
+                _val = block.findtext("HI/HI101", None)
+                if _val == "I":
                     untersuchrichtung = "in Fließrichtung"
-                elif uricht == "G":
+                elif _val == "G":
                     untersuchrichtung = "gegen Fließrichtung"
                 else:
-                    logger.info(f"Untersuchungsdaten Haltung: Feld HI/HI101 fehlt oder falscher Wert: {uricht}")
+                    logger.info(f"Untersuchungsdaten Haltung: Feld HI/HI101 fehlt oder falscher Wert: {_val}")
                     continue
 
                 untersuchtag = block.findtext("HI/HI104")
@@ -1898,7 +1903,7 @@ class ImportTask:
                     #schunten = _untersuchdat_haltung.findtext("d:RGrunddaten/d:KnotenAblauf", None, self.NS)
 
                 _datei = block.findtext("HI/HI116", None)
-                if _datei is not None and self.ordner_video is not None:
+                if _datei and self.ordner_video:
                     film_dateiname = os.path.join(self.ordner_video, _datei).replace("\\","/")
                 else:
                     film_dateiname = None
@@ -1917,7 +1922,7 @@ class ImportTask:
                     quantnr1 = _get_float(_untersuchdat, "HZ003", 0.0)
                     quantnr2 = _get_float(_untersuchdat, "HZ004", 0.0)
                     _text = _untersuchdat.findtext("HZ005", None)
-                    if _text is not None:
+                    if _text:
                         streckenschaden = _text[0]
                         if any(i.isdigit() for i in _text) == True:
                             streckenschaden_lfdnr = [int(num) for num in re.findall(r"\d+", _text)][0]
@@ -1930,7 +1935,7 @@ class ImportTask:
                     pos_bis = _get_int(_untersuchdat, "HZ007", 0)
 
                     _datei = _untersuchdat.findtext("HZ009", None)
-                    if _datei is not None and self.ordner_bild is not None:
+                    if _datei and self.ordner_bild:
                         foto_dateiname = os.path.join(self.ordner_bild, _datei).replace("\\","/")
                     else:
                         foto_dateiname = None
@@ -2170,7 +2175,9 @@ class ImportTask:
                 schoben = block.findtext("HG003", None)
                 schunten = block.findtext("HG004", None)
 
-                laenge = _get_float(block,"HG314", 0.0)
+                laenge = _get_float(block,"HG314", None)
+                if not laenge:
+                    laenge = _get_float(block, "HG310", None)
 
                 hoehe = (_get_float(block,"HG307", 0.0))
                 breite = (_get_float(block,"HG306", 0.0))
@@ -2215,6 +2222,21 @@ class ImportTask:
                     max_ZD = _get_int(_haltung, "HI206", 63)
                     max_ZB = _get_int(_haltung, "HI208", 63)
                     max_ZS = _get_int(_haltung, "HI207", 63)
+
+                    _val = _haltung.findtext("HI101", None)
+                    if _val == "I":
+                        untersuchrichtung = "in Fließrichtung"
+                    elif _val == "G":
+                        untersuchrichtung = "gegen Fließrichtung"
+                    else:
+                        logger.info(f"Untersuchungsdaten Haltung: Feld HI/HI101 fehlt oder falscher Wert: {_val}")
+                        continue
+
+                    _val = block.findtext("HI/HI102")
+                    if _val == 'A' or not _val:
+                        bezugspunkt = 'Rohranfang'
+                    else:
+                        bezugspunkt = 'Gerinnemittelpunkt'          # HI 102 in ('C' , 'D', 'Z')
                 else:
                     untersuchtag = None
                     untersucher = None
@@ -2224,6 +2246,8 @@ class ImportTask:
                     max_ZD = 63
                     max_ZB = 63
                     max_ZS = 63
+                    untersuchrichtung = None
+                    bezugspunkt = None
                 datenart = self.datenart
 
                 yield Anschlussleitung_untersucht(
@@ -2238,6 +2262,8 @@ class ImportTask:
                     baujahr=baujahr,
                     untersuchtag=untersuchtag,
                     untersucher=untersucher,
+                    untersuchrichtung=untersuchrichtung,
+                    bezugspunkt=bezugspunkt,
                     wetter=wetter,
                     bewertungsart=bewertungsart,
                     bewertungstag=bewertungstag,
@@ -2257,6 +2283,8 @@ class ImportTask:
                       'kommentar': anschluss_untersucht.kommentar, 'baujahr': anschluss_untersucht.baujahr,
                       'strasse': anschluss_untersucht.strasse,
                       'untersuchtag':anschluss_untersucht.untersuchtag,
+                      'untersuchrichtung': anschluss_untersucht.untersuchrichtung,
+                      'bezugspunkt': anschluss_untersucht.bezugspunkt,
                       'untersucher': anschluss_untersucht.untersucher, 'wetter': anschluss_untersucht.wetter,
                       'bewertungsart': anschluss_untersucht.bewertungsart,
                       'bewertungstag': anschluss_untersucht.bewertungstag,
@@ -2318,13 +2346,13 @@ class ImportTask:
                 name = block.findtext("HG001", None)
                 schoben = block.findtext("HG003", None)
                 schunten = block.findtext("HG004", None)
-                uricht = block.findtext("HI/HI101", None)
-                if uricht == "I":
+                _val = block.findtext("HI/HI101", None)
+                if _val == "I":
                     untersuchrichtung = "in Fließrichtung"
-                elif uricht == "G":
+                elif _val == "G":
                     untersuchrichtung = "gegen Fließrichtung"
                 else:
-                    logger.info(f"Untersuchungsdaten Anschluss: Feld HI/HI101 fehlt oder falscher Wert: {uricht}")
+                    logger.info(f"Untersuchungsdaten Anschluss: Feld HI/HI101 fehlt oder falscher Wert: {_val}")
                     continue
 
                 untersuchtag = block.findtext("HI/HI104")
@@ -2337,7 +2365,7 @@ class ImportTask:
                 # schunten = _untersuchdat_haltung.findtext("d:RGrunddaten/d:KnotenAblauf", None, self.NS)
 
                 _datei = block.findtext("HI/HI116", None)
-                if _datei is not None and self.ordner_video is not None:
+                if _datei and self.ordner_video:
                     film_dateiname = os.path.join(self.ordner_video, _datei).replace("\\","/")
                 else:
                     film_dateiname = None
@@ -2355,7 +2383,7 @@ class ImportTask:
                     quantnr1 = _get_float(_untersuchdat,"HZ003", 0.0)
                     quantnr2 = _get_float(_untersuchdat,"HZ004", 0.0)
                     _text = _untersuchdat.findtext("HZ005", None)
-                    if _text is not None:
+                    if _text:
                         streckenschaden = _text[0]
                         if any(i.isdigit() for i in _text) == True:
                             streckenschaden_lfdnr = [int(num) for num in re.findall(r"\d+", _text)][0]
@@ -2368,7 +2396,7 @@ class ImportTask:
                     pos_bis = _get_int(_untersuchdat,"HZ007", 0)
 
                     _datei = _untersuchdat.findtext("HZ009", None)
-                    if _datei is not None and self.ordner_bild is not None:
+                    if _datei and self.ordner_bild:
                         foto_dateiname = os.path.join(self.ordner_bild, _datei).replace("\\","/")
                     else:
                         foto_dateiname = None

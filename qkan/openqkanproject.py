@@ -1,6 +1,6 @@
 import os
 
-from qgis.core import Qgis, QgsMessageLog, QgsSettings
+from qgis.core import Qgis, QgsMessageLog
 from qgis.utils import iface, pluginDirectory
 
 from qkan import QKan, enums
@@ -16,17 +16,6 @@ def initQKanProject():
     try:
         logger = get_logger("QKan.openproject")
         logger.debug("openProjekt started\n")
-
-        # Add QKan SVG path
-        qkanSvgPath = os.path.join(pluginDirectory("qkan"), "templates/svg")
-        svgPaths = QgsSettings().value('svg/searchPathsForSVG')
-        if qkanSvgPath not in svgPaths:
-            svgPaths.append(qkanSvgPath)
-            QgsSettings().setValue('svg/searchPathsForSVG', svgPaths)
-
-        # Set Identify Forms Option
-        QgsSettings().setValue('Map/identifyAutoFeatureForm', 'true')
-        QgsSettings().setValue('Map/identifyMode', 'LayerSelection')
 
         database_qkan, _ = get_database_QKan(silent=True)
         with DBConnection(dbname=database_qkan) as db_qkan:
@@ -49,11 +38,13 @@ def initQKanProject():
         )
         iface.messageBar().pushMessage("Information", msg, level=Qgis.Info)
 
+    # Anpassen der Formularpfade
     projectTemplate = os.path.join(pluginDirectory("qkan"), "templates/Projekt.qgs")
     layersadapt(
         database_QKan=None,
         projectTemplate=projectTemplate,
         anpassen_ProjektMakros=False,
+        anpassen_svgPaths=True,
         anpassen_Datenbankanbindung=False,
         anpassen_Layerstile=False,
         anpassen_Formulare=True,

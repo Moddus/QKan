@@ -15,11 +15,7 @@ BEGIN
     )
     WHERE pk = new.pk AND (haltnam = '' OR haltnam IS NULL);
 
-    UPDATE haltungen SET 
-    laenge = round(ST_Length(new.geom), 3)
-    WHERE pk = new.pk AND (laenge = 0 OR laenge IS NULL);
-
-    UPDATE haltungen SET 
+    UPDATE haltungen SET
     schoben = (
         SELECT schnam
         FROM schaechte AS s
@@ -47,7 +43,8 @@ BEGIN
     )
     WHERE pk = new.pk AND (schunten = '' OR schunten IS NULL);
 END;
-CREATE TRIGGER IF NOT EXISTS trig_mod_hal        -- Datenuebernahme aus Schaechten 
+
+CREATE TRIGGER IF NOT EXISTS trig_mod_hal        -- Datenuebernahme aus Schaechten
 AFTER UPDATE OF geom ON haltungen
 BEGIN
     UPDATE haltungen SET 
@@ -65,7 +62,9 @@ BEGIN
     WHERE pk = old.pk;
 
     UPDATE haltungen SET 
-    laenge = coalesce(round(ST_Length(new.geom), 3), OLD.laenge)
+        laenge = NULL,
+        sohleoben = NULL,
+        sohleunten = NULL
     WHERE pk = old.pk;
 
     UPDATE haltungen SET 

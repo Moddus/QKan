@@ -11,7 +11,6 @@ import shutil
 import sqlite3
 from array import array
 import packaging.version
-from sqlite3 import Connection
 from typing import Any, List, Optional, Union, cast, Dict, Tuple
 from fnmatch import fnmatch
 
@@ -245,7 +244,7 @@ class DBConnection:
         """Closes database connection."""
         try:
             if self.consl is not None:
-                cast(Connection, self.consl).close()
+                cast(sqlite3.Connection, self.consl).close()
             logger.debug(f"Verbindung zur Datenbank {self.dbname} wieder geloest.")
         except sqlite3.Error:
             fehlermeldung(
@@ -551,6 +550,7 @@ class DBConnection:
             parlis = [
                 "haltnam",
                 "bezugspunkt",
+                "untersuchrichtung",
                 "schoben",
                 "schunten",
                 "hoehe",
@@ -587,13 +587,13 @@ class DBConnection:
 
             sql = f"""
                 INSERT INTO haltungen_untersucht
-                  (haltnam, bezugspunkt, schoben, schunten,
+                  (haltnam, bezugspunkt, untersuchrichtung, schoben, schunten,
                    hoehe, breite, laenge,
                    kommentar, createdat, baujahr,  
                    geom, untersuchtag, untersucher, wetter, strasse, bewertungsart,
                    bewertungstag, datenart, max_ZD, max_ZB, max_ZS)
                 SELECT 
-                  :haltnam, :bezugspunkt, :schoben, :schunten, 
+                  :haltnam, :bezugspunkt, :untersuchrichtung, :schoben, :schunten, 
                   CASE WHEN :hoehe > 20 THEN :hoehe ELSE :hoehe*1000 END, 
                   CASE WHEN :breite > 20 THEN :breite ELSE :breite*1000 END,
                   :laenge, :kommentar, 
@@ -637,6 +637,7 @@ class DBConnection:
                 "timecode",
                 "video_offset",
                 "kuerzel",
+                "langtext",
                 "charakt1",
                 "charakt2",
                 "quantnr1",
@@ -665,32 +666,15 @@ class DBConnection:
             sql = f"""  
                 INSERT INTO untersuchdat_haltung
                   (untersuchhal, schoben, schunten, id, untersuchtag, bandnr, videozaehler, 
-                    inspektionslaenge, station, timecode, video_offset, kuerzel, charakt1, charakt2, 
+                    inspektionslaenge, station, timecode, video_offset, kuerzel, langtext, charakt1, charakt2, 
                     quantnr1, quantnr2, streckenschaden, streckenschaden_lfdnr, pos_von, pos_bis, foto_dateiname, 
                     film_dateiname, ordner_bild, ordner_video, ZD, ZB, ZS, createdat)
                 SELECT
                   :untersuchhal, :schoben, :schunten, :id, :untersuchtag, :bandnr, :videozaehler, 
-                  :inspektionslaenge , :station, :timecode, :video_offset, :kuerzel, :charakt1, :charakt2, 
+                  :inspektionslaenge , :station, :timecode, :video_offset, :kuerzel, :langtext, :charakt1, :charakt2, 
                   :quantnr1, :quantnr2, :streckenschaden, :streckenschaden_lfdnr, :pos_von, :pos_bis, 
                   :foto_dateiname, :film_dateiname, :ordner_bild, :ordner_video,
-                  coalesce(:ZD, 63), coalesce(:ZB, 63), coalesce(:ZS, 63), coalesce(:createdat, CURRENT_TIMESTAMP)
-                FROM
-                schaechte AS schob,
-                schaechte AS schun,
-                haltungen AS haltung
-                WHERE schob.schnam = :schoben AND schun.schnam = :schunten AND haltung.haltnam = :untersuchhal 
-                UNION
-                SELECT
-                  :untersuchhal, :schoben, :schunten, :id, :untersuchtag, :bandnr, :videozaehler, 
-                  :inspektionslaenge , :station, :timecode, :video_offset, :kuerzel, :charakt1, :charakt2, 
-                  :quantnr1, :quantnr2, :streckenschaden, :streckenschaden_lfdnr, :pos_von, :pos_bis, 
-                  :foto_dateiname, :film_dateiname, :ordner_bild, :ordner_video,
-                  coalesce(:ZD, 63), coalesce(:ZB, 63), coalesce(:ZS, 63), coalesce(:createdat, CURRENT_TIMESTAMP)
-                FROM
-                schaechte AS schob,
-                schaechte AS schun,
-                anschlussleitungen AS leitung
-                WHERE schob.schnam = :schoben AND schun.schnam = :schunten AND leitung.leitnam = :untersuchhal;
+                  coalesce(:ZD, 63), coalesce(:ZB, 63), coalesce(:ZS, 63), coalesce(:createdat, CURRENT_TIMESTAMP);
             """
 
         elif tabnam == "anschlussleitungen":
@@ -766,6 +750,7 @@ class DBConnection:
             parlis = [
                 "leitnam",
                 "bezugspunkt",
+                "untersuchrichtung",
                 "schoben",
                 "schunten",
                 "hoehe",
@@ -802,12 +787,12 @@ class DBConnection:
 
             sql = """
                 INSERT INTO anschlussleitungen_untersucht
-                  (leitnam, bezugspunkt, schoben, schunten,
+                  (leitnam, bezugspunkt, untersuchrichtung, schoben, schunten,
                    hoehe, breite, laenge,
                    kommentar, createdat, baujahr,  
                    geom, untersuchtag, untersucher, wetter, strasse, bewertungsart, bewertungstag, datenart, max_ZD, max_ZB, max_ZS)
                 SELECT 
-                  :leitnam, :bezugspunkt, :schoben, :schunten, 
+                  :leitnam, :bezugspunkt, :untersuchrichtung, :schoben, :schunten, 
                   CASE WHEN :hoehe > 20 THEN :hoehe ELSE :hoehe*1000 END, 
                   CASE WHEN :breite > 20 THEN :breite ELSE :breite*1000 END,
                   :laenge, :kommentar, 
@@ -855,6 +840,7 @@ class DBConnection:
                 "timecode",
                 "video_offset",
                 "kuerzel",
+                "langtext",
                 "charakt1",
                 "charakt2",
                 "quantnr1",
@@ -880,35 +866,18 @@ class DBConnection:
                     else:
                         parameters[el] = None
 
-            sql = f"""  
+            sql = f"""
                 INSERT INTO untersuchdat_anschlussleitungen
                   (untersuchleit, schoben, schunten, id, untersuchtag, bandnr, videozaehler, 
-                    inspektionslaenge, station, timecode, video_offset, kuerzel, charakt1, charakt2, 
+                    inspektionslaenge, station, timecode, video_offset, kuerzel, langtext, charakt1, charakt2, 
                     quantnr1, quantnr2, streckenschaden, streckenschaden_lfdnr, pos_von, pos_bis, foto_dateiname, 
                     film_dateiname, ordner_bild, ordner_video, ZD, ZB, ZS, createdat)
                 SELECT
                   :untersuchleit, :schoben, :schunten, :id, :untersuchtag, :bandnr, :videozaehler, 
-                  :inspektionslaenge , :station, :timecode, :video_offset, :kuerzel, :charakt1, :charakt2, 
+                  :inspektionslaenge , :station, :timecode, :video_offset, :kuerzel, :langtext, :charakt1, :charakt2, 
                   :quantnr1, :quantnr2, :streckenschaden, :streckenschaden_lfdnr, :pos_von, :pos_bis, 
                   :foto_dateiname, :film_dateiname, :ordner_bild, :ordner_video,
-                  coalesce(:ZD, 63), coalesce(:ZB, 63), coalesce(:ZS, 63), coalesce(:createdat, CURRENT_TIMESTAMP)
-                FROM
-                schaechte AS schob,
-                schaechte AS schun,
-                haltungen AS haltung
-                WHERE schob.schnam = :schoben AND schun.schnam = :schunten AND haltung.haltnam = :untersuchhal 
-                UNION
-                SELECT
-                  :untersuchleit, :schoben, :schunten, :id, :untersuchtag, :bandnr, :videozaehler, 
-                  :inspektionslaenge , :station, :timecode, :video_offset, :kuerzel, :charakt1, :charakt2, 
-                  :quantnr1, :quantnr2, :streckenschaden, :streckenschaden_lfdnr, :pos_von, :pos_bis, 
-                  :foto_dateiname, :film_dateiname, :ordner_bild, :ordner_video,
-                  coalesce(:ZD, 63), coalesce(:ZB, 63), coalesce(:ZS, 63), coalesce(:createdat, CURRENT_TIMESTAMP)
-                FROM
-                schaechte AS schob,
-                schaechte AS schun,
-                anschlussleitungen AS leitung
-                WHERE schob.schnam = :schoben AND schun.schnam = :schunten AND leitung.leitnam = :untersuchhal;
+                  coalesce(:ZD, 63), coalesce(:ZB, 63), coalesce(:ZS, 63), coalesce(:createdat, CURRENT_TIMESTAMP);
             """
 
         elif tabnam == "schaechte_untersucht":
@@ -977,6 +946,7 @@ class DBConnection:
                 "videozaehler",
                 "timecode",
                 "kuerzel",
+                "langtext",
                 "charakt1",
                 "charakt2",
                 "quantnr1",
@@ -1007,7 +977,7 @@ class DBConnection:
 
             sql = """
                 INSERT INTO untersuchdat_schacht
-                  (untersuchsch, id, untersuchtag, bandnr, videozaehler, timecode, kuerzel, 
+                  (untersuchsch, id, untersuchtag, bandnr, videozaehler, timecode, kuerzel, langtext, 
                     charakt1, charakt2, quantnr1, quantnr2, 
                     streckenschaden, streckenschaden_lfdnr, pos_von, pos_bis, 
                     vertikale_lage, inspektionslaenge, bereich, 
@@ -1015,7 +985,7 @@ class DBConnection:
                     ZD, ZB, ZS, 
                     createdat)
                 SELECT 
-                  :untersuchsch, :id, :untersuchtag, :bandnr, :videozaehler, :timecode, :kuerzel, 
+                  :untersuchsch, :id, :untersuchtag, :bandnr, :videozaehler, :timecode, :kuerzel, :langtext, 
                     :charakt1, :charakt2, :quantnr1, :quantnr2, 
                     :streckenschaden, :streckenschaden_lfdnr, :pos_von, :pos_bis, 
                     :vertikale_lage, :inspektionslaenge, :bereich, 

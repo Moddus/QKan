@@ -25,12 +25,12 @@ from typing import cast
 from xml.etree import ElementTree
 
 from qgis.core import (
-    Qgis,
     QgsCoordinateReferenceSystem,
     QgsDataSourceUri,
     QgsProject,
     QgsVectorLayer,
     QgsAction,
+    QgsSettings,
 )
 from qgis.utils import pluginDirectory
 
@@ -42,7 +42,6 @@ from qkan.database.qkan_utils import (
     fehlermeldung,
     list_qkan_layers,
     meldung,
-    warnung,
 )
 from qkan.utils import get_logger
 
@@ -103,6 +102,7 @@ def layersadapt(
     database_QKan: [str, None],
     projectTemplate: str,
     anpassen_ProjektMakros: bool,
+    anpassen_svgPaths: bool,
     anpassen_Datenbankanbindung: bool,
     anpassen_Layerstile: bool,
     anpassen_Formulare: bool,
@@ -118,6 +118,7 @@ def layersadapt(
     :database_QKan:                                 Ziel-Datenbank, auf die die Projektdatei angepasst werden soll
     :projectTemplate:                               Vorlage-Projektdatei für die anzupassenden Layereigenschaften
     :anpassen_ProjektMakros:                        Projektmakros werden angepasst
+    :anpassen_svgPaths:                             Pfad zu SVG-Dateien wird ergänzt
     :anpassen_Datenbankanbindung:                   Datenbankanbindungen werden angepasst
     :anpassen_Layerstile:                           Layerstile werden mit den qml-Dateien aus dem Verzeichnis templates/qml aktualisiert
     :anpassen_Formulare:                            Formulare werden anpasst
@@ -162,6 +163,19 @@ def layersadapt(
 
     # -----------------------------------------------------------------------------------------------------
     # QKan-Projekt
+
+    if anpassen_svgPaths:
+        # Add QKan SVG path
+        qkanSvgPath = os.path.join(pluginDirectory("qkan"), "templates/svg")
+        svgPaths = QgsSettings().value('svg/searchPathsForSVG')
+        if qkanSvgPath not in svgPaths:
+            svgPaths.append(qkanSvgPath)
+            QgsSettings().setValue('svg/searchPathsForSVG', svgPaths)
+
+        # Set Identify Forms Option
+        QgsSettings().setValue('Map/identifyAutoFeatureForm', 'true')
+        QgsSettings().setValue('Map/identifyMode', 'LayerSelection')
+
 
     # noinspection PyArgumentList
     project = QgsProject.instance()

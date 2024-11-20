@@ -6,14 +6,14 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>370</width>
-    <height>350</height>
+    <width>350</width>
+    <height>360</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>370</width>
-    <height>350</height>
+    <width>350</width>
+    <height>360</height>
    </size>
   </property>
   <property name="maximumSize">
@@ -79,8 +79,8 @@
    <widget class="QLabel" name="label_4">
     <property name="geometry">
      <rect>
-      <x>40</x>
-      <y>240</y>
+      <x>20</x>
+      <y>260</y>
       <width>100</width>
       <height>21</height>
      </rect>
@@ -95,8 +95,8 @@
    <widget class="QTextEdit" name="bemerkung">
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>260</y>
+      <x>10</x>
+      <y>280</y>
       <width>331</width>
       <height>71</height>
      </rect>
@@ -114,7 +114,7 @@
       <x>10</x>
       <y>40</y>
       <width>331</width>
-      <height>191</height>
+      <height>211</height>
      </rect>
     </property>
     <property name="font">
@@ -159,7 +159,7 @@
       <rect>
        <x>160</x>
        <y>60</y>
-       <width>31</width>
+       <width>71</width>
        <height>20</height>
       </rect>
      </property>
@@ -262,7 +262,7 @@
       <rect>
        <x>160</x>
        <y>90</y>
-       <width>31</width>
+       <width>71</width>
        <height>20</height>
       </rect>
      </property>
@@ -299,7 +299,7 @@
       <rect>
        <x>160</x>
        <y>120</y>
-       <width>31</width>
+       <width>71</width>
        <height>20</height>
       </rect>
      </property>
@@ -354,7 +354,7 @@
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>150</y>
+       <y>180</y>
        <width>131</width>
        <height>21</height>
       </rect>
@@ -379,8 +379,8 @@
      <property name="geometry">
       <rect>
        <x>160</x>
-       <y>150</y>
-       <width>31</width>
+       <y>180</y>
+       <width>71</width>
        <height>20</height>
       </rect>
      </property>
@@ -407,6 +407,38 @@
      </property>
      <property name="frame">
       <bool>true</bool>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_8">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>150</y>
+       <width>131</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Tahoma</family>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;DWA-M 150 - Nr.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="m150_2">
+     <property name="geometry">
+      <rect>
+       <x>160</x>
+       <y>150</y>
+       <width>71</width>
+       <height>20</height>
+      </rect>
      </property>
     </widget>
    </widget>

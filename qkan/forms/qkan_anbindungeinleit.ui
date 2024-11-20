@@ -33,7 +33,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>200</y>
+      <y>220</y>
       <width>291</width>
       <height>71</height>
      </rect>
@@ -55,7 +55,7 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>180</y>
+      <y>200</y>
       <width>81</width>
       <height>16</height>
      </rect>
@@ -70,7 +70,7 @@
       <x>10</x>
       <y>10</y>
       <width>291</width>
-      <height>161</height>
+      <height>181</height>
      </rect>
     </property>
     <property name="font">
@@ -86,7 +86,7 @@
      <property name="geometry">
       <rect>
        <x>130</x>
-       <y>90</y>
+       <y>120</y>
        <width>141</width>
        <height>22</height>
       </rect>
@@ -111,7 +111,7 @@
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>90</y>
+       <y>120</y>
        <width>101</width>
        <height>20</height>
       </rect>
@@ -130,7 +130,7 @@
      <property name="geometry">
       <rect>
        <x>130</x>
-       <y>120</y>
+       <y>150</y>
        <width>141</width>
        <height>23</height>
       </rect>
@@ -152,7 +152,7 @@
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>120</y>
+       <y>150</y>
        <width>101</width>
        <height>21</height>
       </rect>
@@ -256,6 +256,44 @@
      </property>
      <property name="statusTip">
       <string>Name des angebundenen Direkteinleiters</string>
+     </property>
+     <property name="editable">
+      <bool>true</bool>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_72">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>90</y>
+       <width>101</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Tahoma</family>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Schacht</string>
+     </property>
+    </widget>
+    <widget class="QComboBox" name="schnam">
+     <property name="geometry">
+      <rect>
+       <x>130</x>
+       <y>90</y>
+       <width>141</width>
+       <height>22</height>
+      </rect>
+     </property>
+     <property name="toolTip">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Name des angebundenen Schachtes&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+     <property name="statusTip">
+      <string>Name des angebundenen Schachtes</string>
      </property>
      <property name="editable">
       <bool>true</bool>

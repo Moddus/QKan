@@ -291,7 +291,6 @@
       </editWidget>
     </field>
   </fieldConfiguration>
-  <editform tolerant="1">C:/Users/User/Desktop/AppData/Roaming/QGIS/QGIS3/profiles/default/python/plugins/qkan/forms/qkan_auslaesse.ui</editform>
   <editforminit/>
   <editforminitcodesource>0</editforminitcodesource>
   <editforminitfilepath></editforminitfilepath>

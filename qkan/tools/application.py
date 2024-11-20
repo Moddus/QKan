@@ -740,17 +740,18 @@ class QKanTools(QKanPlugin):
             )
 
             layersadapt(
-                cast(str, self.database_name),
-                self.projectTemplate,
-                adapt_macros,
-                adapt_db,
-                adapt_layerstyles,
-                adapt_forms,
-                adapt_kbs,
-                update_node_type,
-                zoom_alles,
-                fehlende_layer_ergaenzen,
-                adapt_selected,
+                database_QKan=cast(str, self.database_name),
+                projectTemplate=self.projectTemplate,
+                anpassen_ProjektMakros=adapt_macros,
+                anpassen_svgPaths=False,
+                anpassen_Datenbankanbindung=adapt_db,
+                anpassen_Layerstile=adapt_layerstyles,
+                anpassen_Formulare=adapt_forms,
+                anpassen_Projektionssystem=adapt_kbs,
+                aktualisieren_Schachttypen=update_node_type,
+                zoom_alles=zoom_alles,
+                fehlende_layer_ergaenzen=fehlende_layer_ergaenzen,
+                anpassen_auswahl=adapt_selected,
             )
 
     def run_dbAdapt(self) -> None:
@@ -838,6 +839,7 @@ class QKanTools(QKanPlugin):
                 database_QKan=cast(str, self.database_name),
                 projectTemplate=os.path.join(pluginDirectory("qkan"), "templates/Projekt.qgs"),
                 anpassen_ProjektMakros=True,
+                anpassen_svgPaths=False,
                 anpassen_Datenbankanbindung=False,
                 anpassen_Layerstile=True,
                 anpassen_Formulare=True,

@@ -85,5 +85,29 @@ class TestQKanM150(QgisTest):
         # self.assertTrue(False, "Fehlernachricht")
 
 
+# Testdatensatz TV-Inspektion aus Abnahmebefahrung ATD
+class TestM150_BA6(QgisTest):
+    @classmethod
+    def setUpClass(cls) -> None:
+        super().setUpClass()
+
+        # Extract files
+        with ZipFile(BASE_DATA / "test_m150Import_BA6.zip") as z:
+            z.extractall(BASE_WORK)
+
+    def test_import(self) -> None:
+        QKan.config.database.qkan = str(BASE_WORK / "ba6.sqlite")
+        QKan.config.xml.import_file = str(BASE_WORK / "E24E0261 Hattinger Str. BA6 KANALERNEUERUNG Haltungen.xml")
+        QKan.config.project.file = str(BASE_WORK / "plan.qgs")
+        QKan.config.epsg = 25832
+
+        imp = M150Porter(iface())
+        erg = imp._doimport()
+
+        LOGGER.debug("erg (Validate_M150_Import): %s", erg)
+        if not erg:
+            LOGGER.info("Fehler in Test150QKan")
+        # self.assertTrue(False, "Fehlernachricht")
+
 if __name__ == "__main__":
     unittest.main()
