@@ -7,19 +7,16 @@ from qgis.PyQt.QtWidgets import (
     QDialog,
     QFileDialog,
     QLineEdit,
-    QListWidget,
-    QListWidgetItem,
     QPushButton,
     QRadioButton,
     QDialogButtonBox,
     QWidget,
 )
-from qgis.core import QgsCoordinateReferenceSystem
+from qgis.core import QgsCoordinateReferenceSystem, QgsProject
 from qgis.gui import QgsProjectionSelectionWidget
 
-from qkan import QKan, enums, list_selected_items
+from qkan import QKan, enums
 from qkan.database.dbfunc import DBConnection
-from qkan.database.qkan_utils import fehlermeldung
 from qkan.utils import get_logger
 
 logger = get_logger("QKan.he8.application_dialog")
@@ -81,7 +78,7 @@ class ExportDialog(_Dialog, EXPORT_CLASS):  # type: ignore
     rb_update: QRadioButton
     rb_append: QRadioButton
 
-    lw_teilgebiete: QListWidget
+    cb_selectedObjects: QCheckBox
 
     db_qkan: DBConnection
 
@@ -101,10 +98,8 @@ class ExportDialog(_Dialog, EXPORT_CLASS):  # type: ignore
         self.cb_tezg_hf.clicked.connect(self.check_tezg_hf)
         self.button_box.helpRequested.connect(self.click_help)
 
-        # Aktionen zu lw_teilgebiete: QListWidget
-        self.cb_selActive.stateChanged.connect(self.click_selection)
-        # self.lw_teilgebiete.itemClicked.connect(self.count_selection)      # ist schon in click_lw_teilgebiete enthalten
-        self.lw_teilgebiete.itemClicked.connect(self.click_lw_teilgebiete)
+        # Aktionen zu Selektionen
+        self.cb_selectedObjects.stateChanged.connect(self.click_selection)
 
         # Init fields
 
@@ -134,24 +129,11 @@ class ExportDialog(_Dialog, EXPORT_CLASS):  # type: ignore
         self.cb_aussengebiete.setChecked(QKan.config.check_export.aussengebiete)
         self.cb_einzugsgebiete.setChecked(QKan.config.check_export.einzugsgebiete)
         self.cb_tezg.setChecked(QKan.config.check_export.tezg)
-        self.cb_tezg_hf.setChecked(QKan.config.check_export.tezg_hf)
+        self.cb_selectedObjects.setChecked(False)                   # zunächst deaktiviert
 
         # Aktionen beim Export
         self.rb_append.setChecked(QKan.config.check_export.append)
         self.rb_update.setChecked(QKan.config.check_export.update)
-
-    # deaktiviert, weil sich die Quelldatenbank aus dem Projekt ergibt
-    # def select_database(self):
-    #     # noinspection PyArgumentList,PyCallByClass
-    #     filename, _ = QFileDialog.getOpenFileName(
-    #         self,
-    #         self.tr("Zu importierende SQLite-Datei"),
-    #         self.default_dir,
-    #         "*.sqlite",
-    #     )
-    #     if filename:
-    #         self.tf_database.setText(filename)
-    #         self.default_dir = os.path.dirname(filename)
 
     def select_template(self) -> None:
         # noinspection PyArgumentList,PyCallByClass
@@ -188,143 +170,50 @@ class ExportDialog(_Dialog, EXPORT_CLASS):  # type: ignore
     def click_selection(self) -> None:
         """Reagiert auf Checkbox zur Aktivierung der Auswahl"""
 
-        # Checkbox hat den Status nach dem Klick
-        if self.cb_selActive.isChecked():
-            # Nix tun ...
-            logger.debug("\nChecked = True")
-        else:
-            # Auswahl deaktivieren und Liste zurücksetzen
-            anz = self.lw_teilgebiete.count()
-            for i in range(anz):
-                item = self.lw_teilgebiete.item(i)
-                item.setSelected(False)
-                # self.lw_teilgebiete.setItemSelected(item, False)
+        # Anzahl in der Anzeige aktualisieren
+        self.count()
 
-            # Anzahl in der Anzeige aktualisieren
-            self.count_selection()
-
-    def click_lw_teilgebiete(self) -> None:
-        """Reaktion auf Klick in Tabelle"""
-
-        self.cb_selActive.setChecked(True)
-        self.count_selection()
-
-    def count_selection(self) -> bool:
-        """ Zählung mit Herstellung der Datenbankverbindung
-        """
-        with DBConnection() as db_qkan:
-            self.count(db_qkan)
-
-    def count(self, db_qkan: DBConnection) -> bool:
+    def count(self) -> bool:
         """ Zählt nach Änderung der Auswahlen in den Listen im Formular die Anzahl
             der betroffenen Flächen und Haltungen
         """
-        teilgebiete: List[str] = list_selected_items(self.lw_teilgebiete)
-        # teilgebiete: List[str] = []        # Todo: wieder aktivieren
+        logger.debug('Event: SelectionChanged')
+        with DBConnection() as db_qkan:
+            dbname = db_qkan.dbname
 
-        # Zu berücksichtigende Flächen zählen
-        auswahl = ""
-        if len(teilgebiete) != 0:
-            auswahl = " WHERE flaechen.teilgebiet in ('{}')".format(
-                "', '".join(teilgebiete)
-            )
+            # Datenbankpfad in Dialog übernehmen
+            QKan.config.database.qkan = dbname
 
-        sql = f"SELECT count(*) AS anzahl FROM flaechen {auswahl}"
+            self.tf_database.setText(QKan.config.database.qkan)
 
-        if not db_qkan.sql(sql, "QKan_ExportHE.application.countselection (1)"):
-            return False
-        daten = db_qkan.fetchone()
-        if not (daten is None):
-            self.lf_anzahl_flaechen.setText(str(daten[0]))
-        else:
-            self.lf_anzahl_flaechen.setText("0")
+            # Checkbox hat den Status nach dem Klick
+            selected = self.cb_selectedObjects.isChecked()
+            # Ausgewählte Objekte in temporäre Tabellen übernehmen
+            n_haltungen, n_schaechte, n_flaechen = db_qkan.getSelection(selected)
 
-        # Zu berücksichtigende Schächte zählen
-        auswahl = ""
-        if len(teilgebiete) != 0:
-            auswahl = " WHERE schaechte.teilgebiet in ('{}')".format(
-                "', '".join(teilgebiete)
-            )
+            self.lf_anzahl_haltungen.setText(f'{n_haltungen}')
+            self.lf_anzahl_schaechte.setText(f'{n_schaechte}')
+            self.lf_anzahl_flaechen.setText(f'{n_flaechen}')
 
-        sql = f"SELECT count(*) AS anzahl FROM schaechte {auswahl}"
-        if not db_qkan.sql(sql, "QKan_ExportHE.application.countselection (2) "):
-            return False
-        daten = db_qkan.fetchone()
-        if not (daten is None):
-            self.lf_anzahl_schaechte.setText(str(daten[0]))
-        else:
-            self.lf_anzahl_schaechte.setText("0")
+    def prepareDialog(self, iface) -> bool:
+        # Initialisierung der Anzeige der Anzahl zu exportierender Objekte
 
-        # Zu berücksichtigende Haltungen zählen
-        auswahl = ""
-        if len(teilgebiete) != 0:
-            auswahl = " WHERE haltungen.teilgebiet in ('{}')".format(
-                "', '".join(teilgebiete)
-            )
+        # Für 3 Layer Selection-Change-Events definieren
+        for layernam in ['Haltungen', 'Schaechte', 'Flaechen']:
+            layerobjects = QgsProject().instance().mapLayersByName(layernam)
+            for layer in layerobjects:
+                layer.selectionChanged.connect(self.count)
 
-        sql = f"SELECT count(*) AS anzahl FROM haltungen {auswahl}"
-        if not db_qkan.sql(sql, "QKan_ExportHE.application.countselection (3) "):
-            return False
-        daten = db_qkan.fetchone()
-        if not (daten is None):
-            self.lf_anzahl_haltungen.setText(str(daten[0]))
-        else:
-            self.lf_anzahl_haltungen.setText("0")
+        self.count()
+
         return True
 
-    def prepareDialog(self, db_qkan: DBConnection) -> bool:
-        """Füllt Auswahllisten im Export-Dialog"""
-
-        # Alle Teilgebiete in Flächen, Schächten und Haltungen, die noch nicht in Tabelle "teilgebiete" enthalten
-        # sind, ergänzen
-
-        sql = """WITH tgb AS (
-                SELECT teilgebiet FROM flaechen
-                WHERE teilgebiet IS NOT NULL
-                UNION
-                SELECT teilgebiet FROM haltungen
-                WHERE teilgebiet IS NOT NULL
-                UNION
-                SELECT teilgebiet FROM schaechte
-                WHERE teilgebiet IS NOT NULL
-                )
-                INSERT INTO teilgebiete (tgnam)
-                SELECT teilgebiet FROM tgb
-                WHERE teilgebiet NOT IN (SELECT tgnam FROM teilgebiete)
-                GROUP BY teilgebiet"""
-        if not db_qkan.sql(sql, "he8porter.application_dialog.connectQKanDB (1) "):
-            return False
-
-        db_qkan.commit()
-
-        # Anlegen der Tabelle zur Auswahl der Teilgebiete
-
-        # Zunächst wird die Liste der beim letzten Mal gewählten Teilgebiete aus config gelesen
-        teilgebiete = QKan.config.selections.teilgebiete
-
-        # Abfragen der Tabelle teilgebiete nach Teilgebieten
-        sql = 'SELECT "tgnam" FROM "teilgebiete" GROUP BY "tgnam"'
-        if not db_qkan.sql(sql, "he8porter.application_dialog.connectQKanDB (4) "):
-            return False
-        daten = db_qkan.fetchall()
-        self.lw_teilgebiete.clear()
-
-        for ielem, elem in enumerate(daten):
-            self.lw_teilgebiete.addItem(QListWidgetItem(elem[0]))
-            try:
-                if elem[0] in teilgebiete:
-                    self.lw_teilgebiete.setCurrentRow(ielem)
-            except BaseException as err:
-                fehlermeldung(
-                    (
-                        "he8porter.application_dialog.connectQKanDB, "
-                        f"Fehler in elem = {elem}\n"
-                    ),
-                    repr(err),
-                )
-
-        # Initialisierung der Anzeige der Anzahl zu exportierender Objekte
-        self.count(db_qkan)
+    def finishDialog(self) -> bool:
+        # Aufheben der Selections-Change-Events
+        for layernam in ['Haltungen', 'Schaechte', 'Flaechen']:
+            layerobjects = QgsProject().instance().mapLayersByName(layernam)
+            for layer in layerobjects:
+                layer.selectionChanged.disconnect()
 
         return True
 
@@ -543,8 +432,9 @@ class ResultsDialog(_Dialog, RESULTS_CLASS):  # type: ignore
         elif qml_choice == enums.QmlChoice.NONE:
             self.rb_none.setChecked(True)
         else:
-            fehlermeldung("Fehler im Programmcode (1)", "Nicht definierte Option")
-            return
+            fehlermeldung = "Nicht definierte Option"
+            logger.error(fehlermeldung)
+            raise Exception(f"{self.__class__.__name__}: {fehlermeldung}")
 
         # Individuelle Stildatei
         self.tf_qmlfile.setText(QKan.config.he8.qml_file_results)

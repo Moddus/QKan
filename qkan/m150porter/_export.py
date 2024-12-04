@@ -47,6 +47,7 @@ class ExportTask:
     def __init__(self, db_qkan: DBConnection, export_file: str):
         self.db_qkan = db_qkan
         self.export_file = export_file
+        self.liste_teilgebiete = QKan.config.selections.teilgebiete
 
         # XML base
 
@@ -645,8 +646,8 @@ class ExportTask:
                 geom,
                 {
                     "GP001": attr[1],
-                    "GP003": x_koordinate,
-                    "GP004": y_koordinate,
+                    "GP003": attr[16],
+                    "GP004": attr[17],
                     "GP007": attr[6],
                 },
             )
@@ -657,8 +658,8 @@ class ExportTask:
                 geom,
                 {
                     "GP001": attr[2],
-                    "GP003": x_koordinate,
-                    "GP004": y_koordinate,
+                    "GP003": attr[18],
+                    "GP004": attr[19],
                     "GP007": attr[7],
                 },
             )

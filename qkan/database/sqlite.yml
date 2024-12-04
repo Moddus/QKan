@@ -1,0 +1,546 @@
+database_getepsg: "
+SELECT srid
+FROM geom_cols_ref_sys
+WHERE Lower(f_table_name) = Lower('haltungen')
+AND Lower(f_geometry_column) = Lower('geom');"
+
+database_altertable_addgeometrycolumn: "
+SELECT AddGeometryColumn(?, ?, ?, ?, ?)"
+
+database_altertable_discardgeometrycolumn: "
+SELECT DiscardGeometryColumn(?, ?)"
+
+database_altertable_createspatialindex: "
+SELECT CreateSpatialIndex(?, ?)"
+
+database_insertdata_schaechte: "
+INSERT INTO schaechte (
+    schnam, sohlhoehe, deckelhoehe, 
+    durchm, 
+    druckdicht,
+    ueberstauflaeche, 
+    entwart, strasse, baujahr, teilgebiet, 
+    knotentyp, auslasstyp, schachttyp,
+    simstatus, material,
+    kommentar, createdat, 
+    geop, geom)
+VALUES (
+    :schnam, :sohlhoehe, :deckelhoehe,
+    CASE WHEN :durchm > 200 THEN :durchm/1000. ELSE :durchm END, 
+    :druckdicht, coalesce(:ueberstauflaeche, 0), 
+    coalesce(:entwart, 'Regenwasser'), :strasse, :baujahr, :teilgebiet, 
+    :knotentyp, :auslasstyp, coalesce(:schachttyp, 'Schacht'), 
+    coalesce(:simstatus, 'vorhanden'), :material,
+    :kommentar, coalesce(:createdat, CURRENT_TIMESTAMP),
+    CASE WHEN :geop IS NULL
+        THEN MakePoint(:xsch, :ysch, :epsg)
+        ELSE GeomFromWKB(:geop, :epsg)
+    END,
+    CASE WHEN :geom IS NULL
+        THEN CastToMultiPolygon(MakePolygon(
+            MakeCircle(:xsch,:ysch,coalesce(:durchm, 1.0)/2.0, :epsg)))
+        ELSE GeomFromWKB(:geom, :epsg)
+    END);"
+
+database_insertdata_haltungen: "
+INSERT INTO haltungen
+  (haltnam, baujahr, schoben, schunten,
+   hoehe, breite, laenge, aussendurchmesser,
+   sohleoben, sohleunten, 
+   teilgebiet, profilnam, 
+   entwart, strasse, material, profilauskleidung, innenmaterial, ks, haltungstyp,
+   simstatus, kommentar, createdat,  
+   geom)
+SELECT 
+  :haltnam, :baujahr, :schoben, :schunten,
+  CASE WHEN :hoehe > 20 THEN :hoehe ELSE :hoehe*1000. END,
+  CASE WHEN :breite > 20 THEN :breite ELSE :breite*1000. END,
+  :laenge, :aussendurchmesser,
+  :sohleoben, :sohleunten,
+  :teilgebiet, coalesce(:profilnam, 'Kreisquerschnitt'),
+  coalesce(:entwart, 'Regenwasser'), :strasse, :material, :profilauskleidung, :innenmaterial, coalesce(:ks, 1.5), coalesce(:haltungstyp, 'Haltung'),
+  coalesce(:simstatus, 'vorhanden'), :kommentar,
+  coalesce(:createdat, CURRENT_TIMESTAMP),
+  CASE WHEN :geom IS NULL
+    THEN
+      MakeLine(
+        coalesce(
+          (SELECT geop FROM schaechte WHERE schnam = :schoben LIMIT 1),
+          MakePoint(:xschob, :yschob, :epsg)
+        ),
+        coalesce(
+          (SELECT geop FROM schaechte WHERE schnam = :schunten LIMIT 1),
+          MakePoint(:xschun, :yschun, :epsg)
+        )
+      )
+    ELSE GeomFromWKB(:geom, :epsg)
+  END;"
+
+database_insertdata_haltungen_untersucht: "
+INSERT INTO haltungen_untersucht
+  (haltnam, bezugspunkt, untersuchrichtung, schoben, schunten,
+   hoehe, breite, laenge,
+   kommentar, createdat, baujahr,  
+   geom, untersuchtag, untersucher, wetter, strasse, bewertungsart,
+   bewertungstag, datenart, max_ZD, max_ZB, max_ZS)
+SELECT 
+  :haltnam, :bezugspunkt, :untersuchrichtung, :schoben, :schunten, 
+  CASE WHEN :hoehe > 20 THEN :hoehe ELSE :hoehe*1000. END, 
+  CASE WHEN :breite > 20 THEN :breite ELSE :breite*1000. END,
+  :laenge, :kommentar, 
+  coalesce(:createdat, CURRENT_TIMESTAMP), :baujahr,
+  CASE WHEN :geom IS NULL
+    THEN
+      MakeLine(
+        coalesce(
+          MakePoint(:xschob, :yschob, :epsg),
+          suo.geop,
+          so.geop
+        ), 
+        coalesce(
+          MakePoint(:xschun, :yschun, :epsg),
+          suu.geop,
+          su.geop
+        )
+      )
+    ELSE GeomFromWKB(:geom, :epsg)
+  END,
+  :untersuchtag, :untersucher, :wetter, :strasse, :bewertungsart,
+  :bewertungstag, :datenart, coalesce(:max_ZD, 63), coalesce(:max_ZB, 63), coalesce(:max_ZS, 63)
+FROM
+  (SELECT :schoben AS schoben, :schunten AS schunten) AS ha
+  LEFT JOIN schaechte_untersucht AS suo ON suo.schnam = ha.schoben
+  LEFT JOIN schaechte_untersucht AS suu ON suu.schnam = ha.schunten
+  LEFT JOIN schaechte AS so ON so.schnam = ha.schoben
+  LEFT JOIN schaechte AS su ON su.schnam = ha.schunten;"
+
+database_insertdata_untersuchdat_haltung: "
+INSERT INTO untersuchdat_haltung
+  (untersuchhal, schoben, schunten, id, untersuchtag, bandnr, videozaehler, 
+    inspektionslaenge, station, timecode, video_offset, kuerzel, langtext, charakt1, charakt2, 
+    quantnr1, quantnr2, streckenschaden, streckenschaden_lfdnr, pos_von, pos_bis, foto_dateiname, 
+    film_dateiname, ordner_bild, ordner_video, ZD, ZB, ZS, createdat)
+SELECT
+  :untersuchhal, :schoben, :schunten, :id, :untersuchtag, :bandnr, :videozaehler, 
+  :inspektionslaenge , :station, :timecode, :video_offset, :kuerzel, :langtext, :charakt1, :charakt2, 
+  :quantnr1, :quantnr2, :streckenschaden, :streckenschaden_lfdnr, :pos_von, :pos_bis, 
+  :foto_dateiname, :film_dateiname, :ordner_bild, :ordner_video,
+  coalesce(:ZD, 63), coalesce(:ZB, 63), coalesce(:ZS, 63), coalesce(:createdat, CURRENT_TIMESTAMP);"
+
+database_insertdata_anschlussleitungen: "
+INSERT INTO anschlussleitungen
+  (leitnam, schoben, schunten,
+   hoehe, breite, laenge, aussendurchmesser,
+   sohleoben, sohleunten, baujahr, haltnam,
+   teilgebiet, 
+   entwart, material, profilauskleidung, innenmaterial, ks, anschlusstyp, 
+   simstatus, kommentar, createdat,  
+   geom)
+VALUES( 
+  :leitnam, :schoben, :schunten, 
+  CASE WHEN :hoehe > 20 THEN :hoehe ELSE :hoehe*1000. END, 
+  CASE WHEN :breite > 20 THEN :breite ELSE :breite*1000. END,
+  :laenge, :aussendurchmesser,
+  :sohleoben, :sohleunten, :baujahr, :haltnam,
+  :teilgebiet, 
+  coalesce(:entwart, 'Regenwasser'), :material, :profilauskleidung, :innenmaterial, coalesce(:ks, 1.5), 
+  :anschlusstyp, coalesce(:simstatus, 'vorhanden'), :kommentar, 
+  coalesce(:createdat, CURRENT_TIMESTAMP), 
+  CASE WHEN :geom IS NULL
+      THEN MakeLine(
+          MakePoint(:xschob, :yschob, :epsg), 
+          MakePoint(:xschun, :yschun, :epsg))
+      ELSE GeomFromWKB(:geom, :epsg)
+  END);"
+
+database_insertdata_anschlussleitungen_untersucht: "
+INSERT INTO anschlussleitungen_untersucht
+  (leitnam, bezugspunkt, untersuchrichtung, schoben, schunten,
+   hoehe, breite, laenge,
+   kommentar, createdat, baujahr,  
+   geom, untersuchtag, untersucher, wetter, strasse, bewertungsart, bewertungstag, datenart, max_ZD, max_ZB, max_ZS)
+SELECT 
+  :leitnam, :bezugspunkt, :untersuchrichtung, :schoben, :schunten, 
+  CASE WHEN :hoehe > 20 THEN :hoehe ELSE :hoehe*1000. END, 
+  CASE WHEN :breite > 20 THEN :breite ELSE :breite*1000. END,
+  :laenge, :kommentar, 
+  coalesce(:createdat, CURRENT_TIMESTAMP), :baujahr,
+  CASE WHEN :geom IS NULL
+    THEN
+      MakeLine(
+        coalesce(
+          MakePoint(:xschob, :yschob, :epsg),
+          suo.geop,
+          so.geop
+        ), 
+        coalesce(
+          MakePoint(:xschun, :yschun, :epsg),
+          suu.geop,
+          su.geop
+        )
+      )
+    ELSE GeomFromWKB(:geom, :epsg)
+  END, 
+  :untersuchtag, :untersucher, :wetter, :strasse, :bewertungsart,
+  :bewertungstag, :datenart, coalesce(:max_ZD, 63), coalesce(:max_ZB, 63), coalesce(:max_ZS, 63)
+FROM
+  (SELECT :schoben AS schoben, :schunten AS schunten) AS ha
+  LEFT JOIN schaechte_untersucht AS suo ON suo.schnam = ha.schoben
+  LEFT JOIN schaechte_untersucht AS suu ON suu.schnam = ha.schunten
+  LEFT JOIN schaechte AS so ON so.schnam = ha.schoben
+  LEFT JOIN schaechte AS su ON su.schnam = ha.schunten;"
+
+database_insertdata_untersuchdat_anschlussleitungen: "
+INSERT INTO untersuchdat_anschlussleitungen
+  (untersuchleit, schoben, schunten, id, untersuchtag, bandnr, videozaehler, 
+    inspektionslaenge, station, timecode, video_offset, kuerzel, langtext, charakt1, charakt2, 
+    quantnr1, quantnr2, streckenschaden, streckenschaden_lfdnr, pos_von, pos_bis, foto_dateiname, 
+    film_dateiname, ordner_bild, ordner_video, ZD, ZB, ZS, createdat)
+SELECT
+  :untersuchleit, :schoben, :schunten, :id, :untersuchtag, :bandnr, :videozaehler, 
+  :inspektionslaenge , :station, :timecode, :video_offset, :kuerzel, :langtext, :charakt1, :charakt2, 
+  :quantnr1, :quantnr2, :streckenschaden, :streckenschaden_lfdnr, :pos_von, :pos_bis, 
+  :foto_dateiname, :film_dateiname, :ordner_bild, :ordner_video,
+  coalesce(:ZD, 63), coalesce(:ZB, 63), coalesce(:ZS, 63), coalesce(:createdat, CURRENT_TIMESTAMP);"
+
+database_insertdata_schaechte_untersucht: "
+INSERT INTO schaechte_untersucht
+  (schnam, durchm, bezugspunkt, id,
+   kommentar, createdat, baujahr,
+   geop, untersuchtag, untersucher, 
+   wetter, strasse, bewertungsart, 
+   bewertungstag, datenart, max_ZD, max_ZB, max_ZS)
+SELECT
+  :schnam,
+  CASE WHEN :durchm > 200 THEN :durchm/1000. ELSE :durchm END, :bezugspunkt, :id,
+  :kommentar, coalesce(:createdat, CURRENT_TIMESTAMP), :baujahr,
+  CASE WHEN :geop IS NULL
+    THEN
+      coalesce(
+        MakePoint(:xsch, :ysch, :epsg),
+        sch.geop
+      )
+    ELSE GeomFromWKB(:geop, :epsg)
+  END,
+  :untersuchtag, :untersucher, 
+  :wetter, :strasse, :bewertungsart, 
+  :bewertungstag, :datenart, 
+  coalesce(:max_ZD, 63), coalesce(:max_ZB, 63), coalesce(:max_ZS, 63)
+FROM
+  (SELECT :schnam AS schnam) AS val
+  LEFT JOIN schaechte AS sch ON val.schnam = sch.schnam;"
+
+database_insertdata_untersuchdat_schacht: "
+INSERT INTO untersuchdat_schacht
+  (untersuchsch, id, untersuchtag, bandnr, videozaehler, timecode, kuerzel, langtext, 
+    charakt1, charakt2, quantnr1, quantnr2, 
+    streckenschaden, streckenschaden_lfdnr, pos_von, pos_bis, 
+    vertikale_lage, inspektionslaenge, bereich, 
+    foto_dateiname, ordner, film_dateiname, ordner_video,
+    ZD, ZB, ZS, 
+    createdat)
+SELECT 
+  :untersuchsch, :id, :untersuchtag, :bandnr, :videozaehler, :timecode, :kuerzel, :langtext, 
+    :charakt1, :charakt2, :quantnr1, :quantnr2, 
+    :streckenschaden, :streckenschaden_lfdnr, :pos_von, :pos_bis, 
+    :vertikale_lage, :inspektionslaenge, :bereich, 
+    :foto_dateiname, :ordner, :film_dateiname, :ordner_video,
+    coalesce(:ZD, 63), coalesce(:ZB, 63), coalesce(:ZS, 63), 
+    coalesce(:createdat, CURRENT_TIMESTAMP)
+FROM
+    schaechte AS sch
+    WHERE sch.schnam = :untersuchsch;"
+
+database_insertdata_tezg: "
+INSERT INTO tezg
+  (flnam, regenschreiber, schnam, befgrad, neigung, 
+    createdat, haltnam, neigkl, schwerpunktlaufzeit, 
+    teilgebiet, abflussparameter,
+    kommentar, geom)
+VALUES (
+:flnam, :regenschreiber, :schnam, :befgrad, :neigung, 
+    coalesce(:createdat, CURRENT_TIMESTAMP), :haltnam, :neigkl, 
+    :schwerpunktlaufzeit, :teilgebiet, 
+    :abflussparameter, :kommentar,
+GeomFromWKB(:geom, :epsg));"
+
+database_insertdata_flaechen: "
+INSERT INTO flaechen
+  (flnam, haltnam, schnam, neigkl, neigung, 
+  teilgebiet, regenschreiber, abflussparameter, 
+  aufteilen, kommentar, createdat, 
+  geom)
+VALUES (
+:flnam, :haltnam, :schnam, :neigkl, :neigung, 
+:teilgebiet, :regenschreiber, :abflussparameter, 
+:aufteilen, :kommentar, 
+coalesce(:createdat, CURRENT_TIMESTAMP),
+GeomFromWKB(:geom, :epsg));"
+
+database_insertdata_teilgebiete: "
+INSERT INTO teilgebiete
+  (tgnam, kommentar, createdat, geom)
+VALUES (
+    :tgnam, :kommentar, 
+    coalesce(:createdat, CURRENT_TIMESTAMP),
+    GeomFromWKB(:geom, :epsg));"
+
+database_insertdata_geometry_columns: "
+SELECT f_geometry_column, geometry_type, srid, 
+        coord_dimension, spatial_index_enabled
+FROM geometry_columns WHERE f_table_name = ?"
+
+database_getversion: "
+SELECT value
+FROM info
+WHERE subject = 'version'"
+
+database_update_info: "
+UPDATE info SET value = ? WHERE subject = 'version'"
+
+database_insertversion: "
+INSERT INTO info (subject, value) Values ('version', '1.9.9')"
+
+database_pragma: "
+PRAGMA table_info({tabnam})"
+
+database_foreign_key_off: "
+PRAGMA foreign_keys=OFF;"
+
+database_create_table: "
+CREATE TABLE {tabnam} ({attr_text_new});"
+
+database_create_temp_table: "
+CREATE TABLE IF NOT EXISTS {tabnam}_t ({attr_text_new});"
+
+database_delete: "
+DELETE FROM {tabnam}_t"
+
+database_in_both: "
+INSERT INTO {tabnam} {attr_text_both}
+SELECT {attr_text_both}
+FROM {tabnam}_t;"
+
+database_in_both_t: "
+INSERT INTO {tabnam}_t {attr_text_both}
+SELECT {attr_text_both}
+FROM {tabnam};"
+
+database_drop_table: "
+DROP TABLE {tabnam};"
+
+database_drop_table_t: "
+DROP TABLE {tabnam}_t;"
+
+database_foreign_check: "
+PRAGMA foreign_key_check;"
+
+database_foreign_on: "
+PRAGMA foreign_keys=ON;"
+
+database_insert_into: "
+INSERT INTO {reftable} ({attr_name}, {attr_key}, {attr_bem})
+VALUES (?, ?, ?)"
+
+database_insert_short: "
+INSERT INTO {reftable} ({attr_name}, {attr_key}, {attr_short}, {attr_bem})
+VALUES (?, ?, ?, ?)"
+
+database_get_bezeichnung: "
+SELECT bezeichnung FROM {tabnam}"
+
+database_set_bezeichnung: "
+UPDATE {tabnam} SET bezeichnung = :qkan_bez WHERE bezeichnung = :bezeichnung"
+
+database_create_haltungen_sel: "
+CREATE TABLE IF NOT EXISTS haltungen_sel (pk INTEGER PRIMARY KEY)"
+
+database_create_schaechte_sel: "
+CREATE TABLE IF NOT EXISTS schaechte_sel (pk INTEGER PRIMARY KEY)"
+
+database_create_flaechen_sel: "
+CREATE TABLE IF NOT EXISTS flaechen_sel (pk INTEGER PRIMARY KEY)"
+
+database_insert_haltungen_sel: "
+INSERT INTO haltungen_sel (pk) VALUES (:pk)"
+
+database_insert_schaechte_sel: "
+INSERT INTO schaechte_sel (pk) VALUES (:pk)"
+
+database_insert_flaechen_sel: "
+INSERT INTO flaechen_sel (pk) VALUES (:pk)"
+
+database_count_haltungen_sel: "
+SELECT count() FROM haltungen_sel"
+
+database_count_schaechte_sel: "
+SELECT count() FROM schaechte_sel"
+
+database_count_flaechen_sel: "
+SELECT count() FROM flaechen_sel"
+
+database_count_haltungen_all: "
+SELECT count() FROM haltungen"
+
+database_count_schaechte_all: "
+SELECT count() FROM schaechte"
+
+database_count_flaechen_all: "
+SELECT count() FROM flaechen"
+
+database_checknames: "
+SELECT {attr}
+    FROM {tab}
+    WHERE {attr} IS NULL or trim({attr}) = ''"
+
+database_correct_names: "
+UPDATE {tab}
+    SET {attr} = printf('{prefix}%d', ROWID)
+    WHERE {attr} IS NULL or trim({attr}) = ''"
+
+database_checkmultiple: "
+SELECT {attr}, count(*) AS anzahl
+    FROM {tab}
+    GROUP BY {attr}
+    HAVING anzahl > 1 OR {attr} IS NULL"
+
+database_correct_multiple: "
+WITH doppelte AS (
+    SELECT {attr}, count(*) AS anzahl
+    FROM {tab}
+    GROUP BY {attr}
+    HAVING anzahl > 1 OR {attr} IS NULL
+)
+UPDATE {tab}
+SET {attr} = printf('{prefix}%d', ROWID)
+WHERE {attr} IN (SELECT {attr} FROM doppelte)"
+
+database_checkflaechenbilanz: "
+WITH flintersect AS (
+    SELECT fl.flnam AS finam, 
+           CASE WHEN (fl.aufteilen <> 'ja' AND not fl.aufteilen) OR fl.aufteilen IS NULL THEN area(fl.geom) 
+           ELSE area(CastToMultiPolygon(CollectionExtract(intersection(fl.geom,tg.geom),3))) 
+           END AS flaeche
+    FROM linkfl AS lf
+    INNER JOIN flaechen AS fl
+    ON lf.flnam = fl.flnam
+    LEFT JOIN tezg AS tg
+    ON lf.tezgnam = tg.flnam)
+SELECT fa.flnam, fi.finam, sum(fi.flaeche) AS fl_int, 
+       AREA(fa.geom) AS fl_ori, sum(fi.flaeche) - AREA(fa.geom) AS diff
+FROM flaechen AS fa
+LEFT JOIN flintersect AS fi
+ON fa.flnam = fi.finam
+GROUP BY fa.flnam
+HAVING ABS(sum(fi.flaeche) - AREA(fa.geom)) > 2"
+
+database_checktezgbilanz: "
+WITH flintersect AS (
+    SELECT tg.flnam AS finam, 
+           CASE WHEN (fl.aufteilen <> 'ja' AND not fl.aufteilen) OR fl.aufteilen IS NULL THEN area(fl.geom) 
+           ELSE area(CastToMultiPolygon(CollectionExtract(intersection(fl.geom,tg.geom),3))) 
+           END AS flaeche
+    FROM linkfl AS lf
+    INNER JOIN flaechen AS fl
+    ON lf.flnam = fl.flnam
+    LEFT JOIN tezg AS tg
+    ON lf.tezgnam = tg.flnam)
+SELECT tg.flnam, fi.finam, sum(fi.flaeche) AS fl_int, 
+       AREA(tg.geom) AS fl_ori, sum(fi.flaeche) - AREA(tg.geom) AS diff
+FROM tezg AS tg
+LEFT JOIN flintersect AS fi
+ON tg.flnam = fi.finam
+GROUP BY tg.flnam
+HAVING ABS(sum(fi.flaeche) - AREA(tg.geom)) > 2"
+
+database_knotentyp_anf: "
+UPDATE schaechte SET knotentyp = 'Anfangsschacht' WHERE schaechte.schnam IN
+(SELECT t_sch.schnam
+FROM schaechte AS t_sch 
+LEFT JOIN haltungen AS t_hob
+ON t_sch.schnam = t_hob.schoben
+LEFT JOIN haltungen AS t_hun
+ON t_sch.schnam = t_hun.schunten
+WHERE t_hun.pk IS NULL)"
+
+database_knotentyp_end: "
+UPDATE schaechte SET knotentyp = 'Endschacht' WHERE schaechte.schnam IN
+(SELECT t_sch.schnam
+FROM schaechte AS t_sch 
+JOIN haltungen AS t_hob
+ON t_sch.schnam = t_hob.schunten
+LEFT JOIN haltungen AS t_hun
+ON t_sch.schnam = t_hun.schoben
+WHERE t_hun.pk IS NULL)"
+
+database_knotentyp_hoch: "
+UPDATE schaechte SET knotentyp = 'Hochpunkt' WHERE schaechte.schnam IN
+( SELECT t_sch.schnam
+  FROM schaechte AS t_sch 
+  JOIN haltungen AS t_hob
+  ON t_sch.schnam = t_hob.schunten
+  JOIN haltungen AS t_hun
+  ON t_sch.schnam = t_hun.schoben
+  JOIN schaechte AS t_sun
+  ON t_sun.schnam = t_hun.schunten
+  JOIN schaechte AS t_sob
+  ON t_sob.schnam = t_hob.schunten
+  WHERE ifnull(t_hob.sohleunten,t_sch.sohlhoehe)>ifnull(t_hob.sohleoben,t_sob.sohlhoehe) AND 
+        ifnull(t_hun.sohleoben,t_sch.sohlhoehe)>ifnull(t_hun.sohleunten,t_sun.sohlhoehe))"
+
+database_knotentyp_tief: "
+UPDATE schaechte SET knotentyp = 'Tiefpunkt' WHERE schaechte.schnam IN
+( SELECT t_sch.schnam
+  FROM schaechte AS t_sch 
+  JOIN haltungen AS t_hob
+  ON t_sch.schnam = t_hob.schunten
+  JOIN haltungen AS t_hun
+  ON t_sch.schnam = t_hun.schoben
+  JOIN schaechte AS t_sun
+  ON t_sun.schnam = t_hun.schunten
+  JOIN schaechte AS t_sob
+  ON t_sob.schnam = t_hob.schunten
+  WHERE ifnull(t_hob.sohleunten,t_sch.sohlhoehe)<ifnull(t_hob.sohleoben,t_sob.sohlhoehe) AND 
+        ifnull(t_hun.sohleoben,t_sch.sohlhoehe)<ifnull(t_hun.sohleunten,t_sun.sohlhoehe))"
+
+database_knotentyp_zweig: "
+UPDATE schaechte SET knotentyp = 'Verzweigung' WHERE schaechte.schnam IN
+( SELECT t_sch.schnam
+  FROM schaechte AS t_sch 
+  JOIN haltungen AS t_hun
+  ON t_sch.schnam = t_hun.schoben
+  GROUP BY t_sch.pk
+  HAVING count(*) > 1)"
+
+database_knotentyp_einzel: "
+UPDATE schaechte SET knotentyp = 'Einzelschacht' WHERE schaechte.schnam IN
+( SELECT t_sch.schnam 
+  FROM schaechte AS t_sch 
+  LEFT JOIN haltungen AS t_hun
+  ON t_sch.schnam = t_hun.schoben
+  LEFT JOIN haltungen AS t_hob
+  ON t_sch.schnam = t_hob.schunten
+  WHERE t_hun.pk IS NULL AND t_hob.pk IS NULL)"
+
+qgsadapt_zoom: "
+SELECT
+    min(x) AS xmin,
+    min(y) AS ymin,
+    max(x) AS xmax,
+    max(y) AS ymax
+FROM (
+    SELECT x(coalesce(geop, centroid(geom))) AS x, 
+           y(coalesce(geop, centroid(geom))) AS y
+    FROM schaechte
+    UNION 
+    SELECT x(centroid(geom)) AS x, 
+           y(centroid(geom)) AS y
+    FROM haltungen
+)"
+
+qgsadapt_proj: "
+SELECT srid
+FROM geom_cols_ref_sys
+WHERE Lower(f_table_name) = Lower('schaechte')
+AND Lower(f_geometry_column) = Lower('geom')"
+

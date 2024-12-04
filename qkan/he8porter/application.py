@@ -65,20 +65,17 @@ class He8Porter(QKanPlugin):
 
         # noinspection PyArgumentList
 
-        with DBConnection() as db_qkan:
-            dbname = db_qkan.dbname
-
-            # Datenbankpfad in Dialog übernehmen
-            self.export_dlg.tf_database.setText(dbname)
-
-            if not self.export_dlg.prepareDialog(db_qkan):
-                return
+        if not self.export_dlg.prepareDialog(self.iface):
+            return
 
         # Formular anzeigen
         self.export_dlg.show()
 
         # Im Formular wurde [OK] geklickt
         if self.export_dlg.exec_():
+
+            # Events wieder deaktivieren
+            self.export_dlg.finishDialog()
 
             # Read from form and save to config
             QKan.config.database.qkan = self.export_dlg.tf_database.text()
@@ -127,10 +124,7 @@ class He8Porter(QKanPlugin):
             QKan.config.check_export.append = True # self.export_dlg.rb_append.isChecked()
             # QKan.config.check_export.update = self.export_dlg.rb_update.isChecked()
 
-            teilgebiete = [
-                _.text() for _ in self.export_dlg.lw_teilgebiete.selectedItems()
-            ]
-            QKan.config.selections.teilgebiete = teilgebiete
+            QKan.config.selections.selectedObjects = self.export_dlg.cb_selectedObjects.isChecked()
 
             QKan.config.save()
 
@@ -154,19 +148,26 @@ class He8Porter(QKanPlugin):
                 )
 
         # Attach SQLite-Database with HE8 Data
-        sql = f'ATTACH DATABASE "{QKan.config.he8.export_file}" AS he'
 
         # Für Test muss noch die Datenbankverbindung hergestellt werden
-        with DBConnection(dbname=QKan.config.database.qkan, epsg=QKan.config.epsg) as db_qkan:
+        with DBConnection(
+            dbname=QKan.config.database.qkan,
+            module='he8porter',
+            epsg=QKan.config.epsg
+        ) as db_qkan:
 
-            if not db_qkan.sql(sql, "He8Porter.run_export_to_he8 Attach HE8"):
-                self.log.error(
+            if not db_qkan.sqlyml(
+                'he8_attach',
+                "He8Porter.run_export_to_he8 Attach HE8",
+                replacefun=lambda sqltext: sqltext.format(filnam=QKan.config.he8.export_file)
+            ):
+                self.log.error_code(
                     f"Fehler in He8Porter._doexport(): Attach fehlgeschlagen: {QKan.config.he8.export_file}"
                 )
-                return False
+                raise Exception(f"{self.__class__.__name__}")
 
             # Run export
-            ExportTask(db_qkan, QKan.config.selections.teilgebiete).run()
+            ExportTask(db_qkan).run()
 
         self.log.debug("Closed DB")
 
@@ -272,7 +273,9 @@ class He8Porter(QKanPlugin):
 
         self.log.info("Creating DB")
         with DBConnection(
-                dbname=QKan.config.database.qkan, epsg=QKan.config.epsg
+            dbname=QKan.config.database.qkan,
+            module='he8porter',
+            epsg=QKan.config.epsg
         ) as db_qkan:
             if not db_qkan.connected:
                 fehlermeldung(
@@ -288,16 +291,18 @@ class He8Porter(QKanPlugin):
 
             # Attach SQLite-Database with HE8 Data
             sql = f'ATTACH DATABASE "{QKan.config.he8.import_file}" AS he'
-            if not db_qkan.sql(sql, "He8Porter.run_import_to_he8 Attach HE8"):
-                self.log.error(
+            if not db_qkan.sqlyml(
+                'he8_attach',
+                "He8Porter.run_import_to_he8 Attach HE8",
+                replacefun=lambda sqltext: sqltext.format(filnam=QKan.config.he8.import_file)
+            ):
+                self.log.error_code(
                     f"Fehler in He8Porter._doimport(): Attach fehlgeschlagen: {QKan.config.he8.import_file}"
                 )
-                return False
+                raise Exception(f"{self.__class__.__name__}")
 
             self.log.info("DB creation finished, starting importer")
-            imp = ImportTask(db_qkan)
-            imp.run()
-            del imp
+            ImportTask(db_qkan).run()
 
             eval_node_types(db_qkan)  # in qkan.database.qkan_utils
 

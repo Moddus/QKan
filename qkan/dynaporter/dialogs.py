@@ -46,7 +46,7 @@ class ExportDialog(QKanDBDialog, EXPORT_CLASS):  # type: ignore
     cb_autonummerierung_dyna: QCheckBox
     cb_profile_ergaenzen: QCheckBox
     cb_regardTezg: QCheckBox
-    cb_selActive: QCheckBox
+    cb_selectedTgbs: QCheckBox
 
     lf_anzahl_flaechen: QLabel
     lf_anzahl_haltungen: QLabel
@@ -73,7 +73,7 @@ class ExportDialog(QKanDBDialog, EXPORT_CLASS):  # type: ignore
 
         self.db_name: Union[str, None] = None
         self.button_box.helpRequested.connect(self.click_help)
-        self.cb_selActive.stateChanged.connect(self.click_selection)
+        self.cb_selectedTgbs.stateChanged.connect(self.click_selection)
         self.lw_teilgebiete.itemClicked.connect(self.click_lw_teilgebiete)
 
         self.bind_select_path(
@@ -94,14 +94,14 @@ class ExportDialog(QKanDBDialog, EXPORT_CLASS):  # type: ignore
     def click_lw_teilgebiete(self) -> None:
         """Reaktion auf Klick in Tabelle"""
 
-        self.cb_selActive.setChecked(True)
+        self.cb_selectedTgbs.setChecked(True)
         self.count_selection()
 
     def click_selection(self) -> None:
         """Reagiert auf Checkbox zur Aktivierung der Auswahl"""
 
         # Checkbox hat den Status nach dem Klick
-        if self.cb_selActive.isChecked():
+        if self.cb_selectedTgbs.isChecked():
             # Nix tun ...
             logger.debug("\nChecked = True")
         else:

@@ -753,7 +753,7 @@
     <string>Schächte:</string>
    </property>
   </widget>
-  <widget class="QCheckBox" name="cb_selActive">
+  <widget class="QCheckBox" name="cb_selectedTgbs">
    <property name="geometry">
     <rect>
      <x>40</x>

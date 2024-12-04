@@ -6,12 +6,12 @@ from qgis.PyQt.QtCore import QByteArray
 from qgis.PyQt.QtWidgets import QProgressBar
 from qgis.core import Qgis, QgsGeometry, QgsPoint, QgsPointXY, QgsCircle, QgsMultiPolygon, QgsPolygon
 
-from qkan import QKan
+from qkan import QKan, enums
 from qkan.config import ClassObject
 from qkan.database.dbfunc import DBConnection
-from qkan.database.qkan_utils import fehlermeldung
 from qkan.utils import get_logger
 from qkan.tools.k_xml import _get_float, _get_int
+from qkan.tools.k_schadenstexte import Schadenstexte
 
 logger = get_logger("QKan.xml.import")
 
@@ -219,7 +219,7 @@ class Pumpe(ClassObject):
 # endregion
 
 # noinspection SqlNoDataSourceInspection, SqlResolve
-class ImportTask:
+class ImportTask(Schadenstexte):
     def __init__(self, db_qkan: DBConnection, xml_file: str, data_choice: str, ordner_bild: str, ordner_video: str):
         self.db_qkan = db_qkan
         self.ordner_bild = ordner_bild
@@ -1285,7 +1285,8 @@ class ImportTask:
 
         # Textpositionen für Schadenstexte berechnen
 
-        self.db_qkan.setschadenstexte_schaechte()
+        # self.db_qkan.setschadenstexte_schaechte()
+        Schadenstexte.setschadenstexte_schaechte()
 
     def _auslaesse(self) -> None:
         def _iter() -> Iterator[Schacht]:
@@ -1766,9 +1767,9 @@ class ImportTask:
 
                     _val = block.findtext("HI/HI102")
                     if _val == 'A' or not _val:
-                        bezugspunkt = 'Rohranfang'
+                        bezugspunkt = enums.UntersuchBezugpunkt.ROHRANFANG.value
                     else:
-                        bezugspunkt = 'Gerinnemittelpunkt'          # HI 102 in ('C' , 'D', 'Z')
+                        bezugspunkt = enums.UntersuchBezugpunkt.GERINNEMITTELPUNKT.value    # HI 102 in ('C' , 'D', 'Z')
 
                 else:
                     untersuchtag = None
@@ -1781,8 +1782,6 @@ class ImportTask:
                     max_ZD = 63
                     max_ZB = 63
                     max_ZS = 63
-                    untersuchrichtung = None
-                    bezugspunkt = None
                 datenart = self.datenart
 
                 yield Haltung_untersucht(
@@ -2005,7 +2004,7 @@ class ImportTask:
 
         # Textpositionen für Schadenstexte berechnen
 
-        self.db_qkan.setschadenstexte_haltungen()
+        Schadenstexte.setschadenstexte_haltungen(self.db_qkan)
 
     def _anschlussleitungen(self) -> None:
         def _iter() -> Iterator[Anschlussleitung]:
@@ -2234,9 +2233,9 @@ class ImportTask:
 
                     _val = block.findtext("HI/HI102")
                     if _val == 'A' or not _val:
-                        bezugspunkt = 'Rohranfang'
+                        bezugspunkt = enums.UntersuchBezugpunkt.ROHRANFANG.value
                     else:
-                        bezugspunkt = 'Gerinnemittelpunkt'          # HI 102 in ('C' , 'D', 'Z')
+                        bezugspunkt = enums.UntersuchBezugpunkt.GERINNEMITTELPUNKT.value    # HI 102 in ('C' , 'D', 'Z')
                 else:
                     untersuchtag = None
                     untersucher = None
@@ -2470,7 +2469,7 @@ class ImportTask:
 
         self.db_qkan.commit()
 
-        self.db_qkan.setschadenstexte_anschlussleitungen()
+        Schadenstexte.setschadenstexte_anschlussleitungen()
 
     def _wehre(self) -> None:
 

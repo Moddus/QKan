@@ -56,7 +56,7 @@ def list_selected_tab_items(table_widget: QTableWidget, n_cols: int = 5) -> List
 class CreateUnbefFlDialog(QKanDialog, FORM_CLASS):  # type: ignore
     button_box: QDialogButtonBox
 
-    cb_selActive: QCheckBox
+    cb_selectedTgbs: QCheckBox
     cb_autokorrektur: QCheckBox
     cb_geomMakeValid: QCheckBox
 
@@ -71,20 +71,20 @@ class CreateUnbefFlDialog(QKanDialog, FORM_CLASS):  # type: ignore
         self.db_name: Union[str, None] = None
 
         self.button_box.helpRequested.connect(self.click_help)
-        self.cb_selActive.stateChanged.connect(self.click_sel_active)
+        self.cb_selectedTgbs.stateChanged.connect(self.click_sel_active)
         self.tw_selAbflparamTeilgeb.itemClicked.connect(self.click_param_teilgebiete)
 
     def click_param_teilgebiete(self) -> None:
         """Reaktion auf Klick in Tabelle"""
 
-        self.cb_selActive.setChecked(True)
+        self.cb_selectedTgbs.setChecked(True)
         self.count_selection()
 
     def click_sel_active(self) -> None:
         """Reagiert auf Checkbox zur Aktivierung der Auswahl"""
 
         # Checkbox hat den Status nach dem Klick
-        if self.cb_selActive.isChecked():
+        if self.cb_selectedTgbs.isChecked():
             # Nix tun ...
             logger.debug("\nChecked = True")
         else:

@@ -73,23 +73,9 @@ def qgsadapt(
 
     # --------------------------------------------------------------------------
     # Zoom-Bereich für die Projektdatei vorbereiten
-    sql = """
-        SELECT
-            min(x) AS xmin,
-            min(y) AS ymin,
-            max(x) AS xmax,
-            max(y) AS ymax
-        FROM (
-            SELECT x(coalesce(geop, centroid(geom))) AS x, 
-                   y(coalesce(geop, centroid(geom))) AS y
-            FROM schaechte
-            UNION 
-            SELECT x(centroid(geom)) AS x, 
-                   y(centroid(geom)) AS y
-            FROM haltungen
-        )"""
+
     try:
-        dbQK.sql(sql)
+        dbQK.sqlyml('qgsadapt_zoom', "k_qgsadapt (1)")
     except BaseException as err:
         fehlermeldung("SQL-Fehler", repr(err))
         fehlermeldung("Fehler in qgsadapt", "\nFehler in sql_zoom: \n" + sql + "\n\n")
@@ -111,11 +97,7 @@ def qgsadapt(
         srid = epsg
         logger.debug(f"Vorgabe epsg: %s", epsg)
     else:
-        sql = """SELECT srid
-                FROM geom_cols_ref_sys
-                WHERE Lower(f_table_name) = Lower('schaechte')
-                AND Lower(f_geometry_column) = Lower('geom')"""
-        if not dbQK.sql(sql, "k_qgsadapt (1)"):
+        if not dbQK.sqlyml('qgsadapt_proj', "k_qgsadapt (2)"):
             return False
         srid = dbQK.fetchone()
 
@@ -152,7 +134,7 @@ def qgsadapt(
     logger.debug(f"k_qgsadapt.QKan-Projekttemplate: {qkanTemplate}")
 
     qkanLayers = list_qkan_layers(
-        qkanTemplate
+        str(qkanTemplate)
     )  # Liste aller Layernamen aus gewählter QGS-Vorlage
     qkanTables = set([el[0] for el in qkanLayers.values()])
     logger.debug(f'k_qgsadapt.qkanLayers: {qkanLayers}')
@@ -165,11 +147,6 @@ def qgsadapt(
         templatepath = os.path.join(pluginDirectory("qkan"), "templates")
         if not projecttemplate:
             projecttemplate = os.path.join(templatepath, "projekt.qgs")
-        projectpath = os.path.dirname(projectfile)
-        if os.path.dirname(database_QKan) == projectpath:
-            datasource = database_QKan.replace(os.path.dirname(database_QKan), ".")
-        else:
-            datasource = database_QKan
 
         # Replace db path with relative path if the same output folder is used
         db_path = Path(database_QKan)

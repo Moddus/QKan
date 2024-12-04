@@ -9,6 +9,7 @@ from qkan.config import ClassObject
 from qkan.database.dbfunc import DBConnection
 from qkan.database.qkan_utils import fehlermeldung
 from qkan.utils import get_logger
+from qkan.tools.k_schadenstexte import Schadenstexte
 
 logger = get_logger("QKan.xml.import")
 
@@ -310,7 +311,7 @@ def _get_int(value: Union[str, int], default: int = 0) -> int:
 
 
 # noinspection SqlNoDataSourceInspection, SqlResolve
-class ImportTask:
+class ImportTask(Schadenstexte):
     def __init__(self, db_qkan: DBConnection, xml_file: str, data_choice: str, ordner_bild: str, ordner_video: str):
         self.db_qkan = db_qkan
         self.ordner_bild = ordner_bild
@@ -2105,7 +2106,7 @@ class ImportTask:
 
         self.db_qkan.commit()
 
-        self.db_qkan.setschadenstexte_haltungen()
+        Schadenstexte.setschadenstexte_haltungen()
 
 
     def _anschlussleitungen(self) -> None:

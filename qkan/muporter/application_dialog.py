@@ -109,7 +109,7 @@ class ExportDialog(_Dialog, EXPORT_CLASS):  # type: ignore
         self.button_box.helpRequested.connect(self.click_help)
 
         # Aktionen zu lw_teilgebiete: QListWidget
-        self.cb_selActive.stateChanged.connect(self.click_selection)
+        self.cb_selectedTgbs.stateChanged.connect(self.click_selection)
         self.lw_teilgebiete.itemClicked.connect(self.count_selection)
         self.lw_teilgebiete.itemClicked.connect(self.click_lw_teilgebiete)
 
@@ -176,7 +176,7 @@ class ExportDialog(_Dialog, EXPORT_CLASS):  # type: ignore
         """Reagiert auf Checkbox zur Aktivierung der Auswahl"""
 
         # Checkbox hat den Status nach dem Klick
-        if self.cb_selActive.isChecked():
+        if self.cb_selectedTgbs.isChecked():
             # Nix tun ...
             logger.debug("\nChecked = True")
         else:
@@ -193,7 +193,7 @@ class ExportDialog(_Dialog, EXPORT_CLASS):  # type: ignore
     def click_lw_teilgebiete(self) -> None:
         """Reaktion auf Klick in Tabelle"""
 
-        self.cb_selActive.setChecked(True)
+        self.cb_selectedTgbs.setChecked(True)
         self.count_selection()
 
     def count_selection(self) -> bool:

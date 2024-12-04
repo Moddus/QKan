@@ -291,6 +291,12 @@
        <height>20</height>
       </rect>
      </property>
+     <property name="toolTip">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Nr. des Funktionsstatus gem. DWA-M 150 (Referenzliste 109)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+     <property name="statusTip">
+      <string>Nr. des Funktionsstatus gem. DWA-M 150 (Referenzliste 109)</string>
+     </property>
     </widget>
     <widget class="QLabel" name="label_9">
      <property name="geometry">
@@ -377,10 +383,10 @@
       </font>
      </property>
      <property name="toolTip">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Nr. des Entwässerungssystems entspr. Kanal++&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Nr. des Funktionsstatus gem. ISYBAU (Referenzliste G105)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
      <property name="statusTip">
-      <string>Nr. des Entwässerungssystems entspr. Kanal++</string>
+      <string>Nr. des Funktionsstatus gem. ISYBAU (Referenzliste G105)</string>
      </property>
      <property name="layoutDirection">
       <enum>Qt::RightToLeft</enum>
@@ -414,10 +420,10 @@
       </font>
      </property>
      <property name="toolTip">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Nr. des Entwässerungssystems entspr. Kanal++&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Nr. des Funktionsstatus gem. DWA-M 145 (Referenzliste 1010)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
      <property name="statusTip">
-      <string>Nr. des Entwässerungssystems entspr. Kanal++</string>
+      <string>Nr. des Funktionsstatus gem. DWA-M 145 (Referenzliste 1010)</string>
      </property>
      <property name="layoutDirection">
       <enum>Qt::RightToLeft</enum>

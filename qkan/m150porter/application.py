@@ -83,6 +83,11 @@ class M150Porter(QKanPlugin):
                 self.export_dlg.cb_export_wehre.isChecked()
             )
 
+            teilgebiete = [
+                _.text() for _ in self.export_dlg.lw_teilgebiete.selectedItems()
+            ]
+            QKan.config.selections.teilgebiete = teilgebiete
+
             QKan.config.save()
 
             self._doexport()

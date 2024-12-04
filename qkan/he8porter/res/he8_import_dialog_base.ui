@@ -44,6 +44,9 @@
    <property name="toolTip">
     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Datenimport starten ...&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
+   <property name="statusTip">
+    <string>Datenimport starten ...</string>
+   </property>
    <property name="orientation">
     <enum>Qt::Horizontal</enum>
    </property>
@@ -127,6 +130,9 @@
     <property name="toolTip">
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;ITWH-Quelldatenbank mit Kanalnetzdaten auswählen&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
+    <property name="statusTip">
+     <string>ITWH-Quelldatenbank mit Kanalnetzdaten auswählen</string>
+    </property>
     <property name="text">
      <string>...</string>
     </property>
@@ -198,6 +204,12 @@
       <weight>75</weight>
       <bold>true</bold>
      </font>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Projektionssystem für die Tabellen in der QKan-Datenbank auswählen&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="statusTip">
+     <string>Projektionssystem für die Tabellen in der QKan-Datenbank auswählen</string>
     </property>
    </widget>
   </widget>
@@ -273,6 +285,9 @@
     </property>
     <property name="toolTip">
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Pfad und Name der Projektdatei festlegen&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="statusTip">
+     <string>Pfad und Name der Projektdatei festlegen</string>
     </property>
     <property name="text">
      <string>...</string>
@@ -379,6 +394,9 @@
     <property name="toolTip">
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Zieldatenbank auswählen und optional erstellen&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
+    <property name="statusTip">
+     <string>Zieldatenbank auswählen und optional erstellen</string>
+    </property>
     <property name="text">
      <string>...</string>
     </property>
@@ -461,7 +479,7 @@
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Haltungen importieren&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="statusTip">
-     <string>aktiviert</string>
+     <string>Haltungen importieren</string>
     </property>
     <property name="text">
      <string>Haltungen</string>
@@ -488,7 +506,7 @@
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Schächte importieren&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="statusTip">
-     <string>aktiviert</string>
+     <string>Schächte importieren</string>
     </property>
     <property name="text">
      <string>Schächte</string>
@@ -515,7 +533,7 @@
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Flächenobjekte und Daten importieren&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="statusTip">
-     <string>aktiviert</string>
+     <string>Flächenobjekte und Daten importieren</string>
     </property>
     <property name="text">
      <string>Flächen (RW)</string>
@@ -542,7 +560,7 @@
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Auslässe importieren&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="statusTip">
-     <string>aktiviert</string>
+     <string>Auslässe importieren</string>
     </property>
     <property name="text">
      <string>Auslässe</string>
@@ -572,7 +590,7 @@
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Speicherbauwerke importieren&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="statusTip">
-     <string>aktiviert</string>
+     <string>Speicherbauwerke importieren</string>
     </property>
     <property name="text">
      <string>Speicher</string>
@@ -602,7 +620,7 @@
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Pumpen importieren&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="statusTip">
-     <string>aktiviert</string>
+     <string>Pumpen importieren</string>
     </property>
     <property name="text">
      <string>Pumpen</string>
@@ -632,7 +650,7 @@
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Wehre importieren&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="statusTip">
-     <string>aktiviert</string>
+     <string>Wehre importieren</string>
     </property>
     <property name="text">
      <string>Wehre</string>
@@ -659,7 +677,7 @@
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Direkteinleiter als Punkte und mit Daten importieren&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="statusTip">
-     <string>aktiviert</string>
+     <string>Direkteinleiter als Punkte und mit Daten importieren</string>
     </property>
     <property name="text">
      <string>SW-Einleiter</string>
@@ -707,7 +725,7 @@
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Außengebiete importieren und Kreisflächen aus Flächenzahl erzeugen&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="statusTip">
-     <string>aktiviert</string>
+     <string>Außengebiete importieren und Kreisflächen aus Flächenzahl erzeugen</string>
     </property>
     <property name="text">
      <string>Außengebiete</string>
@@ -734,7 +752,7 @@
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Einzugsgeebiete importieren (enthält nur Attributdaten)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="statusTip">
-     <string>aktiviert</string>
+     <string>Einzugsgeebiete importieren (enthält nur Attributdaten)</string>
     </property>
     <property name="text">
      <string>Einzugsgebiete</string>
@@ -761,7 +779,7 @@
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Direkteinleiter als Punkte und mit Daten importieren&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="statusTip">
-     <string>aktiviert</string>
+     <string>Direkteinleiter als Punkte und mit Daten importieren</string>
     </property>
     <property name="text">
      <string>Drosseln</string>
@@ -788,7 +806,7 @@
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Direkteinleiter als Punkte und mit Daten importieren&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="statusTip">
-     <string>aktiviert</string>
+     <string>Direkteinleiter als Punkte und mit Daten importieren</string>
     </property>
     <property name="text">
      <string>Schieber</string>
@@ -815,7 +833,7 @@
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Direkteinleiter als Punkte und mit Daten importieren&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="statusTip">
-     <string>aktiviert</string>
+     <string>Direkteinleiter als Punkte und mit Daten importieren</string>
     </property>
     <property name="text">
      <string>H-Regler</string>
@@ -842,7 +860,7 @@
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Direkteinleiter als Punkte und mit Daten importieren&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="statusTip">
-     <string>aktiviert</string>
+     <string>Direkteinleiter als Punkte und mit Daten importieren</string>
     </property>
     <property name="text">
      <string>Grund-/Seitenauslässe</string>
@@ -869,7 +887,7 @@
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Direkteinleiter als Punkte und mit Daten importieren&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="statusTip">
-     <string>aktiviert</string>
+     <string>Direkteinleiter als Punkte und mit Daten importieren</string>
     </property>
     <property name="text">
      <string>Q-Regler</string>
@@ -917,7 +935,7 @@
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Bodenklassen importieren&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="statusTip">
-     <string>aktiviert</string>
+     <string>Bodenklassen importieren</string>
     </property>
     <property name="text">
      <string>Bodenklassen</string>
@@ -944,7 +962,7 @@
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Abflussparameter importieren&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="statusTip">
-     <string>aktiviert</string>
+     <string>Abflussparameter importieren</string>
     </property>
     <property name="text">
      <string>Abflussparameter</string>
@@ -971,7 +989,7 @@
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;wenn aktiviert, werden alle Datensätze in die hier aufgeführten Referenztabellen übernommen, auch wenn sie nicht verwendet werden&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="statusTip">
-     <string>aktiviert</string>
+     <string>wenn aktiviert, werden alle Datensätze in die hier aufgeführten Referenztabellen übernommen, auch wenn sie nicht verwendet werden</string>
     </property>
     <property name="text">
      <string>Auch nicht verwendete
@@ -999,7 +1017,7 @@ Datensätze importieren</string>
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Bodenklassen importieren&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="statusTip">
-     <string>aktiviert</string>
+     <string>Bodenklassen importieren</string>
     </property>
     <property name="text">
      <string>Rohrprofile</string>
@@ -1047,7 +1065,7 @@ Datensätze importieren</string>
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Einzugsflächen importieren, die als &amp;quot;Einzugsfläche&amp;quot; markiert sind&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="statusTip">
-     <string>aktiviert</string>
+     <string>Einzugsflächen importieren, die als &quot;Einzugsfläche&quot; markiert sind</string>
     </property>
     <property name="text">
      <string>Einzugsflächen</string>
@@ -1074,7 +1092,7 @@ Datensätze importieren</string>
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Einzugsflächen importieren, die als &amp;quot;Haltungsfläche&amp;quot; markiert sind&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="statusTip">
-     <string>aktiviert</string>
+     <string>Einzugsflächen importieren, die als &quot;Haltungsfläche&quot; markiert sind</string>
     </property>
     <property name="text">
      <string>Haltungsflächen</string>
@@ -1101,7 +1119,7 @@ Datensätze importieren</string>
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Einzugsflächen importieren, die als &amp;quot;TW-Einzugsfläche&amp;quot; markiert sind&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="statusTip">
-     <string>aktiviert</string>
+     <string>Einzugsflächen importieren, die als &quot;TW-Einzugsfläche&quot; markiert sind</string>
     </property>
     <property name="text">
      <string>TW-Einzugsflächen</string>

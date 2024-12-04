@@ -14,9 +14,9 @@ logger = get_logger("QKan.he8.export")
 
 # noinspection SqlNoDataSourceInspection, SqlResolve
 class ExportTask:
-    def __init__(self, db_qkan: DBConnection, liste_teilgebiete: List[str]):
+    def __init__(self, db_qkan: DBConnection):
 
-        self.liste_teilgebiete = liste_teilgebiete
+        self.liste_teilgebiete = QKan.config.selections.teilgebiete
         self.db_qkan = db_qkan
 
         self.append = QKan.config.check_export.append
@@ -46,7 +46,7 @@ class ExportTask:
         # vergeben werden!!! Ein Grund ist, dass (u.a.?) die Tabelle "tabelleninhalte" mit verschiedenen
         # Tabellen verknuepft ist und dieser ID eindeutig sein muss.
 
-        self.db_qkan.sql("SELECT NextId, Version FROM he.Itwh$ProgInfo")
+        self.db_qkan.sqlyml('he8_get_id', 'id der HE-idbm-Datenbank lesen')
         data = self.db_qkan.fetchone()
         if not data:
             logger.error(
@@ -99,90 +99,55 @@ class ExportTask:
             # Nur Daten fuer ausgewaehlte Teilgebiete, gilt nur für
             # schaechte, auslaesse, speicher
 
-            if len(self.liste_teilgebiete) != 0:
-                lis = "', '".join(self.liste_teilgebiete)
-                auswahl = f" AND schaechte.teilgebiet in ('{lis}')"
-            else:
-                auswahl = ""
-
             if self.update:
-                sql = f"""
-                    UPDATE he.Schacht SET (
-                      Deckelhoehe, 
-                      Sohlhoehe,
-                      Gelaendehoehe,
-                      Art,
-                      Planungsstatus, LastModified,
-                      Durchmesser, Geometry) =
-                    ( SELECT
-                        schaechte.deckelhoehe AS deckelhoehe,
-                        schaechte.sohlhoehe AS sohlhoehe,
-                        coalesce(schaechte.deckelhoehe, 0.0) AS gelaendehoehe, 
-                        1 AS art, 
-                        st.he_nr AS planungsstatus, 
-                        coalesce(schaechte.createdat, datetime('now'))
-                                                AS lastmodified, 
-                        schaechte.durchm*1000 AS durchmesser,
-                        SetSrid(schaechte.geop, -1) AS geometry
-                      FROM schaechte
-                      LEFT JOIN simulationsstatus AS st
-                      ON schaechte.simstatus = st.bezeichnung
-                      WHERE schaechte.schnam = he.Schacht.Name and 
-                            schaechte.schachttyp = 'Schacht'{auswahl})
-                    WHERE he.Schacht.Name IN (
-                        SELECT schnam 
-                        FROM schaechte 
-                        WHERE schaechte.schachttyp = 'Schacht'{auswahl})
-                    """
+                if QKan.config.selections.selectedObjects:
+                    sqlnam = 'he8_update_schaechte_sel'
+                else:
+                    sqlnam = 'he8_update_schaechte_all'
 
-                if not self.db_qkan.sql(
-                    sql, "db_qkan: export_to_he8.export_schaechte (1)"
+                if not self.db_qkan.sqlyml(
+                    sqlnam,
+                    "db_qkan: export_to_he8.export_schaechte (1)"
                 ):
-                    return False
+                    logger.error_data('Export Update Schächte ist fehlgeschlagen')
+                    raise Exception(f"{self.__class__.__name__}")
 
             if self.append:
                 # Feststellen der Anzahl Schächte in ITWH-Datenbank fuer korrekte Werte von nextid
-                sql = "SELECT count(*) FROM he.Schacht"
-                if not self.db_qkan.sql(sql, "db_qkan: export_to_he8.export_schaechte (1)"):
-                    return False
+                if not self.db_qkan.sqlyml(
+                    'he8_count_he_schaechte',
+                    "db_qkan: export_to_he8.export_schaechte (2)"
+                ):
+                    logger.error_data('Abfrage Anzahl Schächte in HE8-Datenbank ist fehlgeschlagen')
+                    raise Exception(f"{self.__class__.__name__}")
                 anzv = self.db_qkan.fetchone()[0]
 
                 nr0 = self.nextid
 
-                sql = f"""
-                    INSERT INTO he.Schacht (
-                      Id,
-                      Name, Deckelhoehe, Sohlhoehe, 
-                      Gelaendehoehe, Art,
-                      Planungsstatus, LastModified, Durchmesser, Geometry)
-                    SELECT
-                      {nr0} + row_number() OVER (ORDER BY schaechte.schnam) AS Id, 
-                      schaechte.schnam AS name, 
-                      coalesce(schaechte.deckelhoehe, 0.0) AS deckelhoehe, 
-                      coalesce(schaechte.sohlhoehe, 0.0) AS sohlhoehe,
-                      coalesce(schaechte.deckelhoehe, 0.0) AS gelaendehoehe, 
-                      1 AS art, 
-                      st.he_nr AS planungsstatus, 
-                      coalesce(schaechte.createdat, datetime('now')) AS lastmodified, 
-                      coalesce(schaechte.durchm, 0.0)*1000 AS durchmesser,
-                      SetSrid(schaechte.geop, -1) AS geometry
-                    FROM schaechte
-                    LEFT JOIN simulationsstatus AS st
-                    ON schaechte.simstatus = st.bezeichnung
-                    WHERE schaechte.schnam NOT IN (SELECT Name FROM he.Schacht) and 
-                          schaechte.schachttyp = 'Schacht'{auswahl}
-                """
+                if QKan.config.selections.selectedObjects:
+                    sqlnam = 'he8_append_schaechte_sel'
+                else:
+                    sqlnam = 'he8_append_schaechte_all'
 
-                if not self.db_qkan.sql(sql, "db_qkan: export_schaechte (3)"):
-                    return False
+                if not self.db_qkan.sqlyml(
+                    sqlnam,
+                    "db_qkan: export_schaechte (3)",
+                    parameters={'id': nr0}
+                ):
+                    logger.error_data('Einfügen Schächte in HE8-Datenbank ist fehlgeschlagen')
+                    raise Exception(f"{self.__class__.__name__}")
 
-                sql = "SELECT count(*) FROM he.Schacht"
-                if not self.db_qkan.sql(sql, "db_qkan: export_to_he8.export_schaechte (2)"):
-                    return False
+                if not self.db_qkan.sqlyml(
+                    'he8_count_he_schaechte',
+                    "db_qkan: Gesamtzahl Schächte nach Einfügen"
+                ):
+                    logger.error_data('Gesamtzahl Schächte nach Einfügen ist fehlgeschlagen')
+                    raise Exception(f"{self.__class__.__name__}")
                 anzn = self.db_qkan.fetchone()[0]
                 self.nextid += anzn - anzv
                 self.db_qkan.sql(
-                    f"UPDATE he.Itwh$ProgInfo SET NextId = {self.nextid}"
+                    'he8_nextid',
+                    parameters=(self.nextid,),
                 )
                 self.db_qkan.commit()
 
@@ -197,86 +162,49 @@ class ExportTask:
             # Nur Daten fuer ausgewaehlte Teilgebiete, gilt nur für
             # schaechte, auslaesse, speicher
 
-            if len(self.liste_teilgebiete) != 0:
-                lis = "', '".join(self.liste_teilgebiete)
-                auswahl = f" AND schaechte.teilgebiet in ('{lis}')"
-            else:
-                auswahl = ""
-
             if self.update:
-                sql = f"""
-                    UPDATE he.Speicherschacht SET
-                    (   Sohlhoehe, Gelaendehoehe, 
-                        Scheitelhoehe,
-                        Planungsstatus,
-                        LastModified, Kommentar, Geometry
-                        ) =
-                    ( SELECT
-                        schaechte.sohlhoehe AS sohlhoehe, 
-                        coalesce(schaechte.deckelhoehe, 0.0) AS gelaendehoehe,
-                        schaechte.deckelhoehe AS scheitelhoehe,
-                        st.he_nr AS planungsstatus, 
-                        coalesce(schaechte.createdat, datetime('now')) AS lastmodified, 
-                        schaechte.kommentar AS kommentar,
-                        SetSrid(schaechte.geop, -1) AS geometry
-                      FROM schaechte
-                      LEFT JOIN simulationsstatus AS st
-                      ON schaechte.simstatus = st.bezeichnung
-                      WHERE schaechte.schnam = he.Speicherschacht.Name and schaechte.schachttyp = 'Speicher'{auswahl})
-                    WHERE he.Speicherschacht.Name IN 
-                          (SELECT schnam FROM schaechte WHERE schaechte.schachttyp = 'Speicher'{auswahl})
-                    """
+                if QKan.config.selections.selectedObjects:
+                    sqlnam = 'he8_update_speicher_sel'
+                else:
+                    sqlnam = 'he8_update_speicher_all'
 
-                if not self.db_qkan.sql(sql, "db_qkan: export_to_he8.export_speicher (1)"):
-                    return False
+                if not self.db_qkan.sqlyml(
+                    sqlnam,
+                    "db_qkan: export_to_he8.export_speicher (1)"
+                ):
+                    logger.error_data('Export Update Speicher ist fehlgeschlagen')
+                    raise Exception(f"{self.__class__.__name__}")
 
             if self.append:
                 # Feststellen der Anzahl Speicherschächte in ITWH-Datenbank fuer korrekte Werte von nextid
-                sql = "SELECT count(*) FROM he.Speicherschacht"
-                if not self.db_qkan.sql(sql, "db_qkan: export_to_he8.export_speicherschaechte (1)"):
-                    return False
+                if not self.db_qkan.sqlyml(
+                    'he8_count_he_speicher',
+                    "db_qkan: export_to_he8.export_speicherschaechte (1)"
+                ):
+                    logger.error_data('Abfrage Anzahl Speicher in HE8-Datenbank ist fehlgeschlagen')
+                    raise Exception(f"{self.__class__.__name__}")
                 anzv = self.db_qkan.fetchone()[0]
 
                 nr0 = self.nextid
 
-                sql = f"""
-                    INSERT INTO he.Speicherschacht
-                    ( Id, Name, Typ, Sohlhoehe,
-                      Gelaendehoehe, Art, AnzahlKanten,
-                      Scheitelhoehe, HoeheVollfuellung,
-                      Planungsstatus,
-                      LastModified, Kommentar, Geometry)
-                    SELECT
-                      {nr0} + row_number() OVER (ORDER BY schaechte.schnam) AS Id, 
-                      schaechte.schnam AS name, 
-                      1 AS typ, 
-                      schaechte.sohlhoehe AS sohlhoehe, 
-                      coalesce(schaechte.deckelhoehe, 0.0) AS gelaendehoehe,
-                      1 AS art, 
-                      2 AS anzahlkanten, 
-                      schaechte.deckelhoehe AS scheitelhoehe,
-                      schaechte.deckelhoehe AS hoehevollfuellung,
-                      st.he_nr AS planungsstatus, 
-                      coalesce(schaechte.createdat, datetime('now')) AS lastmodified, 
-                      schaechte.kommentar AS kommentar,
-                      SetSrid(schaechte.geop, -1) AS geometry
-                    FROM schaechte
-                    LEFT JOIN simulationsstatus AS st
-                    ON schaechte.simstatus = st.bezeichnung
-                    WHERE schaechte.schnam NOT IN (SELECT Name FROM he.Speicherschacht) and 
-                          schaechte.schachttyp = 'Speicher'{auswahl}
-                """
+                if QKan.config.selections.selectedObjects:
+                    sqlnam = 'he8_append_speicher_sel'
+                else:
+                    sqlnam = 'he8_append_speicher_all'
 
-                if not self.db_qkan.sql(sql, "db_qkan: export_speicher (1)"):
+                if not self.db_qkan.sqlyml(sqlnam, "db_qkan: export_speicher (1)"):
                     return False
 
                 sql = "SELECT count(*) FROM he.Speicherschacht"
-                if not self.db_qkan.sql(sql, "db_qkan: export_to_he8.export_speicherschaechte (2)"):
+                if not self.db_qkan.sqlyml(
+                    'he8_count_he_schaechte',
+                    "db_qkan: export_to_he8.export_speicherschaechte (2)"
+                ):
                     return False
                 anzn = self.db_qkan.fetchone()[0]
                 self.nextid += anzn - anzv
                 self.db_qkan.sql(
-                    "UPDATE he.Itwh$ProgInfo SET NextId = ?",
+                    'he8_nextid',
                     parameters=(self.nextid,),
                 )
                 self.db_qkan.commit()
@@ -323,15 +251,19 @@ class ExportTask:
                     """
 
                 if not self.db_qkan.sql(
-                    sql, "db_qkan: export_to_he8.export_auslaesse (1)"
+                    'he8_update_',
+                    "db_qkan: export_to_he8.export_auslaesse (1)"
                 ):
                     return False
 
             if self.append:
                 # Feststellen der Anzahl Auslässe in ITWH-Datenbank fuer korrekte Werte von nextid
-                sql = "SELECT count(*) FROM he.Auslass"
-                if not self.db_qkan.sql(sql, "db_qkan: export_to_he8.export_auslaesse (1)"):
-                    return False
+                if not self.db_qkan.sqlyml(
+                    'he8_count_he_auslaesse',
+                    "db_qkan: export_to_he8.export_auslaesse (1)"
+                ):
+                    logger.error_data('Abfrage Anzahl Auslässe in HE8-Datenbank ist fehlgeschlagen')
+                    raise Exception(f"{self.__class__.__name__}")
                 anzv = self.db_qkan.fetchone()[0]
 
                 nr0 = self.nextid
@@ -366,13 +298,16 @@ class ExportTask:
                 if not self.db_qkan.sql(sql, "db_qkan: export_auslaesse (2)"):
                     return False
 
-                sql = "SELECT count(*) FROM he.Auslass"
-                if not self.db_qkan.sql(sql, "db_qkan: export_to_he8.export_auslaesse (2)"):
-                    return False
+                if not self.db_qkan.sqlyml(
+                    'he8_count_he_auslaesse',
+                    "db_qkan: export_to_he8.export_auslaesse (2)"
+                ):
+                    logger.error_data('Gesamtzahl Auslässe nach Einfügen ist fehlgeschlagen')
+                    raise Exception(f"{self.__class__.__name__}")
                 anzn = self.db_qkan.fetchone()[0]
                 self.nextid += anzn - anzv
                 self.db_qkan.sql(
-                    "UPDATE he.Itwh$ProgInfo SET NextId = ?",
+                    'he8_nextid',
                     parameters=(self.nextid,),
                 )
                 self.db_qkan.commit()
@@ -448,14 +383,18 @@ class ExportTask:
                   """
 
                 if not self.db_qkan.sql(
-                    sql, "db_qkan: export_to_he8.export_haltungen (1)"
+                    'he8_update_',
+                    "db_qkan: export_to_he8.export_haltungen (1)"
                 ):
                     return False
 
             if self.append:
                 # Feststellen der Anzahl Haltungen in ITWH-Datenbank fuer korrekte Werte von nextid
                 sql = "SELECT count(*) FROM he.Rohr"
-                if not self.db_qkan.sql(sql, "db_qkan: export_to_he8.export_haltungen (1)"):
+                if not self.db_qkan.sqlyml(
+                    'he8_count_he_schaechte',
+                    "db_qkan: export_to_he8.export_haltungen (1)"
+                ):
                     return False
                 anzv = self.db_qkan.fetchone()[0]
 
@@ -526,12 +465,15 @@ class ExportTask:
                     return False
 
                 sql = "SELECT count(*) FROM he.Rohr"
-                if not self.db_qkan.sql(sql, "db_qkan: export_to_he8.export_haltungen (4)"):
+                if not self.db_qkan.sqlyml(
+                    'he8_count_he_schaechte',
+                    "db_qkan: export_to_he8.export_haltungen (4)"
+                ):
                     return False
                 anzn = self.db_qkan.fetchone()[0]
                 self.nextid += anzn - anzv
                 self.db_qkan.sql(
-                    "UPDATE he.Itwh$ProgInfo SET NextId = ?",
+                    'he8_nextid',
                     parameters=(self.nextid,),
                 )
                 self.db_qkan.commit()
@@ -672,7 +614,10 @@ class ExportTask:
             if self.append:
                 # Feststellen der Anzahl Flächen in ITWH-Datenbank fuer korrekte Werte von nextid
                 sql = "SELECT count(*) FROM he.Flaeche"
-                if not self.db_qkan.sql(sql, "db_qkan: export_to_he8.export_flaechen (1)"):
+                if not self.db_qkan.sqlyml(
+                    'he8_count_he_schaechte',
+                    "db_qkan: export_to_he8.export_flaechen (1)"
+                ):
                     return False
                 anzv = self.db_qkan.fetchone()[0]
 
@@ -745,12 +690,15 @@ class ExportTask:
                     return False
 
                 sql = "SELECT count(*) FROM he.Flaeche"
-                if not self.db_qkan.sql(sql, "db_qkan: export_to_he8.export_flaechen (2)"):
+                if not self.db_qkan.sqlyml(
+                    'he8_count_he_schaechte',
+                    "db_qkan: export_to_he8.export_flaechen (2)"
+                ):
                     return False
                 anzn = self.db_qkan.fetchone()[0]
                 self.nextid += anzn - anzv
                 self.db_qkan.sql(
-                    "UPDATE he.Itwh$ProgInfo SET NextId = ?",
+                    'he8_nextid',
                     parameters=(self.nextid,),
                 )
                 self.db_qkan.commit()
@@ -767,7 +715,10 @@ class ExportTask:
             if self.append:
                 # Feststellen der Anzahl Haltungsflaechen in ITWH-Datenbank fuer korrekte Werte von nextid
                 sql = "SELECT count(*) FROM he.Flaeche"
-                if not self.db_qkan.sql(sql, "db_qkan: export_to_he8.export_tezg (1)"):
+                if not self.db_qkan.sqlyml(
+                    'he8_count_he_schaechte',
+                    "db_qkan: export_to_he8.export_tezg (1)"
+                ):
                     return False
                 anzv = self.db_qkan.fetchone()[0]
 
@@ -828,12 +779,15 @@ class ExportTask:
                     return False
 
                 sql = "SELECT count(*) FROM he.Flaeche"
-                if not self.db_qkan.sql(sql, "db_qkan: export_to_he8.export_tezg (2)"):
+                if not self.db_qkan.sqlyml(
+                    'he8_count_he_schaechte',
+                    "db_qkan: export_to_he8.export_tezg (2)"
+                ):
                     return False
                 anzn = self.db_qkan.fetchone()[0]
                 self.nextid += anzn - anzv
                 self.db_qkan.sql(
-                    "UPDATE he.Itwh$ProgInfo SET NextId = ?",
+                    'he8_nextid',
                     parameters=(self.nextid,),
                 )
                 self.db_qkan.commit()
@@ -844,7 +798,10 @@ class ExportTask:
             if self.append:
                 # Feststellen der vorkommenden Werte von rowid fuer korrekte Werte von nextid in der ITWH-Datenbank
                 sql = "SELECT min(rowid) as idmin, max(rowid) as idmax FROM tezg"
-                if not self.db_qkan.sql(sql, "db_qkan: export_to_he8.export_tezg (2)"):
+                if not self.db_qkan.sqlyml(
+                    'he8_count_he_schaechte',
+                    "db_qkan: export_to_he8.export_tezg (2)"
+                ):
                     return False
 
                 data = self.db_qkan.fetchone()
@@ -895,8 +852,8 @@ class ExportTask:
 
                     self.nextid += idmax - idmin + 1
                     self.db_qkan.sql(
-                        "UPDATE he.Itwh$ProgInfo SET NextId = ?",
-                        parameters=(self.nextid,), stmt_category="db_qkan: export_to_he8.export_tezg (4)"
+                        'he8_nextid',
+                        parameters=(self.nextid,),
                     )
 
                     fortschritt("{} Haltungsflaechen eingefuegt".format(self.nextid - nr0), 0.90)
@@ -943,13 +900,19 @@ class ExportTask:
                         )
                     """
 
-                if not self.db_qkan.sql(sql, "db_qkan: export_to_he8.export_pumpen (1)"):
+                if not self.db_qkan.sql(
+                    'he8_update_',
+                    "db_qkan: export_to_he8.export_pumpen (1)"
+                ):
                     return False
 
             if self.append:
                 # Feststellen der Anzahl Pumpen in ITWH-Datenbank fuer korrekte Werte von nextid
                 sql = "SELECT count(*) FROM he.Pumpe"
-                if not self.db_qkan.sql(sql, "db_qkan: export_to_he8.export_pumpen (1)"):
+                if not self.db_qkan.sqlyml(
+                    'he8_count_he_schaechte',
+                    "db_qkan: export_to_he8.export_pumpen (1)"
+                ):
                     return False
                 anzv = self.db_qkan.fetchone()[0]
 
@@ -986,12 +949,15 @@ class ExportTask:
                     return False
 
                 sql = "SELECT count(*) FROM he.Pumpe"
-                if not self.db_qkan.sql(sql, "db_qkan: export_to_he8.export_pumpen (2)"):
+                if not self.db_qkan.sqlyml(
+                    'he8_count_he_schaechte',
+                    "db_qkan: export_to_he8.export_pumpen (2)"
+                ):
                     return False
                 anzn = self.db_qkan.fetchone()[0]
                 self.nextid += anzn - anzv
                 self.db_qkan.sql(
-                    "UPDATE he.Itwh$ProgInfo SET NextId = ?",
+                    'he8_nextid',
                     parameters=(self.nextid,),
                 )
                 self.db_qkan.commit()
@@ -1039,13 +1005,19 @@ class ExportTask:
                         )
                     """
 
-                if not self.db_qkan.sql(sql, "db_qkan: export_to_he8.export_wehre (1)"):
+                if not self.db_qkan.sql(
+                    'he8_update_',
+                    "db_qkan: export_to_he8.export_wehre (1)"
+                ):
                     return False
 
             if self.append:
                 # Feststellen der Anzahl Wehre in ITWH-Datenbank fuer korrekte Werte von nextid
                 sql = "SELECT count(*) FROM he.Wehr"
-                if not self.db_qkan.sql(sql, "db_qkan: export_to_he8.export_wehre (1)"):
+                if not self.db_qkan.sqlyml(
+                    'he8_count_he_schaechte',
+                    "db_qkan: export_to_he8.export_wehre (1)"
+                ):
                     return False
                 anzv = self.db_qkan.fetchone()[0]
 
@@ -1084,12 +1056,15 @@ class ExportTask:
                     return False
 
                 sql = "SELECT count(*) FROM he.Wehr"
-                if not self.db_qkan.sql(sql, "db_qkan: export_to_he8.export_wehre (2)"):
+                if not self.db_qkan.sqlyml(
+                    'he8_count_he_schaechte',
+                    "db_qkan: export_to_he8.export_wehre (2)"
+                ):
                     return False
                 anzn = self.db_qkan.fetchone()[0]
                 self.nextid += anzn - anzv
                 self.db_qkan.sql(
-                    "UPDATE he.Itwh$ProgInfo SET NextId = ?",
+                    'he8_nextid',
                     parameters=(self.nextid,),
                 )
                 self.db_qkan.commit()
@@ -1135,13 +1110,19 @@ class ExportTask:
                         )
                     """
 
-                if not self.db_qkan.sql(sql, "db_qkan: export_to_he8.export_drosseln (1)"):
+                if not self.db_qkan.sql(
+                    'he8_update_',
+                    "db_qkan: export_to_he8.export_drosseln (1)"
+                ):
                     return False
 
             if self.append:
                 # Feststellen der Anzahl Drosseln in ITWH-Datenbank fuer korrekte Werte von nextid
                 sql = "SELECT count(*) FROM he.Drossel"
-                if not self.db_qkan.sql(sql, "db_qkan: export_to_he8.export_drosseln (1)"):
+                if not self.db_qkan.sqlyml(
+                    'he8_count_he_schaechte',
+                    "db_qkan: export_to_he8.export_drosseln (1)"
+                ):
                     return False
                 anzv = self.db_qkan.fetchone()[0]
 
@@ -1178,12 +1159,15 @@ class ExportTask:
                     return False
 
                 sql = "SELECT count(*) FROM he.Drossel"
-                if not self.db_qkan.sql(sql, "db_qkan: export_to_he8.export_drosseln (2)"):
+                if not self.db_qkan.sqlyml(
+                    'he8_count_he_schaechte',
+                    "db_qkan: export_to_he8.export_drosseln (2)"
+                ):
                     return False
                 anzn = self.db_qkan.fetchone()[0]
                 self.nextid += anzn - anzv
                 self.db_qkan.sql(
-                    "UPDATE he.Itwh$ProgInfo SET NextId = ?",
+                    'he8_nextid',
                     parameters=(self.nextid,),
                 )
                 self.db_qkan.commit()
@@ -1241,13 +1225,19 @@ class ExportTask:
                         )
                     """
 
-                if not self.db_qkan.sql(sql, "db_qkan: export_to_he8.export_schieber (1)"):
+                if not self.db_qkan.sql(
+                    'he8_update_',
+                    "db_qkan: export_to_he8.export_schieber (1)"
+                ):
                     return False
 
             if self.append:
                 # Feststellen der Anzahl Schieber in ITWH-Datenbank fuer korrekte Werte von nextid
                 sql = "SELECT count(*) FROM he.Schieber"
-                if not self.db_qkan.sql(sql, "db_qkan: export_to_he8.export_schieber (1)"):
+                if not self.db_qkan.sqlyml(
+                    'he8_count_he_schaechte',
+                    "db_qkan: export_to_he8.export_schieber (1)"
+                ):
                     return False
                 anzv = self.db_qkan.fetchone()[0]
 
@@ -1296,12 +1286,15 @@ class ExportTask:
                     return False
 
                 sql = "SELECT count(*) FROM he.Schieber"
-                if not self.db_qkan.sql(sql, "db_qkan: export_to_he8.export_schieber (2)"):
+                if not self.db_qkan.sqlyml(
+                    'he8_count_he_schaechte',
+                    "db_qkan: export_to_he8.export_schieber (2)"
+                ):
                     return False
                 anzn = self.db_qkan.fetchone()[0]
                 self.nextid += anzn - anzv
                 self.db_qkan.sql(
-                    "UPDATE he.Itwh$ProgInfo SET NextId = ?",
+                    'he8_nextid',
                     parameters=(self.nextid,),
                 )
                 self.db_qkan.commit()
@@ -1357,13 +1350,19 @@ class ExportTask:
                         )
                     """
 
-                if not self.db_qkan.sql(sql, "db_qkan: export_to_he8.export_grundseitenauslaesse (1)"):
+                if not self.db_qkan.sql(
+                    'he8_update_',
+                    "db_qkan: export_to_he8.export_grundseitenauslaesse (1)"
+                ):
                     return False
 
             if self.append:
                 # Feststellen der Anzahl Grund-/Seitenauslässe in ITWH-Datenbank fuer korrekte Werte von nextid
                 sql = "SELECT count(*) FROM he.GrundSeitenauslass"
-                if not self.db_qkan.sql(sql, "db_qkan: export_to_he8.export_grundseitenauslaesse (1)"):
+                if not self.db_qkan.sqlyml(
+                    'he8_count_he_schaechte',
+                    "db_qkan: export_to_he8.export_grundseitenauslaesse (1)"
+                ):
                     return False
                 anzv = self.db_qkan.fetchone()[0]
 
@@ -1410,12 +1409,15 @@ class ExportTask:
                     return False
 
                 sql = "SELECT count(*) FROM he.GrundSeitenauslass"
-                if not self.db_qkan.sql(sql, "db_qkan: export_to_he8.export_grundseitenauslaesse (2)"):
+                if not self.db_qkan.sqlyml(
+                    'he8_count_he_schaechte',
+                    "db_qkan: export_to_he8.export_grundseitenauslaesse (2)"
+                ):
                     return False
                 anzn = self.db_qkan.fetchone()[0]
                 self.nextid += anzn - anzv
                 self.db_qkan.sql(
-                    "UPDATE he.Itwh$ProgInfo SET NextId = ?",
+                    'he8_nextid',
                     parameters=(self.nextid,),
                 )
                 self.db_qkan.commit()
@@ -1485,13 +1487,19 @@ class ExportTask:
                   ( SELECT haltnam FROM haltungen AS ha WHERE ha.haltungstyp = 'Q-Regler'){auswahl}
                     """
 
-                if not self.db_qkan.sql(sql, "db_qkan: export_to_he8.export_qregler (1)"):
+                if not self.db_qkan.sql(
+                    'he8_update_',
+                    "db_qkan: export_to_he8.export_qregler (1)"
+                ):
                     return False
 
             if self.append:
                 # Feststellen der Anzahl Q-Regler in ITWH-Datenbank fuer korrekte Werte von nextid
                 sql = "SELECT count(*) FROM he.QRegler"
-                if not self.db_qkan.sql(sql, "db_qkan: export_to_he8.export_qregler (1)"):
+                if not self.db_qkan.sqlyml(
+                    'he8_count_he_schaechte',
+                    "db_qkan: export_to_he8.export_qregler (1)"
+                ):
                     return False
                 anzv = self.db_qkan.fetchone()[0]
 
@@ -1554,12 +1562,15 @@ class ExportTask:
                     return False
 
                 sql = "SELECT count(*) FROM he.QRegler"
-                if not self.db_qkan.sql(sql, "db_qkan: export_to_he8.export_qregler (2)"):
+                if not self.db_qkan.sqlyml(
+                    'he8_count_he_schaechte',
+                    "db_qkan: export_to_he8.export_qregler (2)"
+                ):
                     return False
                 anzn = self.db_qkan.fetchone()[0]
                 self.nextid += anzn - anzv
                 self.db_qkan.sql(
-                    "UPDATE he.Itwh$ProgInfo SET NextId = ?",
+                    'he8_nextid',
                     parameters=(self.nextid,),
                 )
                 self.db_qkan.commit()
@@ -1629,13 +1640,19 @@ class ExportTask:
                   ( SELECT haltnam FROM haltungen AS ha WHERE ha.haltungstyp = 'H-Regler'){auswahl}
                     """
 
-                if not self.db_qkan.sql(sql, "db_qkan: export_to_he8.export_hregler (1)"):
+                if not self.db_qkan.sql(
+                    'he8_update_',
+                    "db_qkan: export_to_he8.export_hregler (1)"
+                ):
                     return False
 
             if self.append:
                 # Feststellen der Anzahl H-Regler in ITWH-Datenbank fuer korrekte Werte von nextid
                 sql = "SELECT count(*) FROM he.HRegler"
-                if not self.db_qkan.sql(sql, "db_qkan: export_to_he8.export_h_regler (1)"):
+                if not self.db_qkan.sqlyml(
+                    'he8_count_he_schaechte',
+                    "db_qkan: export_to_he8.export_h_regler (1)"
+                ):
                     return False
                 anzv = self.db_qkan.fetchone()[0]
 
@@ -1698,12 +1715,15 @@ class ExportTask:
                     return False
 
                 sql = "SELECT count(*) FROM he.HRegler"
-                if not self.db_qkan.sql(sql, "db_qkan: export_to_he8.export_h_regler (2)"):
+                if not self.db_qkan.sqlyml(
+                    'he8_count_he_schaechte',
+                    "db_qkan: export_to_he8.export_h_regler (2)"
+                ):
                     return False
                 anzn = self.db_qkan.fetchone()[0]
                 self.nextid += anzn - anzv
                 self.db_qkan.sql(
-                    "UPDATE he.Itwh$ProgInfo SET NextId = ?",
+                    'he8_nextid',
                     parameters=(self.nextid,),
                 )
                 self.db_qkan.commit()
@@ -1719,7 +1739,10 @@ class ExportTask:
             if self.append:
                 # Feststellen der vorkommenden Werte von rowid fuer korrekte Werte von nextid in der ITWH-Datenbank
                 sql = "SELECT count(*) FROM he.AbflussParameter"
-                if not self.db_qkan.sql(sql, "db_qkan: export_to_he8.export_Abflussparameter (1)"):
+                if not self.db_qkan.sqlyml(
+                    'he8_count_he_schaechte',
+                    "db_qkan: export_to_he8.export_Abflussparameter (1)"
+                ):
                     return False
                 anzv = self.db_qkan.fetchone()[0]
 
@@ -1757,12 +1780,15 @@ class ExportTask:
                     return False
 
                 sql = "SELECT count(*) FROM he.AbflussParameter"
-                if not self.db_qkan.sql(sql, "db_qkan: export_to_he8.export_Abflussparameter (2)"):
+                if not self.db_qkan.sqlyml(
+                    'he8_count_he_schaechte',
+                    "db_qkan: export_to_he8.export_Abflussparameter (2)"
+                ):
                     return False
                 anzn = self.db_qkan.fetchone()[0]
                 self.nextid += anzn - anzv
                 self.db_qkan.sql(
-                    "UPDATE he.Itwh$ProgInfo SET NextId = ?",
+                    'he8_nextid',
                     parameters=(self.nextid,),
                 )
 
@@ -1781,7 +1807,10 @@ class ExportTask:
             if self.append:
                 # Feststellen der Anzahl Bodenklassen in ITWH-Datenbank fuer korrekte Werte von nextid
                 sql = "SELECT count(*) FROM he.Bodenklasse"
-                if not self.db_qkan.sql(sql, "db_qkan: export_to_he8.export_Bodenklassen (1)"):
+                if not self.db_qkan.sqlyml(
+                    'he8_count_he_schaechte',
+                    "db_qkan: export_to_he8.export_Bodenklassen (1)"
+                ):
                     return False
                 anzv = self.db_qkan.fetchone()[0]
 
@@ -1812,12 +1841,15 @@ class ExportTask:
                     return False
 
                 sql = "SELECT count(*) FROM he.Bodenklasse"
-                if not self.db_qkan.sql(sql, "db_qkan: export_to_he8.export_Bodenklassen (2)"):
+                if not self.db_qkan.sqlyml(
+                    'he8_count_he_schaechte',
+                    "db_qkan: export_to_he8.export_Bodenklassen (2)"
+                ):
                     return False
                 anzn = self.db_qkan.fetchone()[0]
                 self.nextid += anzn - anzv
                 self.db_qkan.sql(
-                    "UPDATE he.Itwh$ProgInfo SET NextId = ?",
+                    'he8_nextid',
                     parameters=(self.nextid,),
                 )
                 self.db_qkan.commit()

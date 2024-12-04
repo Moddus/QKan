@@ -349,13 +349,11 @@ def checknames(
     # ----------------------------------------------------------------------------------------------------------------
     # Prüfung, ob Objektnamen leer oder NULL sind:
 
-    sql = f"""
-    SELECT {attr}
-    FROM {tab}
-    WHERE {attr} IS NULL or trim({attr}) = ''
-    """
-
-    if not db_qkan.sql(sql, "QKan.qgis_utils.checknames (1)"):
+    if not db_qkan.sqlyml(
+        'database_checknames',
+        "QKan.qgis_utils.checknames (1)",
+        replacefun=lambda sqltext: sqltext.format(attr=attr, tab=tab)
+    ):
         return False
 
     daten = db_qkan.fetchall()
@@ -369,13 +367,11 @@ def checknames(
                 ),
             )
 
-            sql = f"""
-                UPDATE {tab}
-                SET {attr} = printf('{prefix}%d', ROWID)
-                WHERE {attr} IS NULL or trim({attr}) = ''
-            """
-
-            if not db_qkan.sql(sql, "QKan.qgis_utils.checknames (2)"):
+            if not db_qkan.sqlyml(
+                'database_correct_names',
+                "QKan.qgis_utils.checknames (2)",
+                replacefun=lambda sqltext: sqltext.format(tab=tab, attr=attr, prefix=prefix)
+            ):
                 return False
         else:
             fehlermeldung(
@@ -389,13 +385,11 @@ def checknames(
     # ----------------------------------------------------------------------------------------------------------------
     # Prüfung, ob Objektnamen mehrfach vergeben sind.
 
-    sql = f"""
-        SELECT {attr}, count(*) AS anzahl
-        FROM {tab}
-        GROUP BY {attr}
-        HAVING anzahl > 1 OR {attr} IS NULL
-    """
-    if not db_qkan.sql(sql, "QKan.qgis_utils.checknames (3)"):
+    if not db_qkan.sqlyml(
+        'database_checkmultiple',
+        "QKan.qgis_utils.checknames (3)",
+        replacefun=lambda sqltext: sqltext.format(attr=attr, tab=tab)
+    ):
         return False
 
     daten = db_qkan.fetchall()
@@ -409,20 +403,11 @@ def checknames(
                 ),
             )
 
-            sql = f"""
-            WITH doppelte AS
-                (
-                    SELECT {attr}, count(*) AS anzahl
-                    FROM {tab}
-                    GROUP BY {attr}
-                    HAVING anzahl > 1 OR {attr} IS NULL
-                )
-            UPDATE {tab}
-            SET {attr} = printf('{prefix}%d', ROWID)
-            WHERE {attr} IN (SELECT {attr} FROM doppelte)
-            """
-
-            if not db_qkan.sql(sql, "QKan.qgis_utils.checknames (4)"):
+            if not db_qkan.sqlyml(
+                'database_correct_multiple',
+                "QKan.qgis_utils.checknames (4)",
+                replacefun=lambda sqltext: sqltext.format(attr=attr, tab=tab, prefix=prefix)
+            ):
                 return False
         else:
             fehlermeldung(
@@ -430,74 +415,6 @@ def checknames(
                 'In der Tabelle "{tab}" gibt es doppelte Namen im Feld "{attr}". Abbruch!'.format(
                     tab=tab, attr=attr
                 ),
-            )
-            return False
-
-    return True
-
-
-def checkgeom(
-    db_qkan: "DBConnection",
-    tab: str,
-    attrgeo: str,
-    autokorrektur: bool,
-    liste_teilgebiete: List[str],
-) -> bool:
-    """
-    Prüft, ob in der Tabelle {tab} im Attribut {attrgeo} ein Geoobjekt vorhanden ist.
-
-    :param db_qkan:         Typ der Datenbank (spatialite, postgis)
-    :param tab:             Name der Tabelle
-    :param attrgeo:         Name des Geo-Attributs, das auf Existenz geprüft werden soll
-    :param  autokorrektur:  Option, ob eine automatische Korrektur der Bezeichnungen durchgeführt
-                            werden soll. Falls nicht, wird die Bearbeitung mit einer Fehlermeldung
-                            abgebrochen.
-    :param liste_teilgebiete:
-    """
-
-    # ----------------------------------------------------------------------------------------------------------------
-    # Prüfung, ob das Geoobjekt in Spalte attrgeo existiert
-
-    # Einschränkung auf ausgewählte Teilgebiete
-    if len(liste_teilgebiete) != 0:
-        auswahl = " AND {tab}.teilgebiet in ('{lis}')".format(
-            lis="', '".join(liste_teilgebiete), tab=tab
-        )
-    else:
-        auswahl = ""
-
-    sql = f"""
-        SELECT count(*) AS anzahl
-        FROM {tab}
-        WHERE {tab}.{attrgeo} IS NULL{auswahl}
-    """
-    if not db_qkan.sql(sql, "QKan.qgis_utils.checkgeom (1)"):
-        return False
-
-    daten = db_qkan.fetchone()
-
-    if daten[0] > 0:
-        if autokorrektur:
-            meldung(
-                "Automatische Korrektur von Daten: ",
-                (
-                    f'In der Tabelle "{tab}" wurden leere Geo-Objekte gefunden. '
-                    "Diese Datensätze wurden gelöscht"
-                ),
-            )
-
-            sql = f"""
-                DELETE
-                FROM {tab}
-                WHERE {attrgeo} IS NULL {auswahl}
-                """
-
-            if not db_qkan.sql(sql, "QKan.qgis_utils.checkgeom (2)"):
-                return False
-        else:
-            fehlermeldung(
-                "Datenfehler",
-                f'In der Tabelle "{tab}" gibt es leere Geoobjekte. Abbruch!',
             )
             return False
 
@@ -528,12 +445,13 @@ def sqlconditions(keyword: str, attrlis: List[str], valuelis2: List[List[str]]) 
         return ""
 
     if len(attrlis) != len(valuelis2):
-        fehlermeldung(
-            "Fehler in qkan_utils.sqlconditions:",
+        fehlermeldung=(
+            "Fehler in qkan_utils.sqlconditions:\n"
             "Anzahl an Attributen und Wertlisten stimmt nicht ueberein: \n"
-            + "attrlis= {}\n".format(attrlis)
-            + "valuelis2= {}\n".format(valuelis2),
+            f"attrlis= {attrlis}\n"
+            f"valuelis2= {valuelis2}\n"
         )
+        logger.error_code(fehlermeldung)
 
     condlis = []  # Liste der einzelnen SQL-Conditions
 
@@ -559,25 +477,10 @@ def check_flaechenbilanz(db_qkan: "DBConnection") -> bool:
     :param db_qkan:     Typ der Datenbank (spatialite, postgis)
     """
 
-    sql = """WITH flintersect AS (
-        SELECT fl.flnam AS finam, 
-               CASE WHEN (fl.aufteilen <> 'ja' AND not fl.aufteilen) OR fl.aufteilen IS NULL THEN area(fl.geom) 
-               ELSE area(CastToMultiPolygon(CollectionExtract(intersection(fl.geom,tg.geom),3))) 
-               END AS flaeche
-        FROM linkfl AS lf
-        INNER JOIN flaechen AS fl
-        ON lf.flnam = fl.flnam
-        LEFT JOIN tezg AS tg
-        ON lf.tezgnam = tg.flnam)
-    SELECT fa.flnam, fi.finam, sum(fi.flaeche) AS fl_int, 
-           AREA(fa.geom) AS fl_ori, sum(fi.flaeche) - AREA(fa.geom) AS diff
-    FROM flaechen AS fa
-    LEFT JOIN flintersect AS fi
-    ON fa.flnam = fi.finam
-    GROUP BY fa.flnam
-    HAVING ABS(sum(fi.flaeche) - AREA(fa.geom)) > 2"""
-
-    if not db_qkan.sql(sql, "qkan_utils.check_flaechenbilanz (1)"):
+    if not db_qkan.sqlyml(
+        'database_checkflaechenbilanz',
+        "qkan_utils.check_flaechenbilanz (1)"
+    ):
         return False
 
     daten = db_qkan.fetchone()
@@ -587,25 +490,10 @@ def check_flaechenbilanz(db_qkan: "DBConnection") -> bool:
             'Öffnen Sie den Layer "Prüfung Flächenbilanz"',
         )
 
-    sql = """WITH flintersect AS (
-        SELECT tg.flnam AS finam, 
-               CASE WHEN (fl.aufteilen <> 'ja' AND not fl.aufteilen) OR fl.aufteilen IS NULL THEN area(fl.geom) 
-               ELSE area(CastToMultiPolygon(CollectionExtract(intersection(fl.geom,tg.geom),3))) 
-               END AS flaeche
-        FROM linkfl AS lf
-        INNER JOIN flaechen AS fl
-        ON lf.flnam = fl.flnam
-        LEFT JOIN tezg AS tg
-        ON lf.tezgnam = tg.flnam)
-    SELECT tg.flnam, fi.finam, sum(fi.flaeche) AS fl_int, 
-           AREA(tg.geom) AS fl_ori, sum(fi.flaeche) - AREA(tg.geom) AS diff
-    FROM tezg AS tg
-    LEFT JOIN flintersect AS fi
-    ON tg.flnam = fi.finam
-    GROUP BY tg.flnam
-    HAVING ABS(sum(fi.flaeche) - AREA(tg.geom)) > 2"""
-
-    if not db_qkan.sql(sql, "qkan_utils.check_flaechenbilanz (2)"):
+    if not db_qkan.sqlyml(
+        'database_checktezgbilanz',
+        "qkan_utils.check_flaechenbilanz (2)"
+    ):
         return False
 
     daten = db_qkan.fetchone()
@@ -621,96 +509,27 @@ def eval_node_types(db_qkan: "DBConnection") -> None:
     """Schachttypen auswerten. Dies geschieht ausschließlich mit SQL-Abfragen"""
 
     # -- Anfangsschächte: Schächte ohne Haltung oben
-    sql_typ_anf = """
-        UPDATE schaechte SET knotentyp = 'Anfangsschacht' WHERE schaechte.schnam IN
-        (SELECT t_sch.schnam
-        FROM schaechte AS t_sch 
-        LEFT JOIN haltungen AS t_hob
-        ON t_sch.schnam = t_hob.schoben
-        LEFT JOIN haltungen AS t_hun
-        ON t_sch.schnam = t_hun.schunten
-        WHERE t_hun.pk IS NULL)"""
+    if not db_qkan.sqlyml('database_knotentyp_anf', "importkanaldaten_he (39)"):
+        return
 
     # -- Endschächte: Schächte ohne Haltung unten
-    sql_typ_end = """
-        UPDATE schaechte SET knotentyp = 'Endschacht' WHERE schaechte.schnam IN
-        (SELECT t_sch.schnam
-        FROM schaechte AS t_sch 
-        JOIN haltungen AS t_hob                         --- nur Schaechte mit Haltung oben
-        ON t_sch.schnam = t_hob.schunten
-        LEFT JOIN haltungen AS t_hun
-        ON t_sch.schnam = t_hun.schoben
-        WHERE t_hun.pk IS NULL)"""
+    if not db_qkan.sqlyml('database_knotentyp_end', "importkanaldaten_he (40)"):
+        return
 
     # -- Hochpunkt:
-    sql_typ_hoch = """
-        UPDATE schaechte SET knotentyp = 'Hochpunkt' WHERE schaechte.schnam IN
-        ( SELECT t_sch.schnam
-          FROM schaechte AS t_sch 
-          JOIN haltungen AS t_hob
-          ON t_sch.schnam = t_hob.schunten
-          JOIN haltungen AS t_hun
-          ON t_sch.schnam = t_hun.schoben
-          JOIN schaechte AS t_sun
-          ON t_sun.schnam = t_hun.schunten
-          JOIN schaechte AS t_sob
-          ON t_sob.schnam = t_hob.schunten
-          WHERE ifnull(t_hob.sohleunten,t_sch.sohlhoehe)>ifnull(t_hob.sohleoben,t_sob.sohlhoehe) AND 
-                ifnull(t_hun.sohleoben,t_sch.sohlhoehe)>ifnull(t_hun.sohleunten,t_sun.sohlhoehe))"""
+    if not db_qkan.sqlyml('database_knotentyp_hoch', "importkanaldaten_he (41)"):
+        return
 
     # -- Tiefpunkt:
-    sql_typ_tief = """
-        UPDATE schaechte SET knotentyp = 'Tiefpunkt' WHERE schaechte.schnam IN
-        ( SELECT t_sch.schnam
-          FROM schaechte AS t_sch 
-          JOIN haltungen AS t_hob
-          ON t_sch.schnam = t_hob.schunten
-          JOIN haltungen AS t_hun
-          ON t_sch.schnam = t_hun.schoben
-          JOIN schaechte AS t_sun
-          ON t_sun.schnam = t_hun.schunten
-          JOIN schaechte AS t_sob
-          ON t_sob.schnam = t_hob.schunten
-          WHERE ifnull(t_hob.sohleunten,t_sch.sohlhoehe)<ifnull(t_hob.sohleoben,t_sob.sohlhoehe) AND 
-                ifnull(t_hun.sohleoben,t_sch.sohlhoehe)<ifnull(t_hun.sohleunten,t_sun.sohlhoehe))"""
+    if not db_qkan.sqlyml('database_knotentyp_tief', "importkanaldaten_he (42)"):
+        return
 
     # -- Verzweigung:
-    sql_typ_zweig = """
-        UPDATE schaechte SET knotentyp = 'Verzweigung' WHERE schaechte.schnam IN
-        ( SELECT t_sch.schnam
-          FROM schaechte AS t_sch 
-          JOIN haltungen AS t_hun
-          ON t_sch.schnam = t_hun.schoben
-          GROUP BY t_sch.pk
-          HAVING count(*) > 1)"""
+    if not db_qkan.sqlyml('database_knotentyp_zweig', "importkanaldaten_he (43)"):
+        return
 
     # -- Einzelschacht:
-    sql_typ_einzel = """
-        UPDATE schaechte SET knotentyp = 'Einzelschacht' WHERE schaechte.schnam IN
-        ( SELECT t_sch.schnam 
-          FROM schaechte AS t_sch 
-          LEFT JOIN haltungen AS t_hun
-          ON t_sch.schnam = t_hun.schoben
-          LEFT JOIN haltungen AS t_hob
-          ON t_sch.schnam = t_hob.schunten
-          WHERE t_hun.pk IS NULL AND t_hob.pk IS NULL)"""
-
-    if not db_qkan.sql(sql_typ_anf, "importkanaldaten_he (39)"):
-        return
-
-    if not db_qkan.sql(sql_typ_end, "importkanaldaten_he (40)"):
-        return
-
-    if not db_qkan.sql(sql_typ_hoch, "importkanaldaten_he (41)"):
-        return
-
-    if not db_qkan.sql(sql_typ_tief, "importkanaldaten_he (42)"):
-        return
-
-    if not db_qkan.sql(sql_typ_zweig, "importkanaldaten_he (43)"):
-        return
-
-    if not db_qkan.sql(sql_typ_einzel, "importkanaldaten_he (44)"):
+    if not db_qkan.sqlyml('database_knotentyp_einzel', "importkanaldaten_he (44)"):
         return
 
     db_qkan.commit()

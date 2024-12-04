@@ -9,6 +9,7 @@ from qkan import QKan
 from qkan.config import ClassObject
 from qkan.database.dbfunc import DBConnection
 from qkan.utils import get_logger
+from qkan.tools.k_schadenstexte import Schadenstexte
 
 logger = get_logger("QKan.strakat.import")
 
@@ -115,7 +116,7 @@ class Kanal_STRAKAT(ClassObject):
     strakatid: str = ""
 
 
-class ImportTask:
+class ImportTask(Schadenstexte):
     def __init__(
         self,
         db_qkan: DBConnection,
@@ -124,7 +125,6 @@ class ImportTask:
         self.db_qkan = db_qkan
         self.allrefs = QKan.config.check_import.allrefs
         self.epsg = QKan.config.epsg
-        self.dbtyp = QKan.config.database_typ
         self.strakatdir = QKan.config.strakat.import_dir
         self.projectfile = QKan.config.project.file
         self.db_name = QKan.config.database.qkan
@@ -2227,7 +2227,7 @@ class ImportTask:
 
         self.db_qkan.commit()
 
-        self.db_qkan.setschadenstexte_schaechte()
+        Schadenstexte.setschadenstexte_schaechte(self.db_qkan)
         self.progress_bar.setValue(55)
         logger.debug("setschadenstexte_schaechte"),
 
@@ -2403,7 +2403,7 @@ class ImportTask:
 
         self.db_qkan.commit()
 
-        self.db_qkan.setschadenstexte_haltungen()
+        Schadenstexte.setschadenstexte_haltungen(self.db_qkan)
         self.progress_bar.setValue(75)
         logger.debug("setschadenstexte_haltungen"),
 
@@ -2584,7 +2584,7 @@ class ImportTask:
 
         self.db_qkan.commit()
 
-        self.db_qkan.setschadenstexte_anschlussleitungen()
+        Schadenstexte.setschadenstexte_anschlussleitungen(self.db_qkan)
         self.progress_bar.setValue(100)
         logger.debug("setschadenstexte_anschlussleitungen"),
 

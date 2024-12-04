@@ -49,3 +49,8 @@ class RunOffParamsType(enum.Enum):
 class QKanDBChoice(enum.Enum):
     SPATIALITE = "spatialite"
     POSTGIS = "postgis"
+
+
+class UntersuchBezugpunkt(enum.Enum):
+    ROHRANFANG = 'Rohranfang'
+    GERINNEMITTELPUNKT = 'Gerinnemittelpunkt'

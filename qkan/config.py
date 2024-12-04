@@ -211,9 +211,7 @@ class CheckImport(ClassObject):
 
     # Haltungsflächen aus GIPS, drei Typen in einer Tabelle
     tezg_ef: bool = True
-    tezg_hf: bool = (
-        True  # Sonderfall: Keine Flächenobjekte, stattdessen Befestigungsgrade in tezg
-    )
+    tezg_hf: bool = True    # Sonderfall: Keine Flächenobjekte, stattdessen Befestigungsgrade in tezg
     tezg_tf: bool = True
 
     # Referenztabellen
@@ -271,6 +269,7 @@ class SelectionConfig(ClassObject):
     abflussparameter: list = []
     flaechen_abflussparam: list = []
     hal_entw: list = []
+    selectedObjects: bool = False
     teilgebiete: list = []
 
 
@@ -818,7 +817,6 @@ class Config(ClassObject):
     max_loops: int = 1000
     mindestflaeche: float = 0.5
     mit_verschneidung: bool = True
-    database_typ: str = 'sqlite'
     # ---
     adapt: AdaptConfig = AdaptConfig()
     check_export: CheckExport = CheckExport()
