@@ -1304,13 +1304,13 @@ class Zustandsklassen_funkt:
 			except:
 				pass
 
-		sql = """SELECT RecoverGeometryColumn('untersuchdat_haltung_bewertung', 'geom', ?, 'LINESTRING', 'XY');"""
-		data = (crs,)
-		try:
-			curs.execute(sql, data)
-			db.commit()
-		except:
-			pass
+		# sql = """SELECT RecoverGeometryColumn('untersuchdat_haltung_bewertung', 'geom', ?, 'LINESTRING', 'XY');"""
+		# data = (crs,)
+		# try:
+		# 	curs.execute(sql, data)
+		# 	db.commit()
+		# except:
+		# 	pass
 
 		logger.debug(f'Ende_Haltungstexte.liste: {datetime.now()}')
 
@@ -2468,13 +2468,13 @@ class Zustandsklassen_funkt:
 			except:
 				pass
 
-		sql = """SELECT RecoverGeometryColumn('untersuchdat_anschlussleitung_bewertung', 'geom', ?, 'LINESTRING', 'XY');"""
-		data = (crs,)
-		try:
-			curs.execute(sql, data)
-			db.commit()
-		except:
-			pass
+		# sql = """SELECT RecoverGeometryColumn('untersuchdat_anschlussleitung_bewertung', 'geom', ?, 'LINESTRING', 'XY');"""
+		# data = (crs,)
+		# try:
+		# 	curs.execute(sql, data)
+		# 	db.commit()
+		# except:
+		# 	pass
 
 		logger.debug(f'Ende_Haltungstexte.liste: {datetime.now()}')
 
@@ -3583,13 +3583,13 @@ class Zustandsklassen_funkt:
 				pass
 
 
-		sql = """SELECT RecoverGeometryColumn('Untersuchdat_schacht_bewertung', 'geop', ?, 'POINT', 'XY');"""
-		data = (crs,)
-		try:
-			curs.execute(sql, data)
-			db.commit()
-		except:
-			pass
+		# sql = """SELECT RecoverGeometryColumn('Untersuchdat_schacht_bewertung', 'geop', ?, 'POINT', 'XY');"""
+		# data = (crs,)
+		# try:
+		# 	curs.execute(sql, data)
+		# 	db.commit()
+		# except:
+		# 	pass
 
 		logger.debug(f'Ende_Schachttexte.liste: {datetime.now()}')
 
@@ -3845,21 +3845,21 @@ class Zustandsklassen_funkt:
 		except:
 			pass
 
-		sql = """SELECT RecoverGeometryColumn('untersuchdat_haltung_bewertung', 'geom', ?, 'LINESTRING', 'XY');"""
-		data = (crs,)
-		try:
-			curs.execute(sql, data)
-			db.commit()
-		except:
-			pass
-
-		sql = """SELECT RecoverGeometryColumn('haltungen_untersucht_bewertung', 'geom', ?, 'LINESTRING', 'XY');"""
-		data = (crs,)
-		try:
-			curs.execute(sql, data)
-			db.commit()
-		except:
-			pass
+		# sql = """SELECT RecoverGeometryColumn('untersuchdat_haltung_bewertung', 'geom', ?, 'LINESTRING', 'XY');"""
+		# data = (crs,)
+		# try:
+		# 	curs.execute(sql, data)
+		# 	db.commit()
+		# except:
+		# 	pass
+		#
+		# sql = """SELECT RecoverGeometryColumn('haltungen_untersucht_bewertung', 'geom', ?, 'LINESTRING', 'XY');"""
+		# data = (crs,)
+		# try:
+		# 	curs.execute(sql, data)
+		# 	db.commit()
+		# except:
+		# 	pass
 
 		uri = QgsDataSourceUri()
 		uri.setDatabase(db_x)
@@ -4059,21 +4059,21 @@ class Zustandsklassen_funkt:
 		except:
 			pass
 
-		sql = """SELECT RecoverGeometryColumn('untersuchdat_anschlussleitung_bewertung', 'geom', ?, 'LINESTRING', 'XY');"""
-		data = (crs,)
-		try:
-			curs.execute(sql, data)
-			db.commit()
-		except:
-			pass
-
-		sql = """SELECT RecoverGeometryColumn('anschlussleitungen_untersucht_bewertung', 'geom', ?, 'LINESTRING', 'XY');"""
-		data = (crs,)
-		try:
-			curs.execute(sql, data)
-			db.commit()
-		except:
-			pass
+		# sql = """SELECT RecoverGeometryColumn('untersuchdat_anschlussleitung_bewertung', 'geom', ?, 'LINESTRING', 'XY');"""
+		# data = (crs,)
+		# try:
+		# 	curs.execute(sql, data)
+		# 	db.commit()
+		# except:
+		# 	pass
+		#
+		# sql = """SELECT RecoverGeometryColumn('anschlussleitungen_untersucht_bewertung', 'geom', ?, 'LINESTRING', 'XY');"""
+		# data = (crs,)
+		# try:
+		# 	curs.execute(sql, data)
+		# 	db.commit()
+		# except:
+		# 	pass
 
 		uri = QgsDataSourceUri()
 		uri.setDatabase(db_x)
@@ -4247,21 +4247,21 @@ class Zustandsklassen_funkt:
 		except:
 			pass
 
-		sql = """SELECT RecoverGeometryColumn('schaechte_untersucht_bewertung', 'geop', ?, 'POINT', 'XY');"""
-		data = (crs,)
-		try:
-			curs.execute(sql, data)
-			db.commit()
-		except:
-			pass
-
-		sql = """SELECT RecoverGeometryColumn('Untersuchdat_schacht_bewertung', 'geop', ?, 'POINT', 'XY');"""
-		data = (crs,)
-		try:
-			curs.execute(sql, data)
-			db.commit()
-		except:
-			pass
+		# sql = """SELECT RecoverGeometryColumn('schaechte_untersucht_bewertung', 'geop', ?, 'POINT', 'XY');"""
+		# data = (crs,)
+		# try:
+		# 	curs.execute(sql, data)
+		# 	db.commit()
+		# except:
+		# 	pass
+		#
+		# sql = """SELECT RecoverGeometryColumn('Untersuchdat_schacht_bewertung', 'geop', ?, 'POINT', 'XY');"""
+		# data = (crs,)
+		# try:
+		# 	curs.execute(sql, data)
+		# 	db.commit()
+		# except:
+		# 	pass
 
 		uri = QgsDataSourceUri()
 		uri.setDatabase(db_x)
@@ -4671,6 +4671,21 @@ class Zustandsklassen_funkt:
 			data = ()
 
 			# Tab A.3
+			if attr[10] == "BAB" and attr[11] == "A"  and (
+					attr[12] == "A" or attr[12] == "B" or attr[12] == "C" or attr[12] == "D" or attr[12] == "E"):
+				z = '4'
+				sql = f"""
+					  UPDATE untersuchdat_haltung_bewertung
+						SET Zustandsklasse_S = ?
+						WHERE untersuchdat_haltung_bewertung.pk = ?;
+						"""
+				data = (z, attr[0])
+				try:
+					curs.execute(sql, data)
+					#     db.commit()
+					continue
+				except:
+					pass
 			if attr[10] == "BAB" and (attr[11] == "B" or attr[11] == "C") and (
 					attr[12] == "B" or attr[12] == "C" or attr[12] == "D" or attr[12] == "E"):
 				if attr[13] >= 3:
@@ -7280,21 +7295,21 @@ class Zustandsklassen_funkt:
 		except:
 			pass
 
-		sql = """SELECT RecoverGeometryColumn('untersuchdat_haltung_bewertung', 'geom', ?, 'LINESTRING', 'XY');"""
-		data = (crs,)
-		try:
-			curs.execute(sql, data)
-			db.commit()
-		except:
-			pass
-
-		sql = """SELECT RecoverGeometryColumn('haltungen_untersucht_bewertung', 'geom', ?, 'LINESTRING', 'XY');"""
-		data = (crs,)
-		try:
-			curs.execute(sql, data)
-			db.commit()
-		except:
-			pass
+		# sql = """SELECT RecoverGeometryColumn('untersuchdat_haltung_bewertung', 'geom', ?, 'LINESTRING', 'XY');"""
+		# data = (crs,)
+		# try:
+		# 	curs.execute(sql, data)
+		# 	db.commit()
+		# except:
+		# 	pass
+		#
+		# sql = """SELECT RecoverGeometryColumn('haltungen_untersucht_bewertung', 'geom', ?, 'LINESTRING', 'XY');"""
+		# data = (crs,)
+		# try:
+		# 	curs.execute(sql, data)
+		# 	db.commit()
+		# except:
+		# 	pass
 
 		logger.debug(f'Ende_Bewertung_Haltungen.liste: {datetime.now()}')
 
@@ -10146,21 +10161,21 @@ class Zustandsklassen_funkt:
 		except:
 			pass
 
-		sql = """SELECT RecoverGeometryColumn('untersuchdat_anschlussleitung_bewertung', 'geom', ?, 'LINESTRING', 'XY');"""
-		data = (crs,)
-		try:
-			curs.execute(sql, data)
-			db.commit()
-		except:
-			pass
-
-		sql = """SELECT RecoverGeometryColumn('anschlussleitungen_untersucht_bewertung', 'geom', ?, 'LINESTRING', 'XY');"""
-		data = (crs,)
-		try:
-			curs.execute(sql, data)
-			db.commit()
-		except:
-			pass
+		# sql = """SELECT RecoverGeometryColumn('untersuchdat_anschlussleitung_bewertung', 'geom', ?, 'LINESTRING', 'XY');"""
+		# data = (crs,)
+		# try:
+		# 	curs.execute(sql, data)
+		# 	db.commit()
+		# except:
+		# 	pass
+		#
+		# sql = """SELECT RecoverGeometryColumn('anschlussleitungen_untersucht_bewertung', 'geom', ?, 'LINESTRING', 'XY');"""
+		# data = (crs,)
+		# try:
+		# 	curs.execute(sql, data)
+		# 	db.commit()
+		# except:
+		# 	pass
 
 		logger.debug(f'Ende_Bewertung_Haltungen.liste: {datetime.now()}')
 
@@ -13605,21 +13620,21 @@ class Zustandsklassen_funkt:
 		except:
 			pass
 
-		sql = """SELECT RecoverGeometryColumn('schaechte_untersucht_bewertung', 'geop', ?, 'POINT', 'XY');"""
-		data = (crs,)
-		try:
-			curs.execute(sql, data)
-			db.commit()
-		except:
-			pass
-
-		sql = """SELECT RecoverGeometryColumn('Untersuchdat_schacht_bewertung', 'geop', ?, 'POINT', 'XY');"""
-		data = (crs,)
-		try:
-			curs.execute(sql, data)
-			db.commit()
-		except:
-			pass
+		# sql = """SELECT RecoverGeometryColumn('schaechte_untersucht_bewertung', 'geop', ?, 'POINT', 'XY');"""
+		# data = (crs,)
+		# try:
+		# 	curs.execute(sql, data)
+		# 	db.commit()
+		# except:
+		# 	pass
+		#
+		# sql = """SELECT RecoverGeometryColumn('Untersuchdat_schacht_bewertung', 'geop', ?, 'POINT', 'XY');"""
+		# data = (crs,)
+		# try:
+		# 	curs.execute(sql, data)
+		# 	db.commit()
+		# except:
+		# 	pass
 
 		uri = QgsDataSourceUri()
 		uri.setDatabase(db_x)
@@ -16130,13 +16145,13 @@ class Zustandsklassen_funkt:
 		except:
 			pass
 
-		sql = """SELECT RecoverGeometryColumn('untersuchdat_haltung_bewertung', 'geom', ?, 'LINESTRING', 'XY');"""
-		data = (crs,)
-		try:
-			curs.execute(sql, data)
-			db.commit()
-		except:
-			pass
+		# sql = """SELECT RecoverGeometryColumn('untersuchdat_haltung_bewertung', 'geom', ?, 'LINESTRING', 'XY');"""
+		# data = (crs,)
+		# try:
+		# 	curs.execute(sql, data)
+		# 	db.commit()
+		# except:
+		# 	pass
 
 		uri = QgsDataSourceUri()
 		uri.setDatabase(db_x)
@@ -16195,13 +16210,13 @@ class Zustandsklassen_funkt:
 		except:
 			pass
 
-		sql = """SELECT RecoverGeometryColumn('haltungen_untersucht_bewertung', 'geom', ?, 'LINESTRING', 'XY');"""
-		data = (crs,)
-		try:
-			curs.execute(sql, data)
-			db.commit()
-		except:
-			pass
+		# sql = """SELECT RecoverGeometryColumn('haltungen_untersucht_bewertung', 'geom', ?, 'LINESTRING', 'XY');"""
+		# data = (crs,)
+		# try:
+		# 	curs.execute(sql, data)
+		# 	db.commit()
+		# except:
+		# 	pass
 
 		uri = QgsDataSourceUri()
 		uri.setDatabase(db_x)
@@ -18610,13 +18625,13 @@ class Zustandsklassen_funkt:
 		except:
 			pass
 
-		sql = """SELECT RecoverGeometryColumn('untersuchdat_anschlussleitung_bewertung', 'geom', ?, 'LINESTRING', 'XY');"""
-		data = (crs,)
-		try:
-			curs.execute(sql, data)
-			db.commit()
-		except:
-			pass
+		# sql = """SELECT RecoverGeometryColumn('untersuchdat_anschlussleitung_bewertung', 'geom', ?, 'LINESTRING', 'XY');"""
+		# data = (crs,)
+		# try:
+		# 	curs.execute(sql, data)
+		# 	db.commit()
+		# except:
+		# 	pass
 
 		uri = QgsDataSourceUri()
 		uri.setDatabase(db_x)
@@ -18675,13 +18690,13 @@ class Zustandsklassen_funkt:
 		except:
 			pass
 
-		sql = """SELECT RecoverGeometryColumn('anschlussleitungen_untersucht_bewertung', 'geom', ?, 'LINESTRING', 'XY');"""
-		data = (crs,)
-		try:
-			curs.execute(sql, data)
-			db.commit()
-		except:
-			pass
+		# sql = """SELECT RecoverGeometryColumn('anschlussleitungen_untersucht_bewertung', 'geom', ?, 'LINESTRING', 'XY');"""
+		# data = (crs,)
+		# try:
+		# 	curs.execute(sql, data)
+		# 	db.commit()
+		# except:
+		# 	pass
 
 		uri = QgsDataSourceUri()
 		uri.setDatabase(db_x)
@@ -21655,13 +21670,13 @@ class Zustandsklassen_funkt:
 		except:
 			pass
 
-		sql = """SELECT RecoverGeometryColumn('Untersuchdat_schacht_bewertung', 'geop', ?, 'POINT', 'XY');"""
-		data = (crs,)
-		try:
-			curs.execute(sql, data)
-			db.commit()
-		except:
-			pass
+		# sql = """SELECT RecoverGeometryColumn('Untersuchdat_schacht_bewertung', 'geop', ?, 'POINT', 'XY');"""
+		# data = (crs,)
+		# try:
+		# 	curs.execute(sql, data)
+		# 	db.commit()
+		# except:
+		# 	pass
 
 		uri = QgsDataSourceUri()
 		uri.setDatabase(db_x)
@@ -21714,13 +21729,13 @@ class Zustandsklassen_funkt:
 		except:
 			pass
 
-		sql = """SELECT RecoverGeometryColumn('schaechte_untersucht_bewertung', 'geop', ?, 'POINT', 'XY');"""
-		data = (crs,)
-		try:
-			curs.execute(sql, data)
-			db.commit()
-		except:
-			pass
+		# sql = """SELECT RecoverGeometryColumn('schaechte_untersucht_bewertung', 'geop', ?, 'POINT', 'XY');"""
+		# data = (crs,)
+		# try:
+		# 	curs.execute(sql, data)
+		# 	db.commit()
+		# except:
+		# 	pass
 
 		uri = QgsDataSourceUri()
 		uri.setDatabase(db_x)
@@ -24120,21 +24135,21 @@ class Zustandsklassen_funkt:
 				pass
 
 
-		sql = """SELECT RecoverGeometryColumn('untersuchdat_haltung_bewertung', 'geom', ?, 'LINESTRING', 'XY');"""
-		data = (crs,)
-		try:
-			curs.execute(sql, data)
-			db.commit()
-		except:
-			pass
-
-		sql = """SELECT RecoverGeometryColumn('haltungen_untersucht_bewertung', 'geom', ?, 'LINESTRING', 'XY');"""
-		data = (crs,)
-		try:
-			curs.execute(sql, data)
-			db.commit()
-		except:
-			pass
+		# sql = """SELECT RecoverGeometryColumn('untersuchdat_haltung_bewertung', 'geom', ?, 'LINESTRING', 'XY');"""
+		# data = (crs,)
+		# try:
+		# 	curs.execute(sql, data)
+		# 	db.commit()
+		# except:
+		# 	pass
+		#
+		# sql = """SELECT RecoverGeometryColumn('haltungen_untersucht_bewertung', 'geom', ?, 'LINESTRING', 'XY');"""
+		# data = (crs,)
+		# try:
+		# 	curs.execute(sql, data)
+		# 	db.commit()
+		# except:
+		# 	pass
 
 		uri = QgsDataSourceUri()
 		uri.setDatabase(db_x)
@@ -26464,21 +26479,21 @@ class Zustandsklassen_funkt:
 				pass
 
 
-		sql = """SELECT RecoverGeometryColumn('untersuchdat_anschlussleitung_bewertung', 'geom', ?, 'LINESTRING', 'XY');"""
-		data = (crs,)
-		try:
-			curs.execute(sql, data)
-			db.commit()
-		except:
-			pass
-
-		sql = """SELECT RecoverGeometryColumn('anschlussleitungen_untersucht_bewertung', 'geom', ?, 'LINESTRING', 'XY');"""
-		data = (crs,)
-		try:
-			curs.execute(sql, data)
-			db.commit()
-		except:
-			pass
+		# sql = """SELECT RecoverGeometryColumn('untersuchdat_anschlussleitung_bewertung', 'geom', ?, 'LINESTRING', 'XY');"""
+		# data = (crs,)
+		# try:
+		# 	curs.execute(sql, data)
+		# 	db.commit()
+		# except:
+		# 	pass
+		#
+		# sql = """SELECT RecoverGeometryColumn('anschlussleitungen_untersucht_bewertung', 'geom', ?, 'LINESTRING', 'XY');"""
+		# data = (crs,)
+		# try:
+		# 	curs.execute(sql, data)
+		# 	db.commit()
+		# except:
+		# 	pass
 
 		uri = QgsDataSourceUri()
 		uri.setDatabase(db_x)
@@ -29358,21 +29373,21 @@ class Zustandsklassen_funkt:
 			except:
 				pass
 
-		sql = """SELECT RecoverGeometryColumn('Untersuchdat_schacht_bewertung', 'geom', ?, 'LINESTRING', 'XY');"""
-		data = (crs,)
-		try:
-			curs.execute(sql, data)
-			db.commit()
-		except:
-			pass
-
-		sql = """SELECT RecoverGeometryColumn('schaechte_untersucht_bewertung', 'geom', ?, 'LINESTRING', 'XY');"""
-		data = (crs,)
-		try:
-			curs.execute(sql, data)
-			db.commit()
-		except:
-			pass
+		# sql = """SELECT RecoverGeometryColumn('Untersuchdat_schacht_bewertung', 'geom', ?, 'LINESTRING', 'XY');"""
+		# data = (crs,)
+		# try:
+		# 	curs.execute(sql, data)
+		# 	db.commit()
+		# except:
+		# 	pass
+		#
+		# sql = """SELECT RecoverGeometryColumn('schaechte_untersucht_bewertung', 'geom', ?, 'LINESTRING', 'XY');"""
+		# data = (crs,)
+		# try:
+		# 	curs.execute(sql, data)
+		# 	db.commit()
+		# except:
+		# 	pass
 
 		uri = QgsDataSourceUri()
 		uri.setDatabase(db_x)

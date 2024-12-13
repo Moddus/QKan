@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>624</width>
-    <height>537</height>
+    <width>611</width>
+    <height>460</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -21,19 +21,6 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
-    <widget class="QLabel" name="label_3">
-     <property name="font">
-      <font>
-       <weight>75</weight>
-       <bold>true</bold>
-      </font>
-     </property>
-     <property name="text">
-      <string>Plugin noch in der Bearbeitung!</string>
-     </property>
-    </widget>
-   </item>
-   <item>
     <widget class="QScrollArea" name="scrollArea">
      <property name="widgetResizable">
       <bool>true</bool>
@@ -42,9 +29,9 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>-45</y>
-        <width>579</width>
-        <height>538</height>
+        <y>0</y>
+        <width>587</width>
+        <height>436</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -116,6 +103,20 @@
           </widget>
          </item>
          <item>
+          <widget class="QComboBox" name="comboBox">
+           <item>
+            <property name="text">
+             <string>Importdatum</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Befahrungsdatum</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+         <item>
           <widget class="QComboBox" name="date"/>
          </item>
         </layout>
@@ -164,84 +165,6 @@
        </item>
        <item>
         <widget class="Line" name="line_5">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="label_4">
-         <property name="text">
-          <string>Auswahl der zu berücksichtigenden Zustandsklassen:</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QCheckBox" name="checkBox">
-         <property name="text">
-          <string>4</string>
-         </property>
-         <property name="checked">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QCheckBox" name="checkBox_6">
-         <property name="text">
-          <string>3</string>
-         </property>
-         <property name="checked">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QCheckBox" name="checkBox_7">
-         <property name="text">
-          <string>2</string>
-         </property>
-         <property name="checked">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QCheckBox" name="checkBox_8">
-         <property name="text">
-          <string>1</string>
-         </property>
-         <property name="checked">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QCheckBox" name="checkBox_9">
-         <property name="text">
-          <string>0</string>
-         </property>
-         <property name="checked">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="Line" name="line_6">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QCheckBox" name="checkBox_10">
-         <property name="text">
-          <string>Substanzklasse seperat für die Dichtheit, Standsicherheit und Betriebssicherheit erstellen</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="Line" name="line_2">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>

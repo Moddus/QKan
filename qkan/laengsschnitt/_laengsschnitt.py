@@ -23,7 +23,7 @@ from ..utils import get_logger
 
 logger = get_logger("QKan.laengs.import")
 
-# TODO: mit einpflegen, dass die Geländehöhe von meheren DGM Layern angezeigt wird
+# TODO: mit einpflegen, dass die Geländehöhe von meheren DGM Layern angezeigt wird und Kreuzunde Haltungen dargestellt werden
 
 class LaengsTask:
     def __init__(self, db_qkan: DBConnection, file: str, fig: plt.figure, canv: FigureCanvas, fig_2: plt.figure,
@@ -88,8 +88,15 @@ class LaengsTask:
 
     def closeEvent(self, event):
         # Stop the animation when the window is closed
-        self.anim.event_source.stop()
+
+        if self.anim is not None:
+            self.anim.event_source.stop()
+            plt.close(self.fig)
         event.accept()
+        if QtCore.QTimer.isActive():
+            QtCore.QTimer.stop()
+        event.accept()
+
 
         # TODO:Plugin informieren, dass das Fenster geschlossen wurde
         #self.plugin_instance.window_closed(self)
@@ -575,6 +582,7 @@ class LaengsTask:
         y_sohle2 = []
         x_deckel = []
         y_deckel = []
+        x_deckel_l =[]
         y_label = []
         name = []
         haltnam_l = []
@@ -685,6 +693,10 @@ class LaengsTask:
             x_deckel.append(laenge2)
             x_deckel.append(laenge2)
 
+            #x_deckel_l.append(round(laenge2 - laenge, 2))
+            x_deckel_l.append(laenge2)
+            x_deckel_l.append(laenge2)
+
             z_sohle_h.append(hschoben)
             z_sohle_h.append(hschunten)
             z_deckel.append(deckeloben)
@@ -702,8 +714,8 @@ class LaengsTask:
             schunten_l.append(schunten)
             laenge_l.append(round(laenge, 2))
             entwart_l.append(entwart)
-            hoehe_l.append(hoehe/1000)
-            breite_l.append(int(breite/1000))
+            hoehe_l.append(hoehe)
+            breite_l.append(breite)
             material_l.append(material)
             strasse_l.append(strasse)
             haltungstyp_l.append(haltungstyp)
@@ -1005,7 +1017,6 @@ class LaengsTask:
         plt.annotate("Nennweite [mm] / Material", (x_min - 55, y_min - 3), textcoords="offset points", xytext=(-10, 0),
                      ha='left')
 
-
         z_sohle_neu = []
         for i in z_sohle:
             if i not in z_sohle_neu:
@@ -1029,8 +1040,14 @@ class LaengsTask:
 
         x = 0
 
-        for i, j in zip(x_deckel_neu, z_sohle_h):
-            # so verschieben, dass die Texte passend stehen
+        #TODO: umprogrammieren so das beide Höhen ankommens und abgehend zum Schacht angezeigt werden!
+
+        x_d = x_deckel_l
+        del x_d[-1]
+        x_d.insert(0, 0)
+
+        for i, j in zip(x_d, z_sohle_h):
+            # so verschieben, dass die Texte passend stehen!
             if x % 2:
                 plt.annotate(round(j, 2), (i +0.1, y_min - 1.9), bbox=dict(facecolor='white', edgecolor='none'),
                               ha='center')
@@ -1055,7 +1072,7 @@ class LaengsTask:
             plt.annotate(ffloat(k,2), (i , y_min - 2.5), textcoords="offset points",
                          xytext=(-10, 0), ha='center')
 
-            plt.annotate(f'{ffloat(l, 2)} / {m}', (i, y_min - 3), textcoords="offset points",
+            plt.annotate(f'{int(l)} / {m}', (i, y_min - 3), textcoords="offset points",
                          xytext=(-10, 0), ha='center')
 
 
@@ -2481,11 +2498,18 @@ class LaengsTask:
                 #self.horizontalSlider_3.setValue(t)
 
             #self.horizontalSlider_3.sliderReleased.connect(update_slider(time))
-            self.horizontalSlider_3.valueChanged.connect(update_slider)
+            #self.horizontalSlider_3.valueChanged.connect(update_slider)
 
             self.anim = animation.FuncAnimation(figure, animate, frames=range(anf, len(zeit)), interval=geschw, blit=False)
             self.anim.event_source.stop()
             val = self.horizontalSlider_3.value()
+
+            iface.messageBar().pushMessage("Error",
+                                           str(val),
+                                           level=Qgis.Critical)
+
+            if type(val)==type(None):
+                val=0
             self.horizontalSlider_3.valueChanged.connect(update_slider(val))
 
             # # TODO: update animation
