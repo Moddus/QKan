@@ -37,6 +37,8 @@ def dbAdapt(
     qkanDB: str,
     projectFile: str = None,
     qkan_project: QgsProject = None,
+    writeDbBackup: bool = None,
+    writeQgsBackup: bool = None,
 ) -> None:
     """Aktualisiert die QKan-Datenbank, indem die Tabellenstruktur auf den aktuellen Stand
     gebracht wird.
@@ -54,7 +56,12 @@ def dbAdapt(
         qkan_project.setFileName(projectFile)
         qkan_project.write()
 
-    with DBConnection(dbname=qkanDB, qkan_db_update=True) as dbQK:   # Datenbankobjekt zur Aktualisierung öffnen
+    with DBConnection(
+        dbname=qkanDB,
+        qkan_db_update=True,
+        writeDbBackup=writeDbBackup,
+        writeQgsBackup=writeQgsBackup
+    ) as dbQK:   # Datenbankobjekt zur Aktualisierung öffnen
 
         if not dbQK.connected:
             errormsg = (

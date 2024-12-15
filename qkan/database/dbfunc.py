@@ -43,6 +43,8 @@ class DBConnection:
         module: str = None,
         epsg: int = 25832,
         qkan_db_update: bool = False,
+        writeDbBackup: bool = None,
+        writeQgsBackup: bool = None,
     ):
         """Constructor. Überprüfung, ob die QKan-Datenbank die aktuelle Version hat, mit dem Attribut isCurrentDbVersion.
 
@@ -62,6 +64,12 @@ class DBConnection:
                                 Diese Option ist insbesondere für die Testläufe notwendig
         :type qkan_db_update:   Boolean
 
+        :param writeQgsBackup:  Soll beim Update der Datenbank eine Sicherungskopie der Projektdatei angelegt werden?
+        :type writeQgsBackup:   Boolean
+
+        :param writeDbBackup:   Soll beim Update der Datenbank eine Sicherungskopie der Datenbank angelegt werden?
+        :type writeDbBackup:    Boolean
+
 
         public attributes:
 
@@ -76,6 +84,9 @@ class DBConnection:
         # Übernahme einiger Attribute in die Klasse
         self.dbname = dbname
         self.epsg: Optional[int] = epsg
+        self.qkan_db_update = qkan_db_update
+        self.writeDbBackup = writeDbBackup
+        self.writeQgsBackup = writeQgsBackup
 
         # Die nachfolgenden Klassenobjekte dienen dazu, gleichartige (sqlidtext) SQL-Debug-Meldungen
         # nur einmal pro Sekunde zu erzeugen.
@@ -129,7 +140,7 @@ class DBConnection:
 
             self.sqls |= _sqls
 
-        self._connect(qkan_db_update=qkan_db_update)
+        self._connect()
 
     def __enter__(self) -> "DBConnection":
         """Allows use via context manager for easier connection handling"""
@@ -147,9 +158,7 @@ class DBConnection:
         # )
         self._disconnect()
 
-    def _connect(
-        self, qkan_db_update: bool
-    ) -> None:
+    def _connect(self) -> None:
         """Connects to SQLite3 database.
 
         Raises:
@@ -184,10 +193,28 @@ class DBConnection:
             self.check_version()
             if not self.isCurrentDbVersion:
                 logger.debug("dbqkan: Datenbank ist nicht aktuell")
-                if qkan_db_update:
+                if self.qkan_db_update:
                     logger.debug(
                         "dbqkan: Update aktiviert. Deshalb wird Datenbank aktualisiert"
                     )
+
+                    if self.writeDbBackup or self.writeQgsBackup:
+                        pjVersion = self.current_dbversion.base_version
+                        fpath, ext = os.path.splitext(self.dbname)
+                        bakdir = os.path.join(f'{fpath}_backup', f'backup_{pjVersion}')
+                        num = 0
+                        bakdir_0 = bakdir
+                        while os.path.exists(bakdir):
+                            num += 1
+                            bakdir = f'{bakdir_0}_{num}'
+                        os.makedirs(bakdir)
+
+                        if self.writeDbBackup:
+                            shutil.copy(self.dbname, bakdir)
+
+                        if self.writeQgsBackup:
+                            shutil.copy(QKan.config.project.file, bakdir)
+
                     self.upgrade_database()
                 else:
                     logger.info(
@@ -1086,7 +1113,7 @@ class DBConnection:
         attr_set_both |= {attr_pk}
         attr_set_both |= attr_set_geo
 
-        attr_text_both = ', '.join(attr_set_both)
+        attr_text_both = ', '.join(attr_set_both) + '\n'
         logger.debug(f"dbqkan.DBConnection.alter_table - attr_text_new:{attr_text_both}")
 
         # Zusammenstellen aller Attribute. Begonnen wird mit dem Primärschlüssel
@@ -1110,7 +1137,7 @@ class DBConnection:
                 del attr_dict_new[attr]
 
         # Attribute der neuen Tabelle als String für SQL-Anweisung
-        attr_text_new = "\n,".join(attr_dict_new.values())
+        attr_text_new = "\n,".join(attr_dict_new.values())+"\n"
         logger.debug(f"dbqkan.DBConnection.alter_table - attr_text_new:{attr_text_new}")
 
         # 0. Foreign key constraint deaktivieren
@@ -1434,17 +1461,17 @@ class DBConnection:
             for sqlnam in sqllis:
                 if not self.sqlyml(
                     sqlnam=sqlnam,
-                    stmt_category= f'Erzeugen der temporären Selekktionstabellen'
+                    stmt_category= f'Erzeugen der temporären Selektionstabelle: {sqlnam}'
                 ):
                     raise Exception(f"{self.__class__.__name__}: errno. 101")
 
-            n_haltungen, n_schaechte, n_flaechen = 0, 0, 0
             project = QgsProject.instance()
             for layer in project.mapLayersByName('Haltungen'):
                 for feat in layer.selectedFeatures():
                     params = {'pk': feat[0]}
                     if not self.sqlyml('database_insert_haltungen_sel', 'insert selected haltungen', parameters=params):
                         raise Exception(f"{self.__class__.__name__}: errno. 102")
+                    logger.debug(f'sel: Haltung hinzugefügt: {params}')
                     n_haltungen += 1
                 break               # nur 1. gefundener Layer ;)
             for layer in project.mapLayersByName('Schächte'):
@@ -1452,6 +1479,7 @@ class DBConnection:
                     params = {'pk': feat[0]}
                     if not self.sqlyml('database_insert_schaechte_sel', 'insert selected schaechte', parameters=params):
                         raise Exception(f"{self.__class__.__name__}: errno. 103")
+                    logger.debug(f'sel: Schacht hinzugefügt: {params}')
                     n_schaechte += 1
                 break               # nur 1. gefundener Layer ;)
             for layer in project.mapLayersByName('Flächen'):
@@ -1459,6 +1487,7 @@ class DBConnection:
                     params = {'pk': feat[0]}
                     if not self.sqlyml('database_insert_flaechen_sel', 'insert selected flaechen', parameters=params):
                         raise Exception(f"{self.__class__.__name__}: errno. 104")
+                    logger.debug(f'sel: Fläche hinzugefügt: {params}')
                     n_flaechen += 1
                 break               # nur 1. gefundener Layer ;)
         else:

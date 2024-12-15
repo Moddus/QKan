@@ -2,7 +2,6 @@
 Flaechenzuordnungen
 Diverse Tools zur QKan-Datenbank
 """
-import logging
 import os
 from typing import Optional, cast
 import shutil
@@ -41,6 +40,9 @@ from .k_layersadapt import layersadapt
 from .k_qgsadapt import qgsadapt
 from .k_runoffparams import setRunoffparams
 
+from ..utils import get_logger
+
+logger = get_logger("QKan.tools.application")
 
 class QKanTools(QKanPlugin):
     def __init__(self, iface: QgisInterface):
@@ -227,13 +229,12 @@ class QKanTools(QKanPlugin):
                 return
 
             with DBConnection(dbname=self.database_name) as db_qkan:
+                if not db_qkan.isCurrentDbVersion:
+                    logger.warning('QKan-Datenbank wurde mit einer älteren Version erstellt.\n'
+                                   'Bitte aktualisieren Sie zuerst die Datenbank! ')
+                    return None
                 if not db_qkan.connected:
-                    fehlermeldung(
-                        "Fehler in k_qgsadapt:\n",
-                        "QKan-Datenbank {:s} wurde nicht gefunden oder war nicht aktuell!\nAbbruch!".format(
-                            self.database_name
-                        ),
-                    )
+                    logger.error_user(f"Die QKan-Datenbank {self.database_name} wurde nicht gefunden\nAbbruch!"                    )
                     return None
 
                 qgsadapt(
@@ -812,27 +813,12 @@ class QKanTools(QKanPlugin):
                 )"""
             )
 
-            pjVersion = qgs_version()
-            if writeDbBackup or writeQgsBackup:
-                fpath, ext = os.path.splitext(self.database_name)
-                bakdir = os.path.join(fpath, f'backup_{pjVersion}')
-                num = 0
-                bakdir_0 = bakdir
-                while os.path.exists(bakdir):
-                    num += 1
-                    bakdir = f'{bakdir_0}_{num}'
-                os.makedirs(bakdir)
-
-                if writeDbBackup:
-                    shutil.copy(self.database_name, bakdir)
-
-                if writeQgsBackup:
-                    shutil.copy(project_file, bakdir)
-
             dbAdapt(
                 cast(str, self.database_name),
                 project_file,
                 project,
+                writeDbBackup,
+                writeQgsBackup,
             )
 
             layersadapt(

@@ -44,7 +44,7 @@ class Schadenstexte:
 
         si = len(data_uh)  # Anzahl Untersuchungen
         if si == 0:
-            logger.error("Untersuchungsdaten Haltungen: Es konnten keine Schadenstexte erzeugt werden. "
+            logger.warning("Untersuchungsdaten Haltungen: Es konnten keine Schadenstexte erzeugt werden. "
                          "Wahrscheinlich ist ein notwendiges Attribut noch leer"
                          )
             return
@@ -284,7 +284,7 @@ class Schadenstexte:
 
         si = len(data_uh)  # Anzahl Untersuchungen
         if si == 0:
-            logger.error("Untersuchungsdaten Schächte: "
+            logger.warning("Untersuchungsdaten Schächte: "
                 "Es konnten keine Schadenstexte erzeugt werden. Wahrscheinlich ist ein notwendiges Attribut noch leer",
             )
             return
@@ -474,7 +474,7 @@ class Schadenstexte:
 
         si = len(data_uh)  # Anzahl Untersuchungen
         if si == 0:
-            logger.error("Untersuchungsdaten Anschlussleitungen: "
+            logger.warning("Untersuchungsdaten Anschlussleitungen: "
                 "Es konnten keine Schadenstexte erzeugt werden. Wahrscheinlich ist ein notwendiges Attribut noch leer",
             )
             return

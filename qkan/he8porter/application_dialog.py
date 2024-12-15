@@ -99,7 +99,7 @@ class ExportDialog(_Dialog, EXPORT_CLASS):  # type: ignore
         self.button_box.helpRequested.connect(self.click_help)
 
         # Aktionen zu Selektionen
-        self.cb_selectedObjects.stateChanged.connect(self.click_selection)
+        self.cb_selectedObjects.stateChanged.connect(self.count)
 
         # Init fields
 
@@ -190,6 +190,7 @@ class ExportDialog(_Dialog, EXPORT_CLASS):  # type: ignore
             selected = self.cb_selectedObjects.isChecked()
             # Ausgewählte Objekte in temporäre Tabellen übernehmen
             n_haltungen, n_schaechte, n_flaechen = db_qkan.getSelection(selected)
+            logger.debug(f'Selection 2: {n_haltungen}, {n_schaechte}, {n_flaechen}')
 
             self.lf_anzahl_haltungen.setText(f'{n_haltungen}')
             self.lf_anzahl_schaechte.setText(f'{n_schaechte}')
@@ -199,7 +200,7 @@ class ExportDialog(_Dialog, EXPORT_CLASS):  # type: ignore
         # Initialisierung der Anzeige der Anzahl zu exportierender Objekte
 
         # Für 3 Layer Selection-Change-Events definieren
-        for layernam in ['Haltungen', 'Schaechte', 'Flaechen']:
+        for layernam in ['Haltungen', 'Schächte', 'Flächen']:
             layerobjects = QgsProject().instance().mapLayersByName(layernam)
             for layer in layerobjects:
                 layer.selectionChanged.connect(self.count)
@@ -209,8 +210,10 @@ class ExportDialog(_Dialog, EXPORT_CLASS):  # type: ignore
         return True
 
     def finishDialog(self) -> bool:
+        # Aufheben der Anzeige der Anzahl zu exportierender Objekte
+
         # Aufheben der Selections-Change-Events
-        for layernam in ['Haltungen', 'Schaechte', 'Flaechen']:
+        for layernam in ['Haltungen', 'Schächte', 'Flächen']:
             layerobjects = QgsProject().instance().mapLayersByName(layernam)
             for layer in layerobjects:
                 layer.selectionChanged.disconnect()

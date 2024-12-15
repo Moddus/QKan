@@ -1,8 +1,9 @@
 Was ist QKan?
 =============
 
-QKan ist ein Werkzeug zur Simulation von Kanalnetzen. Es dient der Datenvor- und Nachbereitung und speichert die Kanalnetzdaten dazu 
-in Tabellen-Struktur in einer SQLite-Datenbank. Ein Übersichtsvideo über die Funktionen von QKan ist |video_einfuehrung| zu finden.
+QKan ist ein Werkzeug zur Datenvor- und Nachbereitung im Zusammenhang mit der Abflusssimulation von Kanalnetzen. 
+Es speichert die Kanalnetzdaten dazu in Tabellen-Struktur in einer SQLite-Datenbank. Ein Übersichtsvideo über die Funktionen von QKan ist 
+|video_einfuehrung| zu finden.
 
 .. |video_einfuehrung| raw:: html
 
@@ -82,6 +83,7 @@ Team
  - Yannick Linke
  - Nora Blase
  - Friederike Kimmich
+ - Maja Lange
 
 Ehemalige
 ---------

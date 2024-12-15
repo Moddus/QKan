@@ -39,7 +39,6 @@ class LayersAdaptDialog(QKanDBDialog, FORM_CLASS_layersadapt):  # type: ignore
     cb_adaptLayerstyles: QCheckBox
     cb_applyQKanTemplate: QCheckBox
     cb_completeLayers: QCheckBox
-    cb_qkanDBUpdate: QCheckBox
     cb_updateNodetype: QCheckBox
     cb_zoomAll: QCheckBox
 
