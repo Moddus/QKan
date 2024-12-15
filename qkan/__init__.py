@@ -34,7 +34,7 @@ PLUGIN_LIST = [
     "datacheck.Plausi",
     "zustandsklassen.Zustandsklassen",
     "sanierungsbedarfszahl.Sanierungsbedarfszahl",
-    # "subkans.Substanzklasse",
+    "subkans.Substanzklasse",
     "laengsschnitt.Laengsschnitt",
     "floodTools.FloodTools",
     "tools.QKanTools",

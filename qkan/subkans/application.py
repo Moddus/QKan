@@ -48,12 +48,6 @@ class Substanzklasse(QKanPlugin):
             check_cb['cb3'] = self.import_dlg.checkBox_3.isChecked()
             check_cb['cb4'] = self.import_dlg.checkBox_4.isChecked()
             check_cb['cb5'] = self.import_dlg.checkBox_5.isChecked()
-            check_cb['cb'] = self.import_dlg.checkBox.isChecked()
-            check_cb['cb6'] = self.import_dlg.checkBox_6.isChecked()
-            check_cb['cb7'] = self.import_dlg.checkBox_7.isChecked()
-            check_cb['cb8'] = self.import_dlg.checkBox_8.isChecked()
-            check_cb['cb9'] = self.import_dlg.checkBox_9.isChecked()
-            check_cb['cb10'] = self.import_dlg.checkBox_10.isChecked()
 
             QKan.config.save()
 
@@ -102,6 +96,7 @@ class Substanzklasse(QKanPlugin):
         """
         QKan.config.database.qkan = self.import_dlg.db.text()
         QKan.config.zustand.date = self.import_dlg.date.currentText()
+        datetype = self.import_dlg.comboBox.currentText()
 
         check_cb = {}
         check_cb['cb1'] = self.import_dlg.checkBox_1.isChecked()
@@ -109,12 +104,6 @@ class Substanzklasse(QKanPlugin):
         check_cb['cb3'] = self.import_dlg.checkBox_3.isChecked()
         check_cb['cb4'] = self.import_dlg.checkBox_4.isChecked()
         check_cb['cb5'] = self.import_dlg.checkBox_5.isChecked()
-        check_cb['cb'] = self.import_dlg.checkBox.isChecked()
-        check_cb['cb6'] = self.import_dlg.checkBox_6.isChecked()
-        check_cb['cb7'] = self.import_dlg.checkBox_7.isChecked()
-        check_cb['cb8'] = self.import_dlg.checkBox_8.isChecked()
-        check_cb['cb9'] = self.import_dlg.checkBox_9.isChecked()
-        check_cb['cb10'] = self.import_dlg.checkBox_10.isChecked()
 
         self.log.info("Creating DB")
         with DBConnection(
@@ -133,7 +122,7 @@ class Substanzklasse(QKanPlugin):
                 return False
 
         self.log.info("DB creation finished, starting Zustandsklassen")
-        subkans = Subkans_funkt(check_cb, QKan.config.database.qkan, QKan.config.zustand.date, QKan.config.epsg)
+        subkans = Subkans_funkt(check_cb, QKan.config.database.qkan, QKan.config.zustand.date, QKan.config.epsg, datetype)
         subkans.run()
         del subkans
 
