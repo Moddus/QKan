@@ -1,71 +1,65 @@
 <!DOCTYPE qgis PUBLIC 'http://mrcc.com/qgis.dtd' 'SYSTEM'>
-<qgis hasScaleBasedVisibilityFlag="0" simplifyAlgorithm="0" symbologyReferenceScale="-1" simplifyDrawingTol="1" version="3.22.4-Białowieża" simplifyDrawingHints="0" maxScale="0" labelsEnabled="0" readOnly="0" styleCategories="LayerConfiguration|Symbology|Labeling|Fields|Forms|Actions|MapTips|AttributeTable|Rendering|CustomProperties|Temporal|Legend|Notes" minScale="100000000" simplifyMaxScale="1" simplifyLocal="1">
+<qgis simplifyDrawingHints="0" minScale="100000000" simplifyAlgorithm="0" simplifyMaxScale="1" symbologyReferenceScale="-1" simplifyLocal="1" labelsEnabled="0" simplifyDrawingTol="1" styleCategories="LayerConfiguration|Symbology|Labeling|Fields|Forms|Actions|MapTips|AttributeTable|Rendering|CustomProperties|Notes" readOnly="0" maxScale="0" version="3.22.16-Białowieża" hasScaleBasedVisibilityFlag="0">
   <flags>
     <Identifiable>1</Identifiable>
     <Removable>1</Removable>
     <Searchable>1</Searchable>
     <Private>0</Private>
   </flags>
-  <temporal limitMode="0" startField="" endField="" enabled="0" accumulate="0" durationField="" startExpression="" durationUnit="min" endExpression="" mode="0" fixedDuration="0">
-    <fixedRange>
-      <start></start>
-      <end></end>
-    </fixedRange>
-  </temporal>
-  <renderer-v2 forceraster="0" enableorderby="0" type="singleSymbol" referencescale="-1" symbollevels="0">
+  <renderer-v2 type="singleSymbol" forceraster="0" symbollevels="0" referencescale="-1" enableorderby="0">
     <symbols>
-      <symbol force_rhr="0" type="marker" alpha="1" clip_to_extent="1" name="0">
+      <symbol type="marker" force_rhr="0" clip_to_extent="1" name="0" alpha="1">
         <data_defined_properties>
           <Option type="Map">
-            <Option type="QString" name="name" value=""/>
+            <Option value="" type="QString" name="name"/>
             <Option name="properties"/>
-            <Option type="QString" name="type" value="collection"/>
+            <Option value="collection" type="QString" name="type"/>
           </Option>
         </data_defined_properties>
-        <layer pass="0" class="SvgMarker" enabled="1" locked="0">
+        <layer enabled="1" class="SvgMarker" pass="0" locked="0">
           <Option type="Map">
-            <Option type="QString" name="angle" value="0"/>
-            <Option type="QString" name="color" value="35,35,35,255"/>
-            <Option type="QString" name="fixedAspectRatio" value="0"/>
-            <Option type="QString" name="horizontal_anchor_point" value="1"/>
-            <Option type="QString" name="name" value="amenity/amenity_information.svg"/>
-            <Option type="QString" name="offset" value="0,0"/>
-            <Option type="QString" name="offset_map_unit_scale" value="3x:0,0,0,0,0,0"/>
-            <Option type="QString" name="offset_unit" value="MM"/>
-            <Option type="QString" name="outline_color" value="35,35,35,255"/>
-            <Option type="QString" name="outline_width" value="0.2"/>
-            <Option type="QString" name="outline_width_map_unit_scale" value="3x:0,0,0,0,0,0"/>
-            <Option type="QString" name="outline_width_unit" value="MM"/>
+            <Option value="0" type="QString" name="angle"/>
+            <Option value="35,35,35,255" type="QString" name="color"/>
+            <Option value="0" type="QString" name="fixedAspectRatio"/>
+            <Option value="1" type="QString" name="horizontal_anchor_point"/>
+            <Option value="amenity/amenity_information.svg" type="QString" name="name"/>
+            <Option value="0,0" type="QString" name="offset"/>
+            <Option value="3x:0,0,0,0,0,0" type="QString" name="offset_map_unit_scale"/>
+            <Option value="MM" type="QString" name="offset_unit"/>
+            <Option value="35,35,35,255" type="QString" name="outline_color"/>
+            <Option value="0.2" type="QString" name="outline_width"/>
+            <Option value="3x:0,0,0,0,0,0" type="QString" name="outline_width_map_unit_scale"/>
+            <Option value="MM" type="QString" name="outline_width_unit"/>
             <Option name="parameters"/>
-            <Option type="QString" name="scale_method" value="diameter"/>
-            <Option type="QString" name="size" value="5"/>
-            <Option type="QString" name="size_map_unit_scale" value="3x:0,0,0,0,0,0"/>
-            <Option type="QString" name="size_unit" value="MM"/>
-            <Option type="QString" name="vertical_anchor_point" value="1"/>
+            <Option value="diameter" type="QString" name="scale_method"/>
+            <Option value="5" type="QString" name="size"/>
+            <Option value="3x:0,0,0,0,0,0" type="QString" name="size_map_unit_scale"/>
+            <Option value="MM" type="QString" name="size_unit"/>
+            <Option value="1" type="QString" name="vertical_anchor_point"/>
           </Option>
-          <prop v="0" k="angle"/>
-          <prop v="35,35,35,255" k="color"/>
-          <prop v="0" k="fixedAspectRatio"/>
-          <prop v="1" k="horizontal_anchor_point"/>
-          <prop v="amenity/amenity_information.svg" k="name"/>
-          <prop v="0,0" k="offset"/>
-          <prop v="3x:0,0,0,0,0,0" k="offset_map_unit_scale"/>
-          <prop v="MM" k="offset_unit"/>
-          <prop v="35,35,35,255" k="outline_color"/>
-          <prop v="0.2" k="outline_width"/>
-          <prop v="3x:0,0,0,0,0,0" k="outline_width_map_unit_scale"/>
-          <prop v="MM" k="outline_width_unit"/>
-          <prop v="" k="parameters"/>
-          <prop v="diameter" k="scale_method"/>
-          <prop v="5" k="size"/>
-          <prop v="3x:0,0,0,0,0,0" k="size_map_unit_scale"/>
-          <prop v="MM" k="size_unit"/>
-          <prop v="1" k="vertical_anchor_point"/>
+          <prop k="angle" v="0"/>
+          <prop k="color" v="35,35,35,255"/>
+          <prop k="fixedAspectRatio" v="0"/>
+          <prop k="horizontal_anchor_point" v="1"/>
+          <prop k="name" v="amenity/amenity_information.svg"/>
+          <prop k="offset" v="0,0"/>
+          <prop k="offset_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+          <prop k="offset_unit" v="MM"/>
+          <prop k="outline_color" v="35,35,35,255"/>
+          <prop k="outline_width" v="0.2"/>
+          <prop k="outline_width_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+          <prop k="outline_width_unit" v="MM"/>
+          <prop k="parameters" v=""/>
+          <prop k="scale_method" v="diameter"/>
+          <prop k="size" v="5"/>
+          <prop k="size_map_unit_scale" v="3x:0,0,0,0,0,0"/>
+          <prop k="size_unit" v="MM"/>
+          <prop k="vertical_anchor_point" v="1"/>
           <data_defined_properties>
             <Option type="Map">
-              <Option type="QString" name="name" value=""/>
+              <Option value="" type="QString" name="name"/>
               <Option name="properties"/>
-              <Option type="QString" name="type" value="collection"/>
+              <Option value="collection" type="QString" name="type"/>
             </Option>
           </data_defined_properties>
         </layer>
@@ -76,31 +70,30 @@
   </renderer-v2>
   <customproperties>
     <Option type="Map">
-      <Option type="int" name="embeddedWidgets/count" value="0"/>
-      <Option name="variableNames"/>
-      <Option name="variableValues"/>
+      <Option value="0" type="int" name="embeddedWidgets/count"/>
+      <Option type="invalid" name="variableNames"/>
+      <Option type="invalid" name="variableValues"/>
     </Option>
   </customproperties>
   <blendMode>0</blendMode>
   <featureBlendMode>0</featureBlendMode>
   <layerOpacity>1</layerOpacity>
-  <legend type="default-vector" showLabelLegend="0"/>
   <fieldConfiguration>
-    <field name="pk" configurationFlags="None">
+    <field configurationFlags="None" name="pk">
       <editWidget type="TextEdit">
         <config>
           <Option/>
         </config>
       </editWidget>
     </field>
-    <field name="notiz" configurationFlags="None">
+    <field configurationFlags="None" name="notiz">
       <editWidget type="TextEdit">
         <config>
           <Option/>
         </config>
       </editWidget>
     </field>
-    <field name="createdat" configurationFlags="None">
+    <field configurationFlags="None" name="createdat">
       <editWidget type="TextEdit">
         <config>
           <Option/>
@@ -109,35 +102,35 @@
     </field>
   </fieldConfiguration>
   <aliases>
-    <alias index="0" field="pk" name=""/>
-    <alias index="1" field="notiz" name=""/>
-    <alias index="2" field="createdat" name=""/>
+    <alias index="0" name="" field="pk"/>
+    <alias index="1" name="" field="notiz"/>
+    <alias index="2" name="" field="createdat"/>
   </aliases>
   <defaults>
-    <default expression="" field="pk" applyOnUpdate="0"/>
-    <default expression="" field="notiz" applyOnUpdate="0"/>
-    <default expression="" field="createdat" applyOnUpdate="0"/>
+    <default applyOnUpdate="0" expression="" field="pk"/>
+    <default applyOnUpdate="0" expression="" field="notiz"/>
+    <default applyOnUpdate="0" expression="" field="createdat"/>
   </defaults>
   <constraints>
-    <constraint constraints="3" field="pk" unique_strength="1" notnull_strength="1" exp_strength="0"/>
-    <constraint constraints="0" field="notiz" unique_strength="0" notnull_strength="0" exp_strength="0"/>
-    <constraint constraints="0" field="createdat" unique_strength="0" notnull_strength="0" exp_strength="0"/>
+    <constraint exp_strength="0" constraints="3" unique_strength="1" field="pk" notnull_strength="1"/>
+    <constraint exp_strength="0" constraints="0" unique_strength="0" field="notiz" notnull_strength="0"/>
+    <constraint exp_strength="0" constraints="0" unique_strength="0" field="createdat" notnull_strength="0"/>
   </constraints>
   <constraintExpressions>
-    <constraint desc="" exp="" field="pk"/>
-    <constraint desc="" exp="" field="notiz"/>
-    <constraint desc="" exp="" field="createdat"/>
+    <constraint exp="" desc="" field="pk"/>
+    <constraint exp="" desc="" field="notiz"/>
+    <constraint exp="" desc="" field="createdat"/>
   </constraintExpressions>
   <expressionfields/>
   <attributeactions>
-    <defaultAction key="Canvas" value="{00000000-0000-0000-0000-000000000000}"/>
+    <defaultAction value="{00000000-0000-0000-0000-000000000000}" key="Canvas"/>
   </attributeactions>
-  <attributetableconfig sortOrder="0" sortExpression="" actionWidgetStyle="dropDown">
+  <attributetableconfig actionWidgetStyle="dropDown" sortOrder="0" sortExpression="">
     <columns>
-      <column width="-1" type="field" hidden="0" name="pk"/>
-      <column width="-1" type="field" hidden="0" name="notiz"/>
-      <column width="-1" type="field" hidden="0" name="createdat"/>
-      <column width="-1" type="actions" hidden="1"/>
+      <column type="field" width="-1" hidden="0" name="pk"/>
+      <column type="field" width="-1" hidden="0" name="notiz"/>
+      <column type="field" width="-1" hidden="0" name="createdat"/>
+      <column type="actions" width="-1" hidden="1"/>
     </columns>
   </attributetableconfig>
   <conditionalstyles>
@@ -166,14 +159,14 @@ def my_form_open(dialog, layer, feature):
   <featformsuppress>0</featformsuppress>
   <editorlayout>uifilelayout</editorlayout>
   <editable>
-    <field editable="1" name="createdat"/>
-    <field editable="1" name="notiz"/>
-    <field editable="1" name="pk"/>
+    <field name="createdat" editable="1"/>
+    <field name="notiz" editable="1"/>
+    <field name="pk" editable="1"/>
   </editable>
   <labelOnTop>
-    <field name="createdat" labelOnTop="0"/>
-    <field name="notiz" labelOnTop="0"/>
-    <field name="pk" labelOnTop="0"/>
+    <field labelOnTop="0" name="createdat"/>
+    <field labelOnTop="0" name="notiz"/>
+    <field labelOnTop="0" name="pk"/>
   </labelOnTop>
   <reuseLastValue>
     <field reuseLastValue="0" name="createdat"/>

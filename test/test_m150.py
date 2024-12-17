@@ -21,10 +21,10 @@ class TestM150QKan(QgisTest):
             z.extractall(BASE_WORK)
 
     def test_import(self) -> None:
-        # QKan.config.database.qkan = str(BASE_WORK / "alsdorf.sqlite")
-        # QKan.config.xml.import_file = str(BASE_WORK / "Alsdorf_Test_mit Zustand_25832.xml")
-        QKan.config.database.qkan = str(BASE_WORK / "lemgo.sqlite")
-        QKan.config.xml.import_file = str(BASE_WORK / "Lemgo_test_DWA-M_150.XML")
+        QKan.config.database.qkan = str(BASE_WORK / "alsdorf.sqlite")
+        QKan.config.xml.import_file = str(BASE_WORK / "Alsdorf_Test_mit Zustand_25832.xml")
+        # QKan.config.database.qkan = str(BASE_WORK / "lemgo.sqlite")
+        # QKan.config.xml.import_file = str(BASE_WORK / "Lemgo_test_DWA-M_150.XML")
         QKan.config.project.file = str(BASE_WORK / "plan.qgs")
         QKan.config.epsg = 25832
 

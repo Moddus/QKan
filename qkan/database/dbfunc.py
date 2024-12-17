@@ -43,8 +43,8 @@ class DBConnection:
         module: str = None,
         epsg: int = 25832,
         qkan_db_update: bool = False,
-        writeDbBackup: bool = None,
-        writeQgsBackup: bool = None,
+        writeDbBackup: bool = True,
+        writeQgsBackup: bool = True,
     ):
         """Constructor. Überprüfung, ob die QKan-Datenbank die aktuelle Version hat, mit dem Attribut isCurrentDbVersion.
 
@@ -87,6 +87,7 @@ class DBConnection:
         self.qkan_db_update = qkan_db_update
         self.writeDbBackup = writeDbBackup
         self.writeQgsBackup = writeQgsBackup
+        self.isCurrentVersion = False                       # deprecated, aus Kompatibilitätsgründen
 
         # Die nachfolgenden Klassenobjekte dienen dazu, gleichartige (sqlidtext) SQL-Debug-Meldungen
         # nur einmal pro Sekunde zu erzeugen.
@@ -117,7 +118,7 @@ class DBConnection:
             logger.error_code(': Datenbanktyp {QKan.config.database.type} nicht zulässig!')
             raise Exception(f"{self.__class__.__name__}")
         with open(sqlfilename) as fr:
-            self.sqls = yaml.load(fr.read())
+            self.sqls = yaml.load(fr.read(), Loader=yaml.BaseLoader)
 
         # Modulspezifische Queries zunächst in _sql laden
         if module:
@@ -129,7 +130,7 @@ class DBConnection:
                 logger.error_code('Datenbanktyp {QKan.config.database.type} nicht zulässig!')
                 raise Exception(f"{self.__class__.__name__}")
             with open(sqlfilename) as fr:
-                _sqls = yaml.load(fr.read())
+                _sqls = yaml.load(fr.read(), Loader=yaml.BaseLoader)
 
             if set(list(self.sqls)) & set(list(_sqls)):
                 fehlermeldung = (f"{self.__class__.__name__}: SQL-Abfragen aus '{module}' überschneiden sich "
@@ -398,12 +399,18 @@ class DBConnection:
                     self.cursl.executemany(sql, parameters)
                 except ValueError as err:
                     raise ValueError(f"{err}\nTyp von parameters: {type(parameters)}")
+                except BaseException as err:
+                    logger.error(f"{err}\n: {sql=}")
+                    raise ValueError(f"{err}\n: {sql=}")
             else:
                 try:
                     self.cursl.execute(sql, parameters)
                 except ValueError as err:
                     logger.error(f"{err}\nTyp von parameters: {type(parameters)}")
                     raise ValueError(f"{err}\nTyp von parameters: {type(parameters)}")
+                except BaseException as err:
+                    logger.error(f"{err}\n: {sql=}")
+                    raise ValueError(f"{err}\n: {sql=}")
 
             if mute_logger:
                 return True

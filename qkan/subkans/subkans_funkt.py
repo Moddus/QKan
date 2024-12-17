@@ -45,13 +45,6 @@ class Subkans_funkt:
         if check_cb['cb5']:
             self.subkans()
 
-    # jh: besser round(n, decimals), weil round_up_down bei negativen Zahlen falsch rundet...
-    def round_up_down(self, n, decimals=2):
-        expoN = n * 10 ** decimals
-        if abs(expoN) - abs(floor(expoN)) < 0.5:
-            return floor(expoN) / 10 ** decimals
-        return ceil(expoN) / 10 ** decimals
-
     def round_up(self, n, decimals=2):
         expoN = n * 10 ** decimals
         return ceil(expoN) / 10 ** decimals
@@ -5798,10 +5791,10 @@ class Subkans_funkt:
                 #für Ei-Profile berechnung vom Umfang nach DWA 110!
 
                 if attr[32] in ['Ei', 'Ei (B:H = 2:3)', 'Ei überhöht (B:H=2:3.5)', 'Ei breit (B:H=2:2.5)', 'Ei gedrückt (B:H=2:2)' ]:
-                    sl = (self.round_up_down(7.93 * attr[32] / 1000/ 2, 3))
+                    sl = (round(7.93 * attr[32] / 1000/ 2, 3))
 
                 else:
-                    sl = self.round_up_down(attr[32] / 1000 * pi, 3)
+                    sl = round(attr[32] / 1000 * pi, 3)
 
 
                 sql = """UPDATE substanz_haltung_bewertung SET Schadenslaenge = ? WHERE substanz_haltung_bewertung.pk = ?"""
@@ -7497,7 +7490,7 @@ class Subkans_funkt:
         for attr in curs.fetchall():
             # abn = bsl/länge*100
             if attr[2] not in ("","not found", None, None) and attr[3] not in ("","not found", None, None):
-                abn=self.round_up_down(float(attr[2])/float(attr[4])*100,2)
+                abn=round(float(attr[2])/float(attr[4])*100,2)
 
                 # #substanzklasse
                 sub_ges = 100-abn

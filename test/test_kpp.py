@@ -4,6 +4,7 @@ from zipfile import ZipFile
 # noinspection PyUnresolvedReferences
 from qgis.testing import unittest
 
+from qkan import QKan
 from qkan import enums
 from qkan.database.dbfunc import DBConnection
 from qkan.dynaporter.export_to_dyna import export_kanaldaten
@@ -49,16 +50,16 @@ class TestQKan2Kpp(QgisTest):
             z.extractall(BASE_WORK)
 
     def test_export(self) -> None:
-        database_qkan = str(BASE_WORK / "nette.sqlite")
+        QKan.config.database.qkan = str(BASE_WORK / "nette.sqlite")
         dynafile = str(BASE_WORK / "nette.ein")
-        # project_file = str(BASE_WORK / "plan_export.qgs")
+        QKan.config.project.file = str(BASE_WORK / "Plan_3.0.0.qgs")
         template_dyna = str(BASE_WORK / "dyna_vorlage.ein")
 
         # project = QgsProject.instance()
-        # project.read(project_file)
+        # project.read(QKan.config.project.file)
         # LOGGER.debug("Geladene Projektdatei: %s", project.fileName())
 
-        db = DBConnection(dbname=database_qkan, qkan_db_update=True)
+        db = DBConnection(dbname=QKan.config.database.qkan, qkan_db_update=True)
         if not db.connected:
             raise Exception("Datenbank nicht gefunden oder nicht aktuell.")
 

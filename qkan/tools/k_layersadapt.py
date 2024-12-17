@@ -36,7 +36,7 @@ from qgis.utils import pluginDirectory
 
 from qkan import QKan, enums
 from qkan.database.dbfunc import DBConnection
-from qkan.database.qkan_database import qgs_actual_version, qgs_version
+from qkan.database.qkan_database import qgs_version
 from qkan.database.qkan_utils import (
     eval_node_types,
     fehlermeldung,
@@ -121,7 +121,7 @@ def layersadapt(
     :anpassen_svgPaths:                             Pfad zu SVG-Dateien wird ergänzt
     :anpassen_Datenbankanbindung:                   Datenbankanbindungen werden angepasst
     :anpassen_Layerstile:                           Layerstile werden mit den qml-Dateien aus dem Verzeichnis templates/qml aktualisiert
-    :anpassen_Formulare:                            Formulare werden anpasst
+    :anpassen_Formulare:                            Formularpfade werden anpasst
     :anpassen_Projektionssystem:                    Projektionssystem wird angepasst
     :aktualisieren_Schachttypen:                    Knotentypen in schaechte.knotentyp setzen
     :zoom_alles:                                    Nach der Bearbeitung die Karte auf gesamte Gebiet zoomen
@@ -411,7 +411,9 @@ def layersadapt(
                     editFormConfig.setUiForm(os.path.join(formsDir, form))
                     layer.setEditFormConfig(editFormConfig)
                     logger.debug(
-                        f"k_layersadapt\nformpath: {formpath}\nform: {form}\nformsDir: {formsDir}\n"
+                        f"k_layersadapt - formpath: {formpath}\n"
+                        f"form: {form}\n"
+                        f"formsDir: {formsDir}\n"
                     )
 
     if layerNotInProjektMeldung:

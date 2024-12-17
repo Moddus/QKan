@@ -20,62 +20,62 @@ SELECT pn.gruppe, pn.warntext, pn.warntyp, pn.warnlevel, pn.sql, pn.layername, p
 ('Netzstruktur', 'Zwei Schächte haben ein identisches Geoobjekt', 'Fehler', 9,
     'SELECT pk, printf("Datensatz in Layer ""Schächte"" in %d Datensätzen hat ein identisches Geoobjekt (nur max. 5 Datensätze angezeigt)", 
 (SELECT count(*) FROM (SELECT b.pk as pk FROM schaechte a JOIN schaechte b ON a.pk < b.pk WHERE ST_Equals(a.geop, b.geop) = 1 ))) AS bemerkung
-FROM (SELECT b.pk as pk FROM schaechte a JOIN schaechte b ON a.pk < b.pk WHERE ST_Equals(a.geop, b.geop) = 1 )LIMIT 5', 'Schächte', 'pk'),
+FROM (SELECT b.pk as pk FROM schaechte a JOIN schaechte b ON a.pk < b.pk WHERE ST_Equals(a.geop, b.geop) = 1 ) LIMIT 5', 'Schächte', 'pk'),
 
 ('Netzstruktur', 'Zwei Haltungen haben ein identisches Geoobjekt', 'Fehler', 9,
     'SELECT pk, printf("Datensatz in Layer ""Haltungen"" in %d Datensätzen hat ein identisches Geoobjekt (nur max. 5 Datensätze angezeigt)", 
 (SELECT count(*) FROM (SELECT b.pk as pk FROM haltungen a JOIN haltungen b ON a.pk < b.pk WHERE ST_Equals(a.geom, b.geom) = 1 ))) AS bemerkung
-FROM (SELECT b.pk as pk FROM haltungen a JOIN haltungen b ON a.pk < b.pk WHERE ST_Equals(a.geom, b.geom) = 1 )LIMIT 5', 'Haltungen', 'pk'),
+FROM (SELECT b.pk as pk FROM haltungen a JOIN haltungen b ON a.pk < b.pk WHERE ST_Equals(a.geom, b.geom) = 1 ) LIMIT 5', 'Haltungen', 'pk'),
 
 ('Netzstruktur', 'Zwei Haltungen mit identischen Schachtobjekten', 'Fehler', 9,
     'SELECT pk, printf("Datensatz in Layer ""Haltungen"" in %d Datensätzen hat ein Objekt mit identischen Schachtobjekten (nur max. 5 Datensätze angezeigt)", 
 (SELECT count(*) FROM (SELECT b.pk as pk FROM haltungen a JOIN haltungen b ON a.pk < b.pk WHERE a.schoben= b.schoben AND a.schunten=b.schunten ))) AS bemerkung
-FROM (SELECT b.pk as pk FROM haltungen a JOIN haltungen b ON a.pk < b.pk WHERE a.schoben= b.schoben AND a.schunten=b.schunten)LIMIT 5', 'Haltungen', 'pk'),
+FROM (SELECT b.pk as pk FROM haltungen a JOIN haltungen b ON a.pk < b.pk WHERE a.schoben= b.schoben AND a.schunten=b.schunten) LIMIT 5', 'Haltungen', 'pk'),
 
 ('Netzstruktur', 'Zwei Anschlussleitungen haben ein identisches Geoobjekt', 'Fehler', 9,
     'SELECT pk, printf("Datensatz in Layer ""Haltungen"" in %d Datensätzen hat ein identisches Geoobjekt (nur max. 5 Datensätze angezeigt)", 
 (SELECT count(*) FROM (SELECT b.pk as pk FROM anschlussleitungen a JOIN anschlussleitungen b ON a.pk < b.pk WHERE ST_Equals(a.geom, b.geom) = 1 ))) AS bemerkung
-FROM (SELECT b.pk as pk FROM anschlussleitungen a JOIN anschlussleitungen b ON a.pk < b.pk WHERE ST_Equals(a.geom, b.geom) = 1 )LIMIT 5', 'Anschlussleitungen', 'pk'),
+FROM (SELECT b.pk as pk FROM anschlussleitungen a JOIN anschlussleitungen b ON a.pk < b.pk WHERE ST_Equals(a.geom, b.geom) = 1 ) LIMIT 5', 'Anschlussleitungen', 'pk'),
 
 ('Netzstruktur', 'Haltungslängen prüfen', 'Fehler', 9,
     'SELECT pk, printf("Datensatz in Layer ""Haltungen"" in %d Datensätzen hat eine unübliche Länge (nur max. 5 Datensätze angezeigt)", 
 (SELECT count(*) FROM (SELECT a.pk as pk FROM haltungen a WHERE st_length(a.geom)<2 OR  st_length(a.geom)>80 ))) AS bemerkung
-FROM (SELECT a.pk as pk FROM haltungen a WHERE st_length(a.geom)<2 OR  st_length(a.geom)>80 )LIMIT 5', 'Haltungen', 'pk'),
+FROM (SELECT a.pk as pk FROM haltungen a WHERE st_length(a.geom)<2 OR  st_length(a.geom)>80 ) LIMIT 5', 'Haltungen', 'pk'),
 
 ('Netzstruktur', 'Haltungslängen prüfen', 'Fehler', 9,
     'SELECT pk, printf("Datensatz in Layer ""Haltungen"" in %d Datensätzen weicht von Geometrie ab (nur max. 5 Datensätze angezeigt)", 
 (SELECT count(*) FROM (SELECT a.pk as pk FROM haltungen a WHERE st_length(a.geom)<>a.laenge))) AS bemerkung
-FROM (SELECT a.pk as pk FROM haltungen a WHERE st_length(a.geom)<>a.laenge)LIMIT 5', 'Haltungen', 'pk'),
+FROM (SELECT a.pk as pk FROM haltungen a WHERE st_length(a.geom)<>a.laenge) LIMIT 5', 'Haltungen', 'pk'),
 
 ('Netzstruktur', 'Haltungsgefälle prüfen', 'Fehler', 9,
     'SELECT pk, printf("Datensatz in Layer ""Haltungen"" in %d Datensätzen hat ein unübliches Gefälle (nur max. 5 Datensätze angezeigt)", 
 (SELECT count(*) FROM (SELECT a.pk as pk FROM haltungen a WHERE (( a.sohleoben - a.sohleunten )/st_length(a.geom)*1000)<1 OR (( a.sohleoben - a.sohleunten )/st_length(a.geom)*1000)>30))) AS bemerkung
-FROM (SELECT a.pk as pk FROM haltungen a WHERE (( a.sohleoben - a.sohleunten )/st_length(a.geom)*1000)<1 OR (( a.sohleoben - a.sohleunten )/st_length(a.geom)*1000)>30)LIMIT 5', 'Haltungen', 'pk'),
+FROM (SELECT a.pk as pk FROM haltungen a WHERE (( a.sohleoben - a.sohleunten )/st_length(a.geom)*1000)<1 OR (( a.sohleoben - a.sohleunten )/st_length(a.geom)*1000)>30) LIMIT 5', 'Haltungen', 'pk'),
 
 ('Netzstruktur', 'Haltungs Entwässerungsart prüfen', 'Fehler', 9,
     'SELECT pk, printf("Datensatz in Layer ""Haltungen"" in %d Datensätzen hat eine andere Entwässerungsart als die angeschlossenen Schächte (nur max. 5 Datensätze angezeigt)", 
 (SELECT count(*) FROM (SELECT ha.pk as pk FROM haltungen AS ha LEFT JOIN schaechte AS so ON ha.schoben = so.schnam WHERE ha.entwart <> so.entwart))) AS bemerkung
-FROM (SELECT ha.pk as pk FROM haltungen AS ha LEFT JOIN schaechte AS so ON ha.schoben = so.schnam WHERE ha.entwart <> so.entwart)LIMIT 5', 'Haltungen', 'pk'),
+FROM (SELECT ha.pk as pk FROM haltungen AS ha LEFT JOIN schaechte AS so ON ha.schoben = so.schnam WHERE ha.entwart <> so.entwart) LIMIT 5', 'Haltungen', 'pk'),
 
 ('Netzstruktur', 'Haltungs Entwässerungsart prüfen', 'Fehler', 9,
     'SELECT pk, printf("Datensatz in Layer ""Haltungen"" in %d Datensätzen hat eine andere Entwässerungsart als die angeschlossenen Schächte (nur max. 5 Datensätze angezeigt)", 
 (SELECT count(*) FROM (SELECT ha.pk as pk FROM haltungen AS ha LEFT JOIN schaechte AS su ON ha.schunten = su.schnam WHERE ha.entwart <> su.entwart))) AS bemerkung
-FROM (SELECT ha.pk as pk FROM haltungen AS ha LEFT JOIN schaechte AS su ON ha.schunten = su.schnam WHERE ha.entwart <> su.entwart)LIMIT 5', 'Haltungen', 'pk'),
+FROM (SELECT ha.pk as pk FROM haltungen AS ha LEFT JOIN schaechte AS su ON ha.schunten = su.schnam WHERE ha.entwart <> su.entwart) LIMIT 5', 'Haltungen', 'pk'),
 
 ('Netzstruktur', 'Sohlhöhen vom Schacht prüfen', 'Fehler', 9,
     'SELECT pk, printf("Datensatz in Layer ""Haltungen"" in %d Datensätzen hat eine höhere Sohlhöhe als angeschlossen Haltungen (nur max. 5 Datensätze angezeigt)", 
 (SELECT count(*) FROM (SELECT so.pk as pk FROM schaechte AS so LEFT JOIN haltungen AS ha ON ha.schoben = so.schnam WHERE ha.sohleoben < so.sohlhoehe))) AS bemerkung
-FROM (SELECT so.pk as pk FROM schaechte AS so LEFT JOIN haltungen AS ha ON ha.schoben = so.schnam WHERE ha.sohleoben < so.sohlhoehe)LIMIT 5', 'Haltungen', 'pk'),
+FROM (SELECT so.pk as pk FROM schaechte AS so LEFT JOIN haltungen AS ha ON ha.schoben = so.schnam WHERE ha.sohleoben < so.sohlhoehe) LIMIT 5', 'Haltungen', 'pk'),
 
 ('Netzstruktur', 'Sohlhöhen vom Schacht prüfen', 'Fehler', 9,
     'SELECT pk, printf("Datensatz in Layer ""Haltungen"" in %d Datensätzen hat eine höhere Sohlhöhe als angeschlossen Haltungen (nur max. 5 Datensätze angezeigt)", 
 (SELECT count(*) FROM (SELECT su.pk as pk FROM schaechte AS su LEFT JOIN haltungen AS ha ON ha.schunten = su.schnam WHERE ha.sohleunten < su.sohlhoehe))) AS bemerkung
-FROM (SELECT su.pk as pk ROM schaechte AS su LEFT JOIN haltungen AS ha ON ha.schunten = su.schnam WHERE ha.sohleunten < su.sohlhoehe)LIMIT 5', 'Haltungen', 'pk'),
+FROM (SELECT su.pk as pk FROM schaechte AS su LEFT JOIN haltungen AS ha ON ha.schunten = su.schnam WHERE ha.sohleunten < su.sohlhoehe) LIMIT 5', 'Haltungen', 'pk'),
 
 ('Netzstruktur', 'Schächte ohne zugehörge Haltung', 'Fehler', 9,
-    'SELECT pk, printf("Datensatz in Layer ""Haltungen"" in %d Datensätzen hat keine angeschlossen Haltungen (nur max. 5 Datensätze angezeigt)", 
-(SELECT count(*) FROM (SELECT pk FROM schaechte WHERE schaechte.schnam NOT IN (SELECT haltungen.schoben FROM haltungen) OR (SELECT haltungen.schunten FROM haltungen)))) AS bemerkung
-FROM (SELECT pk FROM schaechte WHERE schaechte.schnam NOT IN (SELECT haltungen.schoben FROM haltungen) OR (SELECT haltungen.schunten FROM haltungen)LIMIT 5', 'Haltungen', 'pk'),
+    'SELECT pk, printf("Datensatz in Layer ""Schächte"" in %d Datensätzen hat keine angeschlossen Haltungen (nur max. 5 Datensätze angezeigt)", 
+(SELECT count(*) FROM (SELECT pk FROM schaechte WHERE schaechte.schnam NOT IN (SELECT haltungen.schoben FROM haltungen UNION SELECT haltungen.schunten FROM haltungen)))) AS bemerkung
+FROM (SELECT pk FROM schaechte WHERE schaechte.schnam NOT IN (SELECT haltungen.schoben FROM haltungen UNION SELECT haltungen.schunten FROM haltungen)) LIMIT 5', 'Haltungen', 'pk'),
 
 
 ('Geoobjekte', 'Haltung ohne graphisches Linienobjekt', 'Fehler', 9,

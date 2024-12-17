@@ -1,6 +1,5 @@
 from test import BASE_DATA, BASE_WORK, LOGGER, QgisTest, iface
 from zipfile import ZipFile
-from pathlib import Path
 
 # noinspection PyUnresolvedReferences
 from qgis.testing import unittest
@@ -72,6 +71,8 @@ class TestQKanHE8(QgisTest):
         QKan.config.check_export.append = True
         QKan.config.check_export.update = False
         QKan.config.check_export.synch = False
+
+        QKan.config.selections.selectedObjects = False
 
         imp = He8Porter(iface())
         erg = imp._doexport()
