@@ -102,6 +102,12 @@ class Zustandsklassen_funkt:
 			self.einzelfallbetrachtung_leitung()
 			self.bewertung_dwa_neu_leitung()
 
+		if check_cb['cb19']:
+			self.tab_dwa()
+
+		if check_cb['cb20']:
+			self.tab_isybau()
+
 	def bewertungstexte_haltung(self):
 		date = self.date
 		db = self.db
@@ -29424,3 +29430,244 @@ class Zustandsklassen_funkt:
 		x = os.path.dirname(os.path.abspath(__file__))
 		vlayer.loadNamedStyle(x + '/schaechte_untersucht_bewertung_dwa.qml')
 		QgsProject.instance().addMapLayer(vlayer)
+
+
+	def tab_dwa(self):
+		pass
+		#tabellen DWA anlegen und vorhandene Zustandsklassen in richtige Spalte kopieren
+		# date = self.date
+		# db = self.db
+		# data = db
+		# crs = self.crs
+		# leitung = self.leitung
+		# haltung = self.haltung
+		# db_x = self.db
+		# db = spatialite_connect(data)
+		# curs = db.cursor()
+		#
+		#
+		# sql = """CREATE TABLE IF NOT EXISTS untersuchdat_haltung_bewertung AS SELECT * FROM untersuchdat_haltung"""
+		# curs.execute(sql)
+		# try:
+		# 	curs.execute("""ALTER TABLE untersuchdat_haltung_bewertung ADD COLUMN Beschreibung TEXT ;""")
+		# except:
+		# 	pass
+		#
+		# if haltung == True:
+		# 	sql = """
+		# 		SELECT
+		# 			haltungen.haltnam,
+		# 			haltungen.material,
+		# 			haltungen.hoehe,
+		# 			untersuchdat_haltung_bewertung.untersuchhal
+		# 		FROM haltungen
+		# 		INNER JOIN untersuchdat_haltung_bewertung  ON haltungen.haltnam = untersuchdat_haltung_bewertung.untersuchhal
+		# 	"""
+		#
+		# if leitung == True:
+		# 	sql = """
+		# 			SELECT
+		# 				anschlussleitungen.leitnam,
+		# 				anschlussleitungen.material,
+		# 				anschlussleitungen.hoehe,
+		# 				untersuchdat_haltung_bewertung.untersuchhal
+		# 			FROM anschlussleitungen
+		# 			INNER JOIN untersuchdat_haltung_bewertung ON anschlussleitungen.leitnam = untersuchdat_haltung_bewertung.untersuchhal
+		# 		"""
+		#
+		# try:
+		# 	curs1.execute(sql)
+		# except:
+		# 	iface.messageBar().pushMessage("Error",
+		# 								   "Die Klassifizierung der Haltungen/Leitungen konnte nicht ermittelt werden",
+		# 								   level=Qgis.Critical)
+		#
+		# for attr1 in curs1.fetchall():
+		#
+		# 	untersuchleit = attr1[0]
+		# 	try:
+		# 		curs1.execute("""ALTER TABLE untersuchdat_haltung_bewertung ADD COLUMN bw_bs TEXT;""")
+		# 	except:
+		# 		pass
+		#
+		# 	if attr1[1] in ["AZ", "AZ Asbestzement", "B", "B Beton", "BS", "BS Betonsegmente ", "FZ", "FZ Fasezement",
+		# 					"MA", "MA Mauerwerk", "OB", "OB Ortbeton", "P", "P Polymerbeton", "PC", "PC Polymermodifizierter Zementbeton",
+		# 					"PCC", "PHB", "PHB Polyesterharz", "SFB", "SFB Stahlfaserbeton", "SPB", "SPB Spannbeton",
+		# 					"SB", "SB Stahlbeton", "STZ", "STZ Steinzeug", "SZB", "SZB Spritzbeton",
+		# 					"ZG", "ZG Ziegelwerk", "Asbestzement", "Beton", "Betonsegmente", "Fasezement", "Mauerwerk", "Ortbeton",
+		# 					"Polymerbeton", "Polymermodifizierter Zementbeton", "Polyesterharz", "Stahlfaserbeton", "Spannbeton",
+		# 					"Stahlbeton", "Steinzeug", "Spritzbeton", "Ziegelwerk"]:
+		# 		bw_bs = "biegesteif"
+		# 		x = attr1[0]
+		#
+		# 		sql = f"""
+		# 			UPDATE untersuchdat_haltung_bewertung
+		# 				SET bw_bs = ?
+		# 				WHERE untersuchdat_haltung_bewertung.untersuchhal = ?
+		# 				"""
+		# 		data = (bw_bs, x)
+		# 		try:
+		# 			curs1.execute(sql, data)
+		# 		except:
+		# 			pass
+		#
+		# 	if attr1[1] in ["CN", "CN Edelstahl", "EIS", "EIS Nichtidentifiziertes Metall", "GFK", "GFK Glasfaserverstärkter Kunststoff",
+		# 					"GG", "GG Grauguß", "GGG", "GGG Duktiles Gußeisen", "KST", "KST Nichtidentifizier Kunststoff",
+		# 					"PE", "PE Polyethylen", "PEHD", "PEHD Polyethylen", "PH", "PH Polyesterharz", "PP", "PP Polypropylen",
+		# 					"PVC", "PVC Polyvinylchlorid", "PVCU", "PVCU Polyvinylchlorid hart", "ST", "ST Stahl",
+		# 					"Edelstahl", "Nichtidentifiziertes Metall", "Glasfaserverstärkter Kunststoff", "Grauguß",
+		# 					"Duktiles Gußeisen", "Nichtidentifizier Kunststoff", "Polyethylen", "Polyesterharz",
+		# 					"Polypropylen", "Polyvinylchlorid", "Polyvinylchlorid hart", "Stahl"]:
+		# 		bw_bs = 'biegeweich'
+		# 		x = attr1[0]
+		#
+		# 		sql = f"""
+		# 			  UPDATE untersuchdat_haltung_bewertung
+		# 				SET bw_bs = ?
+		# 				WHERE untersuchdat_haltung_bewertung.untersuchhal = ?
+		# 				"""
+		# 		data = (bw_bs, x)
+		# 		try:
+		# 			curs1.execute(sql, data)
+		# 		except:
+		# 			pass
+		# 	else:
+		# 		continue
+		# db1.commit()
+		# try:
+		# 	curs.execute("""ALTER TABLE untersuchdat_haltung_bewertung ADD COLUMN Zustandsklasse_D TEXT ;""")
+		# except:
+		# 	pass
+		# try:
+		# 	curs.execute("""ALTER TABLE untersuchdat_haltung_bewertung ADD COLUMN Zustandsklasse_S TEXT ;""")
+		# except:
+		# 	pass
+		# try:
+		# 	curs.execute("""ALTER TABLE untersuchdat_haltung_bewertung ADD COLUMN Zustandsklasse_B TEXT ;""")
+		# except:
+		# 	pass
+		#
+		# sql = """CREATE TABLE IF NOT EXISTS haltungen_untersucht_bewertung AS SELECT * FROM haltungen_untersucht"""
+		# curs.execute(sql)
+		# try:
+		# 	curs.execute("""ALTER TABLE haltungen_untersucht_bewertung ADD COLUMN objektklasse_dichtheit INTEGER ;""")
+		# except:
+		# 	pass
+		# try:
+		# 	curs.execute(
+		# 		"""ALTER TABLE haltungen_untersucht_bewertung ADD COLUMN objektklasse_standsicherheit INTEGER ;""")
+		# # db.commit()
+		# except:
+		# 	pass
+		# try:
+		# 	curs.execute(
+		# 		"""ALTER TABLE haltungen_untersucht_bewertung ADD COLUMN objektklasse_betriebssicherheit INTEGER ;""")
+		# # db.commit()
+		# except:
+		# 	pass
+		# try:
+		# 	curs.execute("""ALTER TABLE haltungen_untersucht_bewertung ADD COLUMN objektklasse_gesamt INTEGER ;""")
+		# # db.commit()
+		# except:
+		# 	pass
+		# try:
+		# 	curs.execute("""ALTER TABLE haltungen_untersucht_bewertung ADD COLUMN hydraulische_auslastung TEXT ;""")
+		# # db.commit()
+		# except:
+		# 	pass
+		# try:
+		# 	curs.execute("""ALTER TABLE haltungen_untersucht_bewertung ADD COLUMN lage_grundwasser TEXT;""")
+		# # db.commit()
+		# except:
+		# 	pass
+		# try:
+		# 	curs.execute("""ALTER TABLE haltungen_untersucht_bewertung ADD COLUMN ueberdeckung INTEGER ;""")
+		# # db.commit()
+		# except:
+		# 	pass
+		# try:
+		# 	curs.execute("""ALTER TABLE haltungen_untersucht_bewertung ADD COLUMN bodengruppe TEXT ;""")
+		# # db.commit()
+		# except:
+		# 	pass
+		#
+		# # Objektklasse berechnen für jede Haltung dafür abfragen
+		#
+		# try:
+		# 	curs.execute("""UPDATE haltungen_untersucht_bewertung
+		# 							SET objektklasse_dichtheit =
+		# 							(SELECT min(Zustandsklasse_D)
+		# 							FROM untersuchdat_haltung_bewertung
+		# 							WHERE untersuchdat_haltung_bewertung.untersuchhal = haltungen_untersucht_bewertung.haltnam AND Zustandsklasse_D <> '-'
+		# 							GROUP BY untersuchdat_haltung_bewertung.untersuchhal);""")
+		# # db.commit()
+		# except:
+		# 	pass
+		#
+		# try:
+		# 	curs.execute("""UPDATE haltungen_untersucht_bewertung
+		# 							SET objektklasse_standsicherheit =
+		# 							(SELECT min(Zustandsklasse_S)
+		# 							FROM untersuchdat_haltung_bewertung
+		# 							WHERE untersuchdat_haltung_bewertung.untersuchhal = haltungen_untersucht_bewertung.haltnam AND Zustandsklasse_S <> '-'
+		# 							GROUP BY untersuchdat_haltung_bewertung.untersuchhal);""")
+		# # db.commit()
+		# except:
+		# 	pass
+		#
+		# try:
+		# 	curs.execute("""UPDATE haltungen_untersucht_bewertung
+		# 							SET objektklasse_betriebssicherheit =
+		# 							(SELECT min(Zustandsklasse_B)
+		# 							FROM untersuchdat_haltung_bewertung
+		# 							WHERE untersuchdat_haltung_bewertung.untersuchhal = haltungen_untersucht_bewertung.haltnam AND Zustandsklasse_B <> '-'
+		# 							GROUP BY untersuchdat_haltung_bewertung.untersuchhal);""")
+		# # db.commit()
+		# except:
+		# 	pass
+		#
+		# try:
+		# 	curs.execute("""update haltungen_untersucht_bewertung
+		# 							set objektklasse_standsicherheit = '-'
+		# 							WHERE objektklasse_betriebssicherheit IS NULL;""")
+		# # db.commit()
+		# except:
+		# 	pass
+		#
+		# try:
+		# 	curs.execute("""update haltungen_untersucht_bewertung
+		# 							set objektklasse_dichtheit = '-'
+		# 							WHERE objektklasse_betriebssicherheit IS NULL;""")
+		# # db.commit()
+		# except:
+		# 	pass
+		#
+		# try:
+		# 	curs.execute("""update haltungen_untersucht_bewertung
+		# 							set objektklasse_betriebssicherheit = '-'
+		# 							WHERE objektklasse_betriebssicherheit IS NULL;""")
+		# # db.commit()
+		# except:
+		# 	pass
+		#
+		# try:
+		# 	curs.execute("""Update
+		# 							haltungen_untersucht_bewertung
+		# 							SET
+		# 							objektklasse_gesamt =
+		# 							(Case
+		# 							 When objektklasse_dichtheit <= objektklasse_standsicherheit And objektklasse_dichtheit <= objektklasse_betriebssicherheit Then objektklasse_dichtheit
+		# 							 When objektklasse_standsicherheit <= objektklasse_dichtheit And objektklasse_standsicherheit <= objektklasse_betriebssicherheit Then objektklasse_standsicherheit
+		# 							 When objektklasse_betriebssicherheit <= objektklasse_dichtheit And objektklasse_betriebssicherheit <= objektklasse_standsicherheit Then objektklasse_betriebssicherheit
+		# 							 Else NULL
+		# 							 END
+		# 							 );""")
+		# 	db.commit()
+		# except:
+		# 	pass
+
+
+
+	def tab_isybau(self):
+		# tabellen ISYBAU anlegen und vorhandene Zustandsklassen in richtige Spalte kopieren
+		pass

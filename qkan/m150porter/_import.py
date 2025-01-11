@@ -1286,7 +1286,7 @@ class ImportTask(Schadenstexte):
         # Textpositionen für Schadenstexte berechnen
 
         # self.db_qkan.setschadenstexte_schaechte()
-        Schadenstexte.setschadenstexte_schaechte(self.db_qkan)
+        Schadenstexte.setschadenstexte_schaechte()
 
     def _auslaesse(self) -> None:
         def _iter() -> Iterator[Schacht]:
@@ -2525,7 +2525,8 @@ class ImportTask(Schadenstexte):
                     baujahr=baujahr,
                     simstatus=block.findtext("KG401", None),
                     entwart=block.findtext("KG302", None),
-                    kommentar=kommentar
+                    kommentar=kommentar,
+                    schwellenhoehe = 0.0
                 )
 
 
