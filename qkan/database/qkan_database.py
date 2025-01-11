@@ -50,67 +50,6 @@ def qgs_version() -> str:
     return __qgsVersion__
 
 
-def qgs_actual_version(update: bool = True, warning: bool = False) -> bool:
-    """Prüft die Version des aktiven Projektes und aktualisiert die Layer gegebenenfalls
-
-    :param warning: Aktiviert Warnung in QGIS-Meldungsleiste
-
-    Prüft im Vergleich zur Version der QKan-Datenbank, ob das geladene Projekt die gleiche oder höhere
-    Versionsnummer aufweist.
-    """
-    warnings.warn("deprecated, no longer necessary", DeprecationWarning)
-
-    iface = QKan.instance.iface
-
-    layers = iface.layerTreeCanvasBridge().rootGroup().findLayers()
-    if len(layers) == 0 and warning:
-        logger.error("qkan_database.qgs_actual_version: Keine Layer vorhanden...")
-        meldung("Fehler: ", "Kein QKan-Projekt geladen!")
-        return False
-
-    # noinspection PyArgumentList
-    act_qgs_version = QgsProject.instance().title().replace("QKan Version ", "")
-    if act_qgs_version == "":
-        if len(layers) == 0:
-            meldung("Benutzerfehler: ", "Es ist kein Projekt geladen")
-        else:
-            act_qgs_version = "2.5.3"  # davor wurde die Version der Projektdatei noch nicht verwaltet.
-    cur_qgs_version = qgs_version()
-    try:
-        act_qgs_version_lis = [
-            int(el.replace("a", "").replace("b", "").replace("c", ""))
-            for el in act_qgs_version.split(".")
-        ]
-    except BaseException as err:
-        logger.error(
-            "\nqkan_database.qgs_actual_version: {}\nVersionsstring fehlerhaft: {}".format(
-                err, act_qgs_version
-            )
-        )
-        act_qgs_version = (
-            "2.5.3"  # davor wurde die Version der Projektdatei noch nicht verwaltet.
-        )
-        act_qgs_version_lis = [
-            int(el.replace("a", "").replace("b", "").replace("c", ""))
-            for el in act_qgs_version.split(".")
-        ]
-
-    cur_qgs_version_lis = [
-        int(el.replace("a", "").replace("b", "").replace("c", ""))
-        for el in cur_qgs_version.split(".")
-    ]
-
-    logger.debug("act_qgs_version: {}".format(act_qgs_version))
-    logger.debug("cur_qgs_version: {}".format(cur_qgs_version))
-
-    # Änderungen an den Layern werden nur in layersadapt vorgenommen.
-
-    return True
-
-
-# Erzeuge QKan-Tabellen
-
-
 def createdbtables(
     consl: Connection, cursl: Cursor, version: str = __dbVersion__, epsg: int = 25832
 ) -> bool:
