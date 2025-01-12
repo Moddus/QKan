@@ -75,7 +75,7 @@ def qgsadapt(
     # Zoom-Bereich für die Projektdatei vorbereiten
     # TODO: produziert fehlermeldung!
     zoom = [0.0, 0.0, 100.0, 100.0]
-    
+
     #try:
     #    dbQK.sqlyml('qgsadapt_zoom', "k_qgsadapt (1)")
     #except BaseException as err:
@@ -260,6 +260,7 @@ def qgsadapt(
                 tag_option.attrib['v'] = str(symbols_path / svg_path.name)
 
         # Reset zoom
+        zoom = [0.0, 0.0, 100.0, 100.0]
         if len(zoom) == 0 or any([x is None for x in zoom]):
             zoom = [0.0, 0.0, 100.0, 100.0]
         for tag_extent in root.findall(".//mapcanvas/extent"):

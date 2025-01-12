@@ -121,10 +121,10 @@ class Substanzklasse(QKanPlugin):
                 )
                 return False
 
-        self.log.info("DB creation finished, starting Zustandsklassen")
-        subkans = Subkans_funkt(check_cb, QKan.config.database.qkan, QKan.config.zustand.date, QKan.config.epsg, datetype)
-        subkans.run()
-        del subkans
+            self.log.info("DB creation finished, starting Zustandsklassen")
+            subkans = Subkans_funkt(check_cb, db_qkan, QKan.config.zustand.date, QKan.config.epsg, datetype)
+            subkans.run()
+            del subkans
 
         # TODO: Some layers don't have a valid EPSG attached or wrong coordinates
         return True
