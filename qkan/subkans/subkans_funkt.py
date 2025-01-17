@@ -39,11 +39,7 @@ class Subkans_funkt:
 
         if check_cb['cb3']:
             self.bewertung_subkans()
-
-        if check_cb['cb4']:
             self.schadens_ueberlagerung()
-
-        if check_cb['cb5']:
             self.subkans()
 
     # jh: besser round(n, decimals), weil round_up_down bei negativen Zahlen falsch rundet...
@@ -3114,24 +3110,24 @@ class Subkans_funkt:
         except:
             pass
 
-        # uri = QgsDataSourceUri()
-        # uri.setDatabase(db_x)
-        # schema = ''
-        # table = 'substanz_haltung_bewertung'
-        # geom_column = 'geom'
-        # uri.setDataSource(schema, table, geom_column)
-        # substanz_haltung_bewertung = 'substanz_haltung_bewertung'
-        # vlayer = QgsVectorLayer(uri.uri(), substanz_haltung_bewertung, 'spatialite')
-        # x = QgsProject.instance()
-        # try:
-        #     x.removeMapLayer(x.mapLayersByName(substanz_haltung_bewertung)[0].id())
-        # except:
-        #     pass
-        #
-        # x = os.path.dirname(os.path.abspath(__file__))
-        # vlayer.loadNamedStyle(x + '/substanz_haltung_bewertung_dwa.qml')
-        # QgsProject.instance().addMapLayer(vlayer)
-        #
+        uri = QgsDataSourceUri()
+        uri.setDatabase(db.dbname)
+        schema = ''
+        table = 'substanz_haltung_bewertung'
+        geom_column = 'geom'
+        uri.setDataSource(schema, table, geom_column)
+        substanz_haltung_bewertung = 'substanz_haltung_bewertung'
+        vlayer = QgsVectorLayer(uri.uri(), substanz_haltung_bewertung, 'spatialite')
+        x = QgsProject.instance()
+        try:
+            x.removeMapLayer(x.mapLayersByName(substanz_haltung_bewertung)[0].id())
+        except:
+            pass
+
+        x = os.path.dirname(os.path.abspath(__file__))
+        vlayer.loadNamedStyle(x + '/substanz_haltung_bewertung_dwa.qml')
+        QgsProject.instance().addMapLayer(vlayer)
+
 
 
     def bewertung_subkans(self):
@@ -5560,22 +5556,22 @@ class Subkans_funkt:
         except:
             pass
 
-        # uri = QgsDataSourceUri()
-        # uri.setDatabase(db)
-        # schema = ''
-        # table = 'substanz_haltung_bewertung'
-        # geom_column = 'geom'
-        # uri.setDataSource(schema, table, geom_column)
-        # substanz_haltung_bewertung = 'substanz_haltung_bewertung'
-        # vlayer = QgsVectorLayer(uri.uri(), substanz_haltung_bewertung, 'spatialite')
-        # x = QgsProject.instance()
-        # try:
-        #     x.removeMapLayer(x.mapLayersByName(substanz_haltung_bewertung)[0].id())
-        # except:
-        #     pass
+        uri = QgsDataSourceUri()
+        uri.setDatabase(db.dbname)
+        schema = ''
+        table = 'substanz_haltung_bewertung'
+        geom_column = 'geom'
+        uri.setDataSource(schema, table, geom_column)
+        substanz_haltung_bewertung = 'substanz_haltung_bewertung'
+        vlayer = QgsVectorLayer(uri.uri(), substanz_haltung_bewertung, 'spatialite')
+        x = QgsProject.instance()
+        try:
+            x.removeMapLayer(x.mapLayersByName(substanz_haltung_bewertung)[0].id())
+        except:
+            pass
 
 
-        #QgsProject.instance().addMapLayer(vlayer)
+        QgsProject.instance().addMapLayer(vlayer)
 
 
     def schadens_ueberlagerung(self):
@@ -7486,20 +7482,20 @@ class Subkans_funkt:
         except:
             pass
 
-        # uri = QgsDataSourceUri()
-        # uri.setDatabase(db)
-        # schema = ''
-        # table = 'haltungen_substanz_bewertung'
-        # geom_column = 'geom'
-        # uri.setDataSource(schema, table, geom_column)
-        # haltungen_substanz_bewertung = 'haltungen_substanz_bewertung'
-        # vlayer = QgsVectorLayer(uri.uri(), haltungen_substanz_bewertung, 'spatialite')
-        # x = QgsProject.instance()
-        # try:
-        #     x.removeMapLayer(x.mapLayersByName(haltungen_substanz_bewertung)[0].id())
-        # except:
-        #     pass
-        #
-        # x = os.path.dirname(os.path.abspath(__file__))
-        # vlayer.loadNamedStyle(x + '/haltungen_subkans.qml')
-        # QgsProject.instance().addMapLayer(vlayer)
+        uri = QgsDataSourceUri()
+        uri.setDatabase(db.dbname)
+        schema = ''
+        table = 'haltungen_substanz_bewertung'
+        geom_column = 'geom'
+        uri.setDataSource(schema, table, geom_column)
+        haltungen_substanz_bewertung = 'haltungen_substanz_bewertung'
+        vlayer = QgsVectorLayer(uri.uri(), haltungen_substanz_bewertung, 'spatialite')
+        x = QgsProject.instance()
+        try:
+            x.removeMapLayer(x.mapLayersByName(haltungen_substanz_bewertung)[0].id())
+        except:
+            pass
+
+        x = os.path.dirname(os.path.abspath(__file__))
+        vlayer.loadNamedStyle(x + '/haltungen_subkans.qml')
+        QgsProject.instance().addMapLayer(vlayer)

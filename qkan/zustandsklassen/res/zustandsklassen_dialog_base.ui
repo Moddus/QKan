@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>818</width>
-    <height>788</height>
+    <width>835</width>
+    <height>855</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -24,8 +24,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>773</width>
-        <height>771</height>
+        <width>811</width>
+        <height>831</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -277,6 +277,20 @@
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:7.8pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Die mit Hilfe der DWA-M 149-3 (2024) ermittelten Zustandsklassen müssen in den Atributtabellen überprüft, bzw. ergänzt werden, da in einigen Fällen eine Einzellfallbetrachtungen notwendig ist.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="checkBox_19">
+         <property name="text">
+          <string>Zustandsklassifizierung aus den vorhandenen Daten übernehmen und lediglich die Tabellenstruktur anlegen (DWA)</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="checkBox_20">
+         <property name="text">
+          <string>Zustandsklassifizierung aus den vorhandenen Daten übernehmen und lediglich die Tabellenstruktur anlegen (ISYBAU)</string>
          </property>
         </widget>
        </item>

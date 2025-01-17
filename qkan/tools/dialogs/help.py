@@ -34,7 +34,7 @@ class QgsHelpDialog(QKanDialog, FORM_CLASS_help):  # type: ignore
 
     def __init__(self, plugin: "QKanTools", parent: Optional[QWidget] = None):
         super().__init__(plugin, parent)
-
+        #TODO: Qkan Version abfragen
         self.pushButton.clicked.connect(self.open_doku)
         self.pushButton_2.clicked.connect(self.open_team)
 

@@ -65,6 +65,7 @@ class Infos(QKanPlugin):
         self.get_widget_2()
         self.get_widget_3()
         self.get_widget_4()
+        self.get_widget_5()
         # self.canv_1 = None
 
 
@@ -138,6 +139,20 @@ class Infos(QKanPlugin):
         self.dialog.verticalLayout_4.addWidget(self.dialog.canv_4)
         self.dialog.verticalLayout_4.addWidget(NavigationToolbar(self.dialog.canv_4, qw, True))
 
+    def get_widget_5(self):
+        """
+        Fügt das Matplotlib-Widget in den jeweiligen Dialog ein.
+        """
+        self.dialog = self.info_dlg
+        self.dialog.fig_5 = plt.figure(layout='constrained')
+        #in der self.fig können die Matplotlib sachen angezeigt werden
+
+        qw = QWidget(self.dialog)
+        self.dialog.canv_5 = FigureCanvas(self.dialog.fig_5)
+
+        self.dialog.verticalLayout.addWidget(self.dialog.canv_5)
+        self.dialog.verticalLayout.addWidget(NavigationToolbar(self.dialog.canv_5, qw, True))
+
     def on_click(self, event):
         Info.handle_click(event, Info.anzeigen, Info.anzeigen)
 
@@ -159,11 +174,13 @@ class Infos(QKanPlugin):
             self.canv_3 = self.dialog.canv_3
             self.fig_4 = self.dialog.fig_4
             self.canv_4 = self.dialog.canv_4
+            self.fig_5 = self.dialog.fig_5
+            self.canv_5 = self.dialog.canv_5
 
             # with DBConnection() as db_qkan:
             #     connected = db_qkan.connected
 
-            test = Info(self.fig_1, self.canv_1, self.fig_2, self.canv_2, self.fig_3, self.canv_3, self.fig_4, self.canv_4, DBConnection())
+            test = Info(self.fig_1, self.canv_1, self.fig_2, self.canv_2, self.fig_3, self.canv_3, self.fig_4, self.canv_4, self.fig_5, self.canv_5, DBConnection())
             test.run(self.info_dlg.date.currentText())
 
             def on_click(self, event):
@@ -268,11 +285,13 @@ class Infos(QKanPlugin):
             self.canv_3 = self.dialog.canv_3
             self.fig_4 = self.dialog.fig_4
             self.canv_4 = self.dialog.canv_4
+            self.fig_5 = self.dialog.fig_5
+            self.canv_5 = self.dialog.canv_5
 
             # with DBConnection() as db_qkan:
             #     connected = db_qkan.connected
 
-            test = Info(self.fig_1, self.canv_1, self.fig_2, self.canv_2, self.fig_3, self.canv_3, self.fig_4, self.canv_4, DBConnection())
+            test = Info(self.fig_1, self.canv_1, self.fig_2, self.canv_2, self.fig_3, self.canv_3, self.fig_4, self.canv_4, self.fig_5, self.canv_5, DBConnection())
             test.run(self.info_dlg.date.currentText())
             # Vorgabe Projektname aktivieren, wenn kein Projekt geladen
             # self.info_dlg.gb_projectfile.setEnabled(QgsProject.instance().fileName() == '')

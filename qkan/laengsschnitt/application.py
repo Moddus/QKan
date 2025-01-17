@@ -70,7 +70,7 @@ class Laengsschnitt(QKanPlugin):
         icon = ":/plugins/qkan/laengsschnitt/res/laengsschnitt.png"
         QKan.instance.add_action(
             icon,
-            text=self.tr("Laengsschnitt"),
+            text=self.tr("Längsschnitt"),
             callback=self.run_laengs,
             parent=self.iface.mainWindow(),
         )
