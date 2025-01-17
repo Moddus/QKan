@@ -46,8 +46,6 @@ class Substanzklasse(QKanPlugin):
             check_cb['cb1'] = self.import_dlg.checkBox_1.isChecked()
             check_cb['cb2'] = self.import_dlg.checkBox_2.isChecked()
             check_cb['cb3'] = self.import_dlg.checkBox_3.isChecked()
-            check_cb['cb4'] = self.import_dlg.checkBox_4.isChecked()
-            check_cb['cb5'] = self.import_dlg.checkBox_5.isChecked()
 
             QKan.config.save()
 
@@ -102,8 +100,7 @@ class Substanzklasse(QKanPlugin):
         check_cb['cb1'] = self.import_dlg.checkBox_1.isChecked()
         check_cb['cb2'] = self.import_dlg.checkBox_2.isChecked()
         check_cb['cb3'] = self.import_dlg.checkBox_3.isChecked()
-        check_cb['cb4'] = self.import_dlg.checkBox_4.isChecked()
-        check_cb['cb5'] = self.import_dlg.checkBox_5.isChecked()
+
 
         self.log.info("Creating DB")
         with DBConnection(
@@ -121,10 +118,10 @@ class Substanzklasse(QKanPlugin):
                 )
                 return False
 
-        self.log.info("DB creation finished, starting Zustandsklassen")
-        subkans = Subkans_funkt(check_cb, QKan.config.database.qkan, QKan.config.zustand.date, QKan.config.epsg, datetype)
-        subkans.run()
-        del subkans
+            self.log.info("DB creation finished, starting Zustandsklassen")
+            subkans = Subkans_funkt(check_cb, db_qkan, QKan.config.zustand.date, QKan.config.epsg, datetype)
+            subkans.run()
+            del subkans
 
         # TODO: Some layers don't have a valid EPSG attached or wrong coordinates
         return True

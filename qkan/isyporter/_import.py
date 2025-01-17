@@ -224,7 +224,7 @@ class Untersuchdat_anschlussleitung(ClassObject):
     inspektionslaenge: float = 0.0
     videozaehler: int = 0
     station: float = 0.0
-    timecode: str = ""
+    timecode: int = 0
     kuerzel: str = ""
     charakt1: str = ""
     charakt2: str = ""
@@ -937,7 +937,7 @@ class ImportTask(Schadenstexte):
             id = 0
             bandnr = 0
             videozaehler = 0
-            timecode = "0"
+            timecode = 0
             kuerzel = ""
             charakt1 = ""
             charakt2 = ""
@@ -963,7 +963,7 @@ class ImportTask(Schadenstexte):
 
                     id = _get_int(_untersuchdat_schacht.findtext("d:Index", "0", self.NS))
                     videozaehler = _get_int(_untersuchdat_schacht.findtext("d:Videozaehler", "0", self.NS))
-                    timecode = _untersuchdat_schacht.findtext("d:Timecode", "0", self.NS)
+                    timecode = _get_int(_untersuchdat_schacht.findtext("d:Timecode", "0", self.NS))
                     kuerzel = _untersuchdat_schacht.findtext("d:InspektionsKode", None, self.NS)
                     charakt1 = _untersuchdat_schacht.findtext("d:Charakterisierung1", None, self.NS)
                     charakt2 = _untersuchdat_schacht.findtext("d:Charakterisierung2", None, self.NS)
@@ -983,7 +983,7 @@ class ImportTask(Schadenstexte):
                         foto_dateiname = None
 
                     ZD = _get_int(_untersuchdat_schacht.findtext("d:Klassifizierung/d:Dichtheit/d:SKDvAuto", 63, self.NS))
-                    ZS = _get_int(_untersuchdat_schacht.findtext("d:Klassifizierung/d:Standsicherheit/d:SKSvAuto", 63, self.NS))
+                    ZS = _get_int(_untersuchdat_schacht.findtext("d:Klassifizierung/d:Betriebssicherheit/d:SKSvAuto", 63, self.NS))
                     ZB = _get_int(_untersuchdat_schacht.findtext("d:Klassifizierung/d:Standsicherheit/d:SKBvAuto", 63, self.NS))
 
 
@@ -1943,7 +1943,7 @@ class ImportTask(Schadenstexte):
             inspektionslaenge = 0.0
             videozaehler = 0
             station = 0.0
-            timecode = "0"
+            timecode = 0
             kuerzel = ""
             charakt1 = ""
             charakt2 = ""
@@ -1984,7 +1984,7 @@ class ImportTask(Schadenstexte):
                         id = _get_int(_untersuchdat.findtext("d:Index", "0", self.NS))
                         videozaehler = _get_int(_untersuchdat.findtext("d:Videozaehler", 0, self.NS))
                         station = _get_float(_untersuchdat.findtext("d:Station", 0.0, self.NS))
-                        timecode = _untersuchdat.findtext("d:Timecode", 0, self.NS)
+                        timecode = _get_int(_untersuchdat.findtext("d:Timecode", 0, self.NS))
                         kuerzel = _untersuchdat.findtext("d:InspektionsKode", None, self.NS)
                         charakt1 = _untersuchdat.findtext("d:Charakterisierung1", None, self.NS)
                         charakt2 = _untersuchdat.findtext("d:Charakterisierung2", None, self.NS)
@@ -2002,7 +2002,7 @@ class ImportTask(Schadenstexte):
                             foto_dateiname = None
 
                         ZD = _get_int(_untersuchdat.findtext("d:Klassifizierung/d:Dichtheit/d:SKDvAuto", 63, self.NS))
-                        ZS = _get_int(_untersuchdat.findtext("d:Klassifizierung/d:Standsicherheit/d:SKSvAuto", 63, self.NS))
+                        ZS = _get_int(_untersuchdat.findtext("d:Klassifizierung/d:Betriebssicherheit/d:SKSvAuto", 63, self.NS))
                         ZB = _get_int(_untersuchdat.findtext("d:Klassifizierung/d:Standsicherheit/d:SKBvAuto", 63, self.NS))
 
 
@@ -2106,7 +2106,8 @@ class ImportTask(Schadenstexte):
 
         self.db_qkan.commit()
 
-        Schadenstexte.setschadenstexte_haltungen(self.db_qkan)
+        #Schadenstexte.setschadenstexte_haltungen()
+        self.db_qkan.setschadenstexte_haltungen()
 
 
     def _anschlussleitungen(self) -> None:
@@ -2754,7 +2755,7 @@ class ImportTask(Schadenstexte):
             inspektionslaenge = 0.0
             videozaehler = 0
             station = 0.0
-            timecode = "0"
+            timecode = 0
             kuerzel = ""
             charakt1 = ""
             charakt2 = ""
@@ -2797,7 +2798,7 @@ class ImportTask(Schadenstexte):
                             id = _get_int(_untersuchdat.findtext("d:Index", "0", self.NS))
                             videozaehler = _get_int(_untersuchdat.findtext("d:Videozaehler", 0, self.NS))
                             station = _get_float(_untersuchdat.findtext("d:Station", 0.0, self.NS))
-                            timecode = _untersuchdat.findtext("d:Timecode", 0, self.NS)
+                            timecode = _get_int(_untersuchdat.findtext("d:Timecode", 0, self.NS))
                             kuerzel = _untersuchdat.findtext("d:InspektionsKode", None, self.NS)
                             charakt1 = _untersuchdat.findtext("d:Charakterisierung1", None, self.NS)
                             charakt2 = _untersuchdat.findtext("d:Charakterisierung2", None, self.NS)
@@ -2820,7 +2821,7 @@ class ImportTask(Schadenstexte):
                             ZS = _get_int(
                                 _untersuchdat.findtext("d:Klassifizierung/d:Standsicherheit/d:SKSvAuto", 63, self.NS))
                             ZB = _get_int(
-                                _untersuchdat.findtext("d:Klassifizierung/d:Standsicherheit/d:SKBvAuto", 63, self.NS))
+                                _untersuchdat.findtext("d:Klassifizierung/d:Betriebssicherheit/d:SKBvAuto", 63, self.NS))
 
                             yield Untersuchdat_anschlussleitung(
                                 untersuchhal=name,
@@ -2880,34 +2881,22 @@ class ImportTask(Schadenstexte):
 
         for untersuchdat_anschlussleitung in _iter():
 
-            params = {
-                'untersuchleit': untersuchdat_anschlussleitung.untersuchhal,
-                'untersuchrichtung': untersuchdat_anschlussleitung.untersuchrichtung,
-                'schoben': untersuchdat_anschlussleitung.schoben,
-                'schunten': untersuchdat_anschlussleitung.schunten,
-                'id': untersuchdat_anschlussleitung.id,
-                'videozaehler': untersuchdat_anschlussleitung.videozaehler,
-                'inspektionslaenge': untersuchdat_anschlussleitung.inspektionslaenge,
-                'station': untersuchdat_anschlussleitung.station,
-                'timecode': untersuchdat_anschlussleitung.timecode,
-                'kuerzel': untersuchdat_anschlussleitung.kuerzel,
-                'charakt1': untersuchdat_anschlussleitung.charakt1,
-                'charakt2': untersuchdat_anschlussleitung.charakt2,
-                'quantnr1': untersuchdat_anschlussleitung.quantnr1,
-                'quantnr2': untersuchdat_anschlussleitung.quantnr2,
-                'streckenschaden': untersuchdat_anschlussleitung.streckenschaden,
-                'streckenschaden_lfdnr': untersuchdat_anschlussleitung.streckenschaden_lfdnr,
-                'pos_von': untersuchdat_anschlussleitung.pos_von,
-                'pos_bis': untersuchdat_anschlussleitung.pos_bis,
-                'foto_dateiname': untersuchdat_anschlussleitung.foto_dateiname,
-                'film_dateiname': untersuchdat_anschlussleitung.film_dateiname,
-                'ordner_bild': untersuchdat_anschlussleitung.ordner_bild,
-                'ordner_video': untersuchdat_anschlussleitung.ordner_video,
-                'ZD': untersuchdat_anschlussleitung.ZD,
-                'ZB': untersuchdat_anschlussleitung.ZB,
-                'ZS': untersuchdat_anschlussleitung.ZS,
-                'epsg': QKan.config.epsg
-            }
+            params = {'untersuchleit': untersuchdat_anschlussleitung.untersuchhal, 'untersuchrichtung': untersuchdat_anschlussleitung.untersuchrichtung,
+                      'schoben': untersuchdat_anschlussleitung.schoben, 'schunten': untersuchdat_anschlussleitung.schunten,
+                      'id': untersuchdat_anschlussleitung.id, 'videozaehler': untersuchdat_anschlussleitung.videozaehler,
+                      'inspektionslaenge': untersuchdat_anschlussleitung.inspektionslaenge,
+                      'station': untersuchdat_anschlussleitung.station,
+                      'timecode': untersuchdat_anschlussleitung.timecode, 'kuerzel': untersuchdat_anschlussleitung.kuerzel,
+                      'charakt1': untersuchdat_anschlussleitung.charakt1, 'charakt2': untersuchdat_anschlussleitung.charakt2,
+                      'quantnr1': untersuchdat_anschlussleitung.quantnr1, 'quantnr2': untersuchdat_anschlussleitung.quantnr2,
+                      'streckenschaden': untersuchdat_anschlussleitung.streckenschaden,
+                      'streckenschaden_lfdnr': untersuchdat_anschlussleitung.streckenschaden_lfdnr,
+                      'pos_von': untersuchdat_anschlussleitung.pos_von, 'pos_bis': untersuchdat_anschlussleitung.pos_bis,
+                      'foto_dateiname': untersuchdat_anschlussleitung.foto_dateiname,
+                      'film_dateiname': untersuchdat_anschlussleitung.film_dateiname,
+                      'ordner_bild': untersuchdat_anschlussleitung.ordner_bild,
+                      'ordner_video': untersuchdat_anschlussleitung.ordner_video, 'ZD': untersuchdat_anschlussleitung.ZD,
+                      'ZB': untersuchdat_anschlussleitung.ZB, 'ZS': untersuchdat_anschlussleitung.ZS, 'epsg': QKan.config.epsg}
 
             logger.debug(f'isyporter.import - insertdata:\ntabnam: untersuchdat_anschlussleitung\n'
                          f'params: {params}')

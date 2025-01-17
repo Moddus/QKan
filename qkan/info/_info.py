@@ -19,7 +19,7 @@ logger = get_logger("QKan.xml.info")
 
 
 class Info:
-    def __init__(self, fig_1, canv_1, fig_2, canv_2, fig_3, canv_3, fig_4, canv_4, db_qkan: DBConnection):
+    def __init__(self, fig_1, canv_1, fig_2, canv_2, fig_3, canv_3, fig_4, canv_4, fig_5, canv_5, db_qkan: DBConnection):
         self.db_qkan = db_qkan
         self.anz_haltungen = 0
         self.anz_schaechte = 0
@@ -33,6 +33,8 @@ class Info:
         self.fig_3 = fig_3
         self.canv_4 = canv_4
         self.fig_4 = fig_4
+        self.canv_5 = canv_5
+        self.fig_5 = fig_5
 
         #variable für schatten
         self.shadow = True
@@ -201,7 +203,7 @@ class Info:
                 y_pos = np.arange(len(sonstiges_values))
 
                 title = 'Sonstiges'
-                self._barofpie(figure, title, values, pos2)
+                #self._barofpie(figure, title, values, pos2)
 
         return wedges, texts, autotexts
 
@@ -231,6 +233,7 @@ class Info:
 
     def _infos(self) -> None:
         #TODO: Anzeige anpassen um die Auswahl eines Teilgebietes zu ermöglichen!
+        #TODO: Daten Substanz ergänzen und Plots überarbeiten!
 
         # Karteikarte 1 initialisieren
         figure = self.fig_4
@@ -321,8 +324,8 @@ class Info:
                         FROM haltungen
                         WHERE entwart IS NOT NULL 
                         GROUP BY tgb
-                    
                 """
+
         # pos=111
         self._tableplot(
             figure=figure,
@@ -330,7 +333,6 @@ class Info:
             title="Haltungen Teilgebiete",
             pos=gs[3]
         )
-
 
     def handle_click(event, pie_wedges, run_script_callback):
         # TODO: Anpassen, sodass beim Anklicken der Grafik die jeweiligen Daten in QGIS ausgewählt werden!
@@ -427,12 +429,13 @@ class Info:
             ORDER BY baujahr
         """
 
-        wedges, texts, autotexts = self._pieplot(
+        self._barplot(
             sql=sql,
             figure=figure,
             title='Baujahre',
-            pos=gs[2],
-            pos2=gs[3]
+            ylabel='Baujahre',
+            xlabel='Gesamtlänge (km)',
+            pos=gs[2]
         )
 
         # Darstellungen Haltungen nach Durchmesser
@@ -632,7 +635,8 @@ class Info:
         self.canv_1.draw()
 
         #Haltungen nach Zustandsklasse
-        # TODO: Farben nach Zustandsklassen anpassen
+        #TODO: Farben nach Zustandsklassen anpassen
+        #TODO: Testen ob untersuchdat_haltung_bewertung oder substanz_haltung_bewertung vorhanden ist und die Daten verwenden!
 
         # Karteikarte 3 initialisieren
         figure_3 = self.fig_3

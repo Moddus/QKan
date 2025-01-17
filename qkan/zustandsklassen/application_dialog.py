@@ -83,6 +83,7 @@ class ZustandDialog(_Dialog, ZUSTAND_CLASS):  # type: ignore
         self.pushButton.clicked.connect(self.select_db)
 
         self.db.textChanged.connect(self.select_date)
+        self.comboBox.currentTextChanged.connect(self.select_date)
         self.checkBox.clicked.connect(self.checkBox_click)
         self.checkBox_2.clicked.connect(self.checkBox_click_2)
         self.checkBox_4.clicked.connect(self.checkBox_click_4)

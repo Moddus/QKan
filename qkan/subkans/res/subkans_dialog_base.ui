@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>611</width>
+    <width>757</width>
     <height>460</height>
    </rect>
   </property>
@@ -17,7 +17,7 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>SubKans</string>
+   <string>SubKanS</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
@@ -30,7 +30,7 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>587</width>
+        <width>733</width>
         <height>436</height>
        </rect>
       </property>
@@ -124,7 +124,7 @@
        <item>
         <widget class="QCheckBox" name="checkBox_1">
          <property name="text">
-          <string>Einzelfallbetrachtungen nach SubKans ergänzen</string>
+          <string>Einzelfallbetrachtungen nach SubKanS ergänzen</string>
          </property>
         </widget>
        </item>
@@ -145,21 +145,7 @@
        <item>
         <widget class="QCheckBox" name="checkBox_3">
          <property name="text">
-          <string>Zuordnung von Schadensart- und Schadensausprägung</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QCheckBox" name="checkBox_4">
-         <property name="text">
-          <string>Überlagerung der Schäden</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QCheckBox" name="checkBox_5">
-         <property name="text">
-          <string>Berechnung der Substanzklassen</string>
+          <string>Zuordnung von Schadensart- und Schadensausprägung / Überlagerung der Schäden / Berechnung der Substanzklassen</string>
          </property>
         </widget>
        </item>

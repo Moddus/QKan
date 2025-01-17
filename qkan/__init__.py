@@ -215,7 +215,7 @@ class QKan:
             safe_add_action(daten, "Plausibilitätsprüfungen")
             safe_add_action(daten, "Tabellendaten aus Clipboard einfügen")
             safe_add_action(daten, "Tabellendaten aus Clipboard: Zuordnung anzeigen")
-            safe_add_action(daten, "Laengsschnitt")
+            safe_add_action(daten, "Längsschnitt")
 
             safe_add_action(flaechen, "Erzeuge unbefestigte Flächen...")
             safe_add_action(flaechen, "Erzeuge Voronoiflächen zu Haltungen")
@@ -251,7 +251,7 @@ class QKan:
 
             safe_add_action(zustand, "Zustandsklassen ermitteln")
             safe_add_action(zustand, "Sanierungsbedarfszahl ermitteln")
-            # safe_add_action(zustand, "Substanzklassen ermitteln")
+            safe_add_action(zustand, "Substanzklassen ermitteln")
             #
             safe_add_action(flood2D, "Überflutungsanimation")
 

@@ -1285,8 +1285,8 @@ class ImportTask(Schadenstexte):
 
         # Textpositionen für Schadenstexte berechnen
 
-        # self.db_qkan.setschadenstexte_schaechte()
-        Schadenstexte.setschadenstexte_schaechte()
+        self.db_qkan.setschadenstexte_schaechte()
+        #Schadenstexte.setschadenstexte_schaechte()
 
     def _auslaesse(self) -> None:
         def _iter() -> Iterator[Schacht]:
@@ -2003,8 +2003,8 @@ class ImportTask(Schadenstexte):
         self.db_qkan.commit()
 
         # Textpositionen für Schadenstexte berechnen
-
-        Schadenstexte.setschadenstexte_haltungen(self.db_qkan)
+        self.db_qkan.setschadenstexte_haltungen()
+        #Schadenstexte.setschadenstexte_haltungen(self.db_qkan)
 
     def _anschlussleitungen(self) -> None:
         def _iter() -> Iterator[Anschlussleitung]:
@@ -2469,7 +2469,8 @@ class ImportTask(Schadenstexte):
 
         self.db_qkan.commit()
 
-        Schadenstexte.setschadenstexte_anschlussleitungen()
+        #Schadenstexte.setschadenstexte_anschlussleitungen()
+        self.db_qkan.setschadenstexte_anschlussleitungen()
 
     def _wehre(self) -> None:
 

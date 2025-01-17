@@ -73,15 +73,13 @@ def qgsadapt(
 
     # --------------------------------------------------------------------------
     # Zoom-Bereich für die Projektdatei vorbereiten
-    # TODO: produziert fehlermeldung!
-    zoom = [0.0, 0.0, 100.0, 100.0]
-    
-    #try:
-    #    dbQK.sqlyml('qgsadapt_zoom', "k_qgsadapt (1)")
-    #except BaseException as err:
-    #    fehlermeldung("SQL-Fehler", repr(err))
-    #    fehlermeldung("Fehler in qgsadapt", "\nFehler in sql_zoom: \n" + sql + "\n\n")
-    #    return False
+    #TODO: AttributeError("'DBConnection' object has no attribute 'sqlyml'")
+    try:
+       dbQK.sqlyml('qgsadapt_zoom', "k_qgsadapt (1)")
+    except BaseException as err:
+       fehlermeldung("SQL-Fehler", repr(err))
+       fehlermeldung("Fehler in qgsadapt", "\nFehler in sql_zoom: \n" + sql + "\n\n")
+       return False
 
     try:
         zoom = dbQK.fetchone()
