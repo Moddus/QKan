@@ -15,6 +15,8 @@ from qgis.utils import pluginDirectory
 from .config import Config
 from .utils import setup_logging
 
+from qkan import enums
+
 # Toggle in DEV to log to console
 LOG_TO_CONSOLE = False
 
@@ -70,6 +72,11 @@ class QKan:
     config: Config
     template_dir: str
     forms: str
+
+    # SQL-Statements werden abhängig vom Datenbanktyp und Modul geladen
+    sqls: str                       # SQL-Statements
+    dbtype: enums.QKanDBChoice            # Datenbanktyp
+    module: str                   # aktuelles Modul
 
     def __init__(self, iface: qgis.gui.QgisInterface):
         QKan.instance = self
@@ -140,6 +147,10 @@ class QKan:
 
         self.toolbar = self.iface.addToolBar("QKan")
         self.toolbar.setObjectName("QKan")
+
+        QKan.sqls = None
+        QKan.dbtype = None
+        QKan.dbmodule = None
 
     # noinspection PyPep8Naming
     def initGui(self) -> None:

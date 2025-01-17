@@ -48,7 +48,7 @@ class RunOffParamsType(enum.Enum):
 
 class QKanDBChoice(enum.Enum):
     SPATIALITE = "spatialite"
-    POSTGIS = "postgis"
+    POSTGIS = "postgis"                 # Achtung: lay.providerType() liefert 'postgres'
 
 
 class UntersuchBezugpunkt(enum.Enum):

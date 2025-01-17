@@ -120,10 +120,8 @@ class LinkFl(QKanPlugin):
     @property
     def database_name(self) -> str:
         """Contains the database name"""
-        if self.db_name:
-            return self.db_name
-
-        self.db_name, _ = get_database_QKan()
+        if not self.db_name:
+            self.db_name, _, _ = get_database_QKan()
         return self.db_name
 
     def run_createlinefl(self) -> None:
@@ -383,10 +381,9 @@ class LinkFl(QKanPlugin):
 
         # Check, ob die relevanten Layer nicht editable sind.
         if len({"einleit", "haltungen", "linksw"} & get_editable_layers()) > 0:
-            self.iface.messageBar().pushMessage(
-                "Bedienerfehler: ",
-                'Die zu verarbeitenden Layer dürfen nicht im Status "bearbeitbar" sein. Abbruch!',
-                level=Qgis.Critical,
+            logger.error_user(
+                "Bedienerfehler: "
+                'Die zu verarbeitenden Layer dürfen nicht im Status "bearbeitbar" sein. Abbruch!'
             )
             return
 

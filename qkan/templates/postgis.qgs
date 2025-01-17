@@ -7958,11 +7958,11 @@ def my_form_open(dialog, layer, feature):
       <expressionfields/>
       <attributeactions>
         <defaultAction key="Canvas" value="{7f802d16-fd1e-45ac-9683-a33a61fc674b}"/>
-        <actionsetting shortTitle="Alle Zustandsdaten" id="{7f802d16-fd1e-45ac-9683-a33a61fc674b}" name="Zustandsdaten für alle Hausanschlussleitungen anzeigen" capture="1" notificationMessage="" action="from qkan.tools.zeige_untersuchungsdaten import ShowHausanschlussschaeden&#xd;&#xa;&#xd;&#xa;form = ShowHausanschlussschaeden('[%leitnam%]')&#xd;&#xa;form.show_selected()&#xd;&#xa;del form&#xd;&#xa;" type="1" icon="" isEnabledOnlyWhenEditable="0">
+        <actionsetting shortTitle="Alle Zustandsdaten" id="{7f802d16-fd1e-45ac-9683-a33a61fc674b}" name="Zustandsdaten für alle Hausanschlussleitungen anzeigen" capture="1" notificationMessage="" action="from qkan.tools.zeige_untersuchungsdaten import ShowHausanschlussschaeden&#xd;&#xa;form = ShowHausanschlussschaeden('[%leitnam%]')&#xd;&#xa;form.show_selected()&#xd;&#xa;del form&#xd;&#xa;" type="1" icon="" isEnabledOnlyWhenEditable="0">
           <actionScope id="Canvas"/>
           <actionScope id="Feature"/>
         </actionsetting>
-        <actionsetting shortTitle="" id="{df45edbe-ca08-43ef-85cf-7e9ae15140b0}" name="Zustandsdaten für eine Hausanschlussleitung anzeigen" capture="1" notificationMessage="" action="from qkan.tools.zeige_untersuchungsdaten import ShowHausanschlussschaeden&#xd;&#xa;&#xd;&#xa;form = ShowHausanschlussschaeden('[%leitnam%]', '[%untersuchtag%]')&#xd;&#xa;form.show_selected()&#xd;&#xa;del form&#xd;&#xa;&#xd;&#xa;" type="1" icon="" isEnabledOnlyWhenEditable="0">
+        <actionsetting shortTitle="" id="{df45edbe-ca08-43ef-85cf-7e9ae15140b0}" name="Zustandsdaten für eine Hausanschlussleitung anzeigen" capture="1" notificationMessage="" action="from qkan.tools.zeige_untersuchungsdaten import ShowHausanschlussschaeden&#xd;&#xa;form = ShowHausanschlussschaeden('[%leitnam%]', '[%untersuchtag%]')&#xd;&#xa;form.show_selected()&#xd;&#xa;del form&#xd;&#xa;" type="1" icon="" isEnabledOnlyWhenEditable="0">
           <actionScope id="Canvas"/>
           <actionScope id="Feature"/>
         </actionsetting>
@@ -16621,11 +16621,11 @@ def my_form_open(dialog, layer, feature):
           <actionScope id="Canvas"/>
           <actionScope id="Feature"/>
         </actionsetting>
-        <actionsetting shortTitle="" id="{b8a6ef63-40f5-4eb6-8b35-d05b36b01f7d}" name="Zustandsdatenfür alle Haltungen anzeigen" capture="0" notificationMessage="" action="from qkan.tools.zeige_untersuchungsdaten import ShowHaltungsschaeden&#xd;&#xa;&#xd;&#xa;form = ShowHaltungsschaeden('', '', '')&#xd;&#xa;form.show_selected()&#xd;&#xa;del form&#xd;&#xa;" type="1" icon="" isEnabledOnlyWhenEditable="0">
+        <actionsetting shortTitle="" id="{b8a6ef63-40f5-4eb6-8b35-d05b36b01f7d}" name="Zustandsdatenfür alle Haltungen anzeigen" capture="0" notificationMessage="" action="from qkan.tools.zeige_untersuchungsdaten import ShowHaltungsschaeden&#xd;&#xa;form = ShowHaltungsschaeden('', '', '')&#xd;&#xa;form.show_selected()&#xd;&#xa;del form&#xd;&#xa;" type="1" icon="" isEnabledOnlyWhenEditable="0">
           <actionScope id="Canvas"/>
           <actionScope id="Feature"/>
         </actionsetting>
-        <actionsetting shortTitle="" id="{81fbb5a5-5cce-4004-9f8f-d46ab31c0e5d}" name="Zustandsdaten für ein Haltung anzeigen" capture="0" notificationMessage="" action="# Haltungen untersucht: Zustandsdaten für eine Haltung anzeigen&#xd;&#xa;from qkan.tools.zeige_untersuchungsdaten import ShowHaltungsschaeden&#xd;&#xa;&#xd;&#xa;form = ShowHaltungsschaeden('[%untersuchhal%]', '', '', '[%untersuchtag%]')&#xd;&#xa;form.show_selected()&#xd;&#xa;del form&#xd;&#xa;&#xd;&#xa;" type="1" icon="" isEnabledOnlyWhenEditable="0">
+        <actionsetting shortTitle="" id="{81fbb5a5-5cce-4004-9f8f-d46ab31c0e5d}" name="Zustandsdaten für ein Haltung anzeigen" capture="0" notificationMessage="" action="# Haltungen untersucht: Zustandsdaten für eine Haltung anzeigen&#xd;&#xa;from qkan.tools.zeige_untersuchungsdaten import ShowHaltungsschaeden&#xd;&#xa;form = ShowHaltungsschaeden('[%untersuchhal%]', '', '', '[%untersuchtag%]')&#xd;&#xa;form.show_selected()&#xd;&#xa;del form&#xd;&#xa;" type="1" icon="" isEnabledOnlyWhenEditable="0">
           <actionScope id="Canvas"/>
           <actionScope id="Feature"/>
         </actionsetting>
@@ -18083,11 +18083,11 @@ def my_form_open(dialog, layer, feature):
           <actionScope id="Canvas"/>
           <actionScope id="Feature"/>
         </actionsetting>
-        <actionsetting shortTitle="" id="{7a5bc868-254a-45ab-a059-1ef3bf749701}" name="Zustandsdaten für alle Schächte anzeigen" capture="0" notificationMessage="" action="from qkan.tools.zeige_untersuchungsdaten import ShowSchachtschaeden&#xd;&#xa;&#xd;&#xa;form = ShowSchachtschaeden('[%untersuchsch%]')&#xd;&#xa;form.show_selected()&#xd;&#xa;del form&#xd;&#xa;" type="1" icon="" isEnabledOnlyWhenEditable="0">
+        <actionsetting shortTitle="" id="{7a5bc868-254a-45ab-a059-1ef3bf749701}" name="Zustandsdaten für alle Schächte anzeigen" capture="0" notificationMessage="" action="from qkan.tools.zeige_untersuchungsdaten import ShowSchachtschaeden&#xd;&#xa;form = ShowSchachtschaeden('[%untersuchsch%]')&#xd;&#xa;form.show_selected()&#xd;&#xa;del form&#xd;&#xa;" type="1" icon="" isEnabledOnlyWhenEditable="0">
           <actionScope id="Canvas"/>
           <actionScope id="Feature"/>
         </actionsetting>
-        <actionsetting shortTitle="" id="{3d54d528-fe05-4027-8c24-c00bab9a5282}" name="Zustandsdaten für einen Schacht anzeigen" capture="0" notificationMessage="" action="from qkan.tools.zeige_untersuchungsdaten import ShowSchachtschaeden&#xd;&#xa;&#xd;&#xa;form = ShowSchachtschaeden('[%untersuchsch%]', '[%untersuchtag%]')&#xd;&#xa;form.show_selected()&#xd;&#xa;del form&#xd;&#xa;" type="1" icon="" isEnabledOnlyWhenEditable="0">
+        <actionsetting shortTitle="" id="{3d54d528-fe05-4027-8c24-c00bab9a5282}" name="Zustandsdaten für einen Schacht anzeigen" capture="0" notificationMessage="" action="from qkan.tools.zeige_untersuchungsdaten import ShowSchachtschaeden&#xd;&#xa;form = ShowSchachtschaeden('[%untersuchsch%]', '[%untersuchtag%]')&#xd;&#xa;form.show_selected()&#xd;&#xa;del form&#xd;&#xa;" type="1" icon="" isEnabledOnlyWhenEditable="0">
           <actionScope id="Canvas"/>
           <actionScope id="Feature"/>
         </actionsetting>
@@ -19518,11 +19518,11 @@ def my_form_open(dialog, layer, feature):
           <actionScope id="Canvas"/>
           <actionScope id="Feature"/>
         </actionsetting>
-        <actionsetting shortTitle="" id="{b8a6ef63-40f5-4eb6-8b35-d05b36b01f7d}" name="Zustandsdaten für alle Hausanschussleitungen anzeigen" capture="0" notificationMessage="" action="from qkan.tools.zeige_untersuchungsdaten import ShowHausanschlussschaeden&#xd;&#xa;&#xd;&#xa;form = ShowHausanschlussschaeden('[%untersuchleit%]')&#xd;&#xa;form.show_selected()&#xd;&#xa;del form&#xd;&#xa;" type="1" icon="" isEnabledOnlyWhenEditable="0">
+        <actionsetting shortTitle="" id="{b8a6ef63-40f5-4eb6-8b35-d05b36b01f7d}" name="Zustandsdaten für alle Hausanschussleitungen anzeigen" capture="0" notificationMessage="" action="from qkan.tools.zeige_untersuchungsdaten import ShowHausanschlussschaeden&#xd;&#xa;form = ShowHausanschlussschaeden('[%untersuchleit%]')&#xd;&#xa;form.show_selected()&#xd;&#xa;del form&#xd;&#xa;" type="1" icon="" isEnabledOnlyWhenEditable="0">
           <actionScope id="Canvas"/>
           <actionScope id="Feature"/>
         </actionsetting>
-        <actionsetting shortTitle="" id="{2f6c2c7d-8251-4002-be66-c58ccf67965e}" name="Zustandsdaten für eine Hausanschlussleitung anzeigen" capture="0" notificationMessage="" action="from qkan.tools.zeige_untersuchungsdaten import ShowHausanschlussschaeden&#xd;&#xa;&#xd;&#xa;form = ShowHausanschlussschaeden('[%untersuchleit%]', '[%untersuchtag%]')&#xd;&#xa;form.show_selected()&#xd;&#xa;del form&#xd;&#xa;" type="1" icon="" isEnabledOnlyWhenEditable="0">
+        <actionsetting shortTitle="" id="{2f6c2c7d-8251-4002-be66-c58ccf67965e}" name="Zustandsdaten für eine Hausanschlussleitung anzeigen" capture="0" notificationMessage="" action="from qkan.tools.zeige_untersuchungsdaten import ShowHausanschlussschaeden&#xd;&#xa;form = ShowHausanschlussschaeden('[%untersuchleit%]', '[%untersuchtag%]')&#xd;&#xa;form.show_selected()&#xd;&#xa;del form&#xd;&#xa;" type="1" icon="" isEnabledOnlyWhenEditable="0">
           <actionScope id="Canvas"/>
           <actionScope id="Feature"/>
         </actionsetting>
@@ -29428,11 +29428,11 @@ def my_form_open(dialog, layer, feature):
       <expressionfields/>
       <attributeactions>
         <defaultAction key="Canvas" value="{df45edbe-ca08-43ef-85cf-7e9ae15140b0}"/>
-        <actionsetting shortTitle="Alle Zustandsdaten" id="{7f802d16-fd1e-45ac-9683-a33a61fc674b}" name="Zustandsdaten für alle Haltungen anzeigen" capture="1" notificationMessage="" action="from qkan.tools.zeige_untersuchungsdaten import ShowHaltungsschaeden&#xd;&#xa;&#xd;&#xa;form = ShowHaltungsschaeden('', '', '')&#xd;&#xa;form.show_selected()&#xd;&#xa;del form&#xd;&#xa;" type="1" icon="" isEnabledOnlyWhenEditable="0">
+        <actionsetting shortTitle="Alle Zustandsdaten" id="{7f802d16-fd1e-45ac-9683-a33a61fc674b}" name="Zustandsdaten für alle Haltungen anzeigen" capture="1" notificationMessage="" action="from qkan.tools.zeige_untersuchungsdaten import ShowHaltungsschaeden&#xd;&#xa;form = ShowHaltungsschaeden('', '', '')&#xd;&#xa;form.show_selected()&#xd;&#xa;del form&#xd;&#xa;" type="1" icon="" isEnabledOnlyWhenEditable="0">
           <actionScope id="Canvas"/>
           <actionScope id="Feature"/>
         </actionsetting>
-        <actionsetting shortTitle="" id="{df45edbe-ca08-43ef-85cf-7e9ae15140b0}" name="Zustandsdaten für eine Haltung anzeigen" capture="1" notificationMessage="" action="from qkan.tools.zeige_untersuchungsdaten import ShowHaltungsschaeden&#xd;&#xa;&#xd;&#xa;form = ShowHaltungsschaeden('[%haltnam%]', '', '', '[%untersuchtag%]')&#xd;&#xa;form.show_selected()&#xd;&#xa;del form&#xd;&#xa;&#xd;&#xa;" type="1" icon="" isEnabledOnlyWhenEditable="0">
+        <actionsetting shortTitle="" id="{df45edbe-ca08-43ef-85cf-7e9ae15140b0}" name="Zustandsdaten für eine Haltung anzeigen" capture="1" notificationMessage="" action="from qkan.tools.zeige_untersuchungsdaten import ShowHaltungsschaeden&#xd;&#xa;form = ShowHaltungsschaeden('[%haltnam%]', '', '', '[%untersuchtag%]')&#xd;&#xa;form.show_selected()&#xd;&#xa;del form&#xd;&#xa;" type="1" icon="" isEnabledOnlyWhenEditable="0">
           <actionScope id="Canvas"/>
           <actionScope id="Feature"/>
         </actionsetting>
@@ -36406,11 +36406,11 @@ def my_form_open(dialog, layer, feature):
       <expressionfields/>
       <attributeactions>
         <defaultAction key="Canvas" value="{7f802d16-fd1e-45ac-9683-a33a61fc674b}"/>
-        <actionsetting shortTitle="Alle Zustandsdaten" id="{7f802d16-fd1e-45ac-9683-a33a61fc674b}" name="Zustandsdaten für alle Schächten anzeigen" capture="1" notificationMessage="" action="from qkan.tools.zeige_untersuchungsdaten import ShowSchachtschaeden&#xd;&#xa;&#xd;&#xa;form = ShowSchachtschaeden('[%schnam%]')&#xd;&#xa;form.show_selected()&#xd;&#xa;del form&#xd;&#xa;" type="1" icon="" isEnabledOnlyWhenEditable="0">
+        <actionsetting shortTitle="Alle Zustandsdaten" id="{7f802d16-fd1e-45ac-9683-a33a61fc674b}" name="Zustandsdaten für alle Schächten anzeigen" capture="1" notificationMessage="" action="from qkan.tools.zeige_untersuchungsdaten import ShowSchachtschaeden&#xd;&#xa;form = ShowSchachtschaeden('[%schnam%]')&#xd;&#xa;form.show_selected()&#xd;&#xa;del form&#xd;&#xa;" type="1" icon="" isEnabledOnlyWhenEditable="0">
           <actionScope id="Canvas"/>
           <actionScope id="Feature"/>
         </actionsetting>
-        <actionsetting shortTitle="" id="{df45edbe-ca08-43ef-85cf-7e9ae15140b0}" name="Zustandsdaten für einen Schacht anzeigen" capture="1" notificationMessage="" action="from qkan.tools.zeige_untersuchungsdaten import ShowSchachtschaeden&#xd;&#xa;&#xd;&#xa;form = ShowSchachtschaeden('[%schnam%]', '[%untersuchtag%]')&#xd;&#xa;form.show_selected()&#xd;&#xa;del form&#xd;&#xa;&#xd;&#xa;&#xd;&#xa;&#xd;&#xa;" type="1" icon="" isEnabledOnlyWhenEditable="0">
+        <actionsetting shortTitle="" id="{df45edbe-ca08-43ef-85cf-7e9ae15140b0}" name="Zustandsdaten für einen Schacht anzeigen" capture="1" notificationMessage="" action="from qkan.tools.zeige_untersuchungsdaten import ShowSchachtschaeden&#xd;&#xa;form = ShowSchachtschaeden('[%schnam%]', '[%untersuchtag%]')&#xd;&#xa;form.show_selected()&#xd;&#xa;del form&#xd;&#xa;" type="1" icon="" isEnabledOnlyWhenEditable="0">
           <actionScope id="Canvas"/>
           <actionScope id="Feature"/>
         </actionsetting>
@@ -37021,26 +37021,26 @@ def my_form_open(dialog, layer, feature):
       <filterByMap type="bool">false</filterByMap>
     </Legend>
     <Macros>
-      <pythonCode type="QString">from qkan.openqkanproject import initQKanProject&#xd;
-&#xd;
-def openProject():&#xd;
-    """Check actual version of database and project file"""&#xd;
-    try:&#xd;
-        initQKanProject()&#xd;
-    except ImportError:&#xd;
-        import traceback&#xd;
-        traceback.print_exc()&#xd;
-        msg = "Diese Projektdatei wurde mit dem Programm QKan (Prof. Höttges, FH Aachen) erstellt."&#xd;
-        QgsMessageLog.logMessage(&#xd;
-            message=msg, level=Qgis.Info,&#xd;
-        )&#xd;
-        iface.messageBar().pushMessage("Information", msg, level=Qgis.Info)&#xd;
-&#xd;
-def saveProject():&#xd;
-    pass&#xd;
-&#xd;
-def closeProject():&#xd;
-    pass&#xd;
+      <pythonCode type="QString">from qkan.openqkanproject import initQKanProject
+
+def openProject():
+    """Check actual version of database and project file"""
+    try:
+        initQKanProject()
+    except ImportError:
+        import traceback
+        traceback.print_exc()
+        msg = "Diese Projektdatei wurde mit dem Programm QKan (Prof. Höttges, FH Aachen) erstellt."
+        QgsMessageLog.logMessage(
+            message=msg, level=Qgis.Info,
+        )
+        iface.messageBar().pushMessage("Information", msg, level=Qgis.Info)
+
+def saveProject():
+    pass
+
+def closeProject():
+    pass
       </pythonCode>
     </Macros>
     <Measure>

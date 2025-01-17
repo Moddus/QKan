@@ -109,37 +109,9 @@ class DBConnection:
 
         self.current_dbversion = packaging.version.parse("0.0.0")
 
-        # Queries zu diesem Modul laden
-        if QKan.config.database.type == enums.QKanDBChoice.SPATIALITE:
-            sqlfilename = os.path.join(pluginDirectory("qkan"), 'database', 'sqlite.yml')
-        elif QKan.config.database.type == enums.QKanDBChoice.POSTGIS:
-            sqlfilename = os.path.join(pluginDirectory("qkan"), 'database', 'postgres.yml')
-        else:
-            logger.error_code(': Datenbanktyp {QKan.config.database.type} nicht zulässig!')
-            raise Exception(f"{self.__class__.__name__}")
-        with open(sqlfilename) as fr:
-            self.sqls = yaml.load(fr.read(), Loader=yaml.BaseLoader)
+        self.dbtype = None
 
-        # Modulspezifische Queries zunächst in _sql laden
-        if module:
-            if QKan.config.database.type == enums.QKanDBChoice.SPATIALITE:
-                sqlfilename = os.path.join(pluginDirectory("qkan"), module, 'sqlite.yml')
-            elif QKan.config.database.type == enums.QKanDBChoice.POSTGIS:
-                sqlfilename = os.path.join(pluginDirectory("qkan"), module, 'postgres.yml')
-            else:
-                logger.error_code('Datenbanktyp {QKan.config.database.type} nicht zulässig!')
-                raise Exception(f"{self.__class__.__name__}")
-            with open(sqlfilename) as fr:
-                _sqls = yaml.load(fr.read(), Loader=yaml.BaseLoader)
-
-            if set(list(self.sqls)) & set(list(_sqls)):
-                fehlermeldung = (f"{self.__class__.__name__}: SQL-Abfragen aus '{module}' überschneiden sich "
-                                 f"mit denen aus Modul 'database': "
-                                 f"{set(list(self.sqls)) & set(list(_sqls))}")
-                logger.error(fehlermeldung)
-                raise Exception(fehlermeldung)
-
-            self.sqls |= _sqls
+        self.module = module
 
         self._connect()
 
@@ -160,35 +132,80 @@ class DBConnection:
         self._disconnect()
 
     def _connect(self) -> None:
-        """Connects to SQLite3 database.
+        """Connects to SQLite3 or PostgreSAL database.
 
         Raises:
             DBConnectError: dbname is not set & could not be determined from project
         """
+
         if not self.dbname:
-            self.dbname, _ = get_database_QKan()
+            self.dbname, _, self.dbtype = get_database_QKan()
             if not self.dbname:
                 logger.warning("Fehler: Für die gewählte Funktion muss ein Projekt geladen sein!")
                 raise DBConnectError()
 
+        # Queries zu diesem Modul laden, wenn noch nicht geschehen oder Datenbank oder Modul geändert
+        if not QKan.dbtype or QKan.dbtype != self.dbtype or not QKan.module or QKan.module != self.module:
+            QKan.dbtype = self.dbtype
+            QKan.module = self.module
+            if QKan.dbtype == enums.QKanDBChoice.SPATIALITE:
+                sqlfilename = os.path.join(pluginDirectory("qkan"), 'database', 'spatialite.yml')
+            elif QKan.dbtype == enums.QKanDBChoice.POSTGIS:
+                sqlfilename = os.path.join(pluginDirectory("qkan"), 'database', 'postgis.yml')
+            else:
+                logger.error_code(f'Fehler: Datenbanktyp {QKan.dbtype} nicht zulässig!')
+                raise Exception(f"{self.__class__.__name__}")
+            with open(sqlfilename) as fr:
+                self.sqls = yaml.load(fr.read(), Loader=yaml.BaseLoader)
+
+            # Modulspezifische Queries zunächst in _sql laden
+            if self.module:
+                if QKan.dbtype == enums.QKanDBChoice.SPATIALITE:
+                    sqlfilename = os.path.join(pluginDirectory("qkan"), self.module, 'spatialite.yml')
+                elif QKan.dbtype == enums.QKanDBChoice.POSTGIS:
+                    sqlfilename = os.path.join(pluginDirectory("qkan"), self.module, 'postgis.yml')
+                else:
+                    logger.error_code(f'Datenbanktyp {QKan.dbtype} nicht zulässig!')
+                    raise Exception(f"{self.__class__.__name__}")
+                with open(sqlfilename) as fr:
+                    _sqls = yaml.load(fr.read(), Loader=yaml.BaseLoader)
+
+                if set(list(self.sqls)) & set(list(_sqls)):
+                    fehlermeldung = (f"{self.__class__.__name__}: SQL-Abfragen aus '{self.module}' überschneiden sich "
+                                     f"mit denen aus Modul 'database': "
+                                     f"{set(list(self.sqls)) & set(list(_sqls))}")
+                    logger.error(fehlermeldung)
+                    raise Exception(fehlermeldung)
+
+                self.sqls |= _sqls
+                QKan.sqls = self.sqls
+        else:
+            self.sqls = QKan.sqls
+
         # Load existing database
         if os.path.exists(self.dbname):
-            self.consl = spatialite_connect(
-                database=self.dbname, check_same_thread=False
-            )
-            self.cursl = self.consl.cursor()
-
-            self.epsg = self.getepsg()
-            if self.epsg is None:
-                logger.error(
-                    "dbqkan.DBConnection.__init__: EPSG konnte nicht ermittelt werden. \n"
-                    + " QKan-DB: {}\n".format(self.dbname)
+            if self.dbtype == enums.QKanDBChoice.SPATIALITE:
+                self.consl = spatialite_connect(
+                    database=self.dbname, check_same_thread=False
                 )
+                self.cursl = self.consl.cursor()
 
-            logger.debug(
-                "dbqkan.DBConnection.__init__: Datenbank existiert und Verbindung hergestellt:\n"
-                + "{}".format(self.dbname)
-            )
+                self.epsg = self.getepsg()
+                if self.epsg is None:
+                    logger.error(
+                        "dbqkan.DBConnection.__init__: EPSG konnte nicht ermittelt werden. \n"
+                        + " QKan-DB: {}\n".format(self.dbname)
+                    )
+
+                logger.debug(
+                    "dbqkan.DBConnection.__init__: Datenbank existiert und Verbindung hergestellt:\n"
+                    + "{}".format(self.dbname)
+                )
+            elif self.dbtype == enums.QKanDBChoice.SPATIALITE:
+                self.consl = None
+            else:
+                logger.error_code(f'Datenbanktyp {self.dbtype} unbekannt: Abbruch')
+
 
             # Versionsprüfung
             self.check_version()
